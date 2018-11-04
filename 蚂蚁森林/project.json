@@ -1,0 +1,14 @@
+{
+  "assets": [],
+  "build": {
+    "build_id": "D0836B7F-1",
+    "build_number": 1,
+    "build_time": 1540276121360
+  },
+  "icon": "res/logo.png",
+  "main": "main.js",
+  "name": "蚂蚁森林偷能量",
+  "packageName": "xyz.qxy",
+  "versionCode": 1,
+  "versionName": "1.0.0"
+}
