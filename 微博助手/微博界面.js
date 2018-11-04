@@ -65,7 +65,23 @@ ui.layout(
     
 );
 处理配置("加载");
+wocao()
+function wocao(){
+    let 当前时间 = "Sun Nov 04 2018 20:33:12 GMT+0800 (GMT+08:00)"
+    var date1=new Date(当前时间);  //开始时间
+    var date2=new Date();    //结束时间
+    var date3=date2.getTime()-date1.getTime()  //时间差的毫秒数
+    
+    
+    //计算出相差天数
+    var days=Math.floor(date3/(24*3600*1000))
+    
+    if(days > 7){
+        dialogs.alert("提示", "已过期,请联系作者")
+        exit();
+    }
 
+}
 ///绑定按钮事件
 ui.互动_开始.on("click",()=>{
     //这里是互动的逻辑

@@ -21,7 +21,7 @@ events.on("互动", function(words){
         向主线程发送消息("配置完成")
         exit()
     } catch (error) {
-        log("function_Name:"+arguments.callee.name+":"+error)
+        log("function_Name:"+"互动路径配置"+":"+error)
     }
     
 });
@@ -33,7 +33,7 @@ events.on("抢热评", function(words){
         向主线程发送消息("配置完成")
         exit()
     } catch (error) {
-        log("function_Name:"+arguments.callee.name+":"+error)
+        log("function_Name:"+"抢热评路径配置"+":"+error)
     }
 });
 setInterval(()=>{},20);

@@ -1,0 +1,11 @@
+{
+    "name": "微博辅助工具",
+    "icon":"res/logo.png",
+    "main": "微博界面.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "weibo.fuzhu",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}

@@ -42,51 +42,7 @@ function get_global_config(){
     }
     
 }
-/*
-function select_file () {
-    let current_dir_array, dir = ["/", "sdcard", "/"]; //存储当前目录
-    let select_index;
-    let i = 0;
-    while (i<1) {
-        current_dir_array = new Array(),
-        current_dir_array = ["返回上级目录"];
-        files.listDir(dir.join("")).forEach((i) => {
-            if (files.isDir(dir.join("") + i)) {
-                current_dir_array.push(i + "/");
-            } else if (files.isFile(dir.join("") + i)){
-                current_dir_array.push(i);
-            }
-        });
-        select_index = dialogs.select("路径(按返回键退出)：\n" + dir.join(""), current_dir_array);
-        switch (select_index) {
-            case -1: //用户取消               
-                return null;
-            case 0://父目录处理
-                if (dir.length > 3) {
-                    dir.pop();
-                    dir.pop();
-                }
-                break;
-            default:
-                if (files.isFile(files.join(dir.join(""), current_dir_array[select_index ]))) {
-                    let file_name = (files.join(dir.join(""), current_dir_array[select_index ]))
-                    
-                    if (files.getExtension(file_name) != "txt"){
-                        toast("请选择文本文件或按返回键退出");
-                    }else{
-                        return file_name;
-                    }
-                } else if( files.isDir(files.join(dir.join(""), current_dir_array[select_index ])) ){
-                    log(files.join(dir.join(""), current_dir_array[select_index ]) + ":是目录")
-                    dir.push(current_dir_array[select_index ])
-                }else{
 
-                }               
-        }
-        i++;
-    }
-}
-*/
 function 评论框处理(){
     try {
         sleep(1000)
@@ -145,23 +101,28 @@ function 点赞评论(列表项){
         sleep(300);
         列表项.findOne(descStartsWith("评论")).click()
         sleep(1000);
-        switch (currentActivity()){
-            case "com.sina.weibo.feed.DetailWeiboActivity"://   新打开一个页面 的包名
-                id("comment").findOne().click()//评论页的评论按钮
-                sleep(1000);
-                if (currentActivity()== "com.sina.weibo.feed.detail.composer.ComposerActivity") {//成功打开评论框
+        let count =0
+        while(count <20){//网络可能卡顿,等待页面加载
+            switch (currentActivity()){
+                case "com.sina.weibo.feed.DetailWeiboActivity"://   新打开一个页面 的包名
+                    id("comment").findOne().click()//评论页的评论按钮
+                    sleep(1000);
+                    if (currentActivity()== "com.sina.weibo.feed.detail.composer.ComposerActivity") {//成功打开评论框
+                        return 评论框处理();
+                    } else {
+                        back();
+                        log("打开评论框失败")
+                        return false;
+                    }
+                    break;
+                case "com.sina.weibo.feed.detail.composer.ComposerActivity"://在本页面打开打开评论框
                     return 评论框处理();
-                } else {
-                    back();
-                    log("打开评论框失败")
-                    return false;
-                }
-                break;
-            case "com.sina.weibo.feed.detail.composer.ComposerActivity"://在本页面打开打开评论框
-                return 评论框处理();
-            default :
-                toastlog('未知异常');
-            
+                default :
+                    toastlog('等待页面改变');
+                
+            }
+            sleep(500)
+            count++;
         }
     } catch (error) {
         log("function_Name:"+arguments.callee.name+":"+error)

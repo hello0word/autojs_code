@@ -7,10 +7,8 @@ function 枚举方法(obj){
     }    
     log(names);    
 }
-function wocao(){
-    log(arguments.callee.name)
-}
-wocao()
+
+
 var storage = storages.create("3316538544@qq.com:微博")
 let ss= storage.get("抢热评_路径输入框","ss")
 //log(枚举方法(global.ui))
