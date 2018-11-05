@@ -108,17 +108,19 @@ ui.互动_路径.on("click",()=>{
     ui.互动_路径.setClickable(false)
     处理配置("保存");
     let e= engines.execScriptFile("./微博-文件选择.js");
-    sleep(1000);
-    e.getEngine().emit("互动","互动")
-    ui.互动_路径.setClickable(true)
+    setTimeout(()=>{
+        e.getEngine().emit("互动","互动")
+        ui.互动_路径.setClickable(true)
+    },1000)
 });
 ui.抢热评_路径.on("click",()=>{
     ui.抢热评_路径.setClickable(false);
     处理配置("保存");
     let e= engines.execScriptFile("./微博-文件选择.js");
-    sleep(1000);
-    e.getEngine().emit("抢热评","抢热评")
-    ui.抢热评_路径.setClickable(true);
+    setTimeout(()=>{
+        e.getEngine().emit("抢热评","抢热评")
+        ui.抢热评_路径.setClickable(true);
+    },1000)
 });
 events.on("配置完成",()=>{
     处理配置('加载');

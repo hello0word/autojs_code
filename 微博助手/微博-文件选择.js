@@ -9,32 +9,20 @@ function log(message){
     f.writeline(message)
     f.close()
 }
-toastLog = function(message){
-    log(message)
-    toast(message)
-}
+
 events.on("互动", function(words){
-    toastLog(words);
+    toast(words);
     存储标记 = "互动"
-    try {
-        select_file()
-        向主线程发送消息("配置完成")
-        exit()
-    } catch (error) {
-        log("function_Name:"+"互动路径配置"+":"+error)
-    }
-    
+    select_file()
+    向主线程发送消息("配置完成")
+    exit()
 });
 events.on("抢热评", function(words){
-    toastLog(words);
+    toast(words);
     存储标记 = "抢热评"
-    try {
-        select_file()
-        向主线程发送消息("配置完成")
-        exit()
-    } catch (error) {
-        log("function_Name:"+"抢热评路径配置"+":"+error)
-    }
+    select_file()
+    向主线程发送消息("配置完成")
+    exit()
 });
 setInterval(()=>{},20);
 function 向主线程发送消息(message){
@@ -58,8 +46,6 @@ function select_file(){
                 current_dir_array.push(i + "/");
             } else if (files.isFile(dir.join("") + i)){
                 current_dir_array.push(i);
-            }else{
-                log(dir.join("") + i +"啥也不是")
             }
         });
         select_index = dialogs.select("路径(按返回键退出)：\n" + dir.join(""), current_dir_array);
@@ -79,20 +65,18 @@ function select_file(){
                         toast("请选择文本文件或按返回键退出");
                     }else{
                         if (存储标记 == "互动"){
-                            log("互动已存储")
                             storage.put("互动_路径输入框",file_name)
+                            log("互动已存储为:"+file_name)
                             return null;
                         }else if(存储标记 == "抢热评"){
                             storage.put("抢热评_路径输入框",file_name)
-                            log("抢热评已存储")
+                            log("抢热评已存储为:"+file_name)
                             return null;
                         }
                         
                     }
                 } else if( files.isDir(files.join(dir.join(""), current_dir_array[select_index ])) ){
-                    log(files.join(dir.join(""), current_dir_array[select_index ]) + ":是目录")
                     dir.push(current_dir_array[select_index ])
-                    
                 }else{
 
                 }              

@@ -16,7 +16,7 @@ function tLog(msg) {
  
 function prepareThings() {
     console.log("开始");
-    //setScreenMetrics(1080, 1920);
+    setScreenMetrics(1080, 1920);
     //请求截图
     if (!requestScreenCapture()) {
         tLog("请求截图失败");
@@ -96,54 +96,32 @@ function waitPage(type) {
     // 等待进入自己的能量主页
     if (type == 0) {
         className("android.widget.Button").desc("通知").findOne()
-        //className("android.widget.Button").desc("发消息").findOne()
-        //desc("消息").findOne();
     }
     // 等待进入他人的能量主页
     else if (type == 1) {
         className("android.widget.Button").desc("浇水").findOne()
-        //desc("浇水").findOne();
     }
     //再次容错处理
     sleep(1000);
 }
 /**
- * 从支付宝主页进入蚂蚁森林我的主页
+ * 进入蚂蚁森林我的主页
  */
 function enterMyMainPage() {
     app.startActivity({
             action: "VIEW",
             data: "alipays://platformapi/startapp?appId=60000002"
         });
-
-    
-    
-    /*launchApp("支付宝");
-    tLog("等待支付宝启动");
-    var i = 0;
-    sleep(1000);
-    //五次尝试蚂蚁森林入口
-    while (!textEndsWith("蚂蚁森林").exists() && i <= 5) {
-        sleep(2000);
-        i++;
-    }
-    clickByText("蚂蚁森林", true, "请把蚂蚁森林入口添加到主页我的应用");
-    //等待进入自己的主页
-    waitPage(0);
-    */
 }
 /**
  * 进入排行榜
  */
 function enterRank() {
-    Swipe(520, 1860, 520, 100);
-    sleep(2500);
     descEndsWith("查看更多好友").findOne().click();
     var i = 0;
     //等待排行榜主页出现
-    sleep(2000);
     while (!textEndsWith("好友排行榜").exists() && i <= 5) {
-        sleep(2000);
+        sleep(1000);
         i++;
     }
     if (i >= 5) {
@@ -176,22 +154,24 @@ function getHasEnergyfriend(type) {
  * @returns {boolean}
  */
 function isRankEnd() {
-    if (descEndsWith("没有更多了").exists()) {
-        var b = descEndsWith("没有更多了").findOne();
-        var bs = b.bounds();
-        if (bs.centerY() < 1920) {
-            return true;
-        }
+    while(textEndsWith("好友排行榜").exists()){
+            let 长度=className("android.webkit.WebView").findOne().child(1).children().length
+            //let 范围= className("android.webkit.WebView").findOne().child(1).child(长度-1).bounds()
+            let 按钮内容 = className("android.webkit.WebView").findOne().child(1).child(长度-2).child(2).desc()
+            //log(范围)
+            log(按钮内容)
+            if (按钮内容 == "邀请") {
+                return true;
+            }
+        
+        return false;
     }
-    return false;
 }
 /**
  * 在排行榜页面,循环查找可收集好友
  * @returns {boolean}
  */
 function enterOthers() {
-    //tLog("开始检查排行榜");
-
     var ePoint = null;
     enterRank();//进入排行榜
     //确保当前操作是在排行榜界面
@@ -200,24 +180,17 @@ function enterOthers() {
         ePoint = getHasEnergyfriend(1);
         if (ePoint != null) {
             //点击位置相对找图后的修正
-            tLog("找到了")
             click(ePoint.x, ePoint.y + 20);
             waitPage(1);
-            sleep(2000);
             log("运行到这了");
             收取能量();
-            //进去收集完后,递归调用enterOthers
             back();
-            sleep(500);
-            //等待返回好有排行榜
-            //textEndsWith("好友排行榜").findOne();
             //返回后递归调用
             ePoint = null;
         } else {
             //向下滑动
-            Swipe(520, 1800, 520, 300, 1000);
-            sleep(2000);
-            
+            className("android.webkit.WebView").findOne().scrollDown()
+            sleep(100)
         }
         //检测是否排行榜结束了
         if (isRankEnd()) {
@@ -311,7 +284,8 @@ function collectionMyEnergy() {
     }
 }
 /**
- * 结束后返回主页面
+ * 
+ * 时间超过7.35 则退出
  */
 function whenComplete() {
     var now = new Date();
@@ -359,39 +333,38 @@ function 前置操作() {
     if(currentPackage() !="org.autojs.autojs"){
         解锁();
     }
-    //前置操作
-    
-    //注册音量下按下退出脚本监听
-    //registEvent();
 
 }
 function 收取能量(){
     className("android.webkit.WebView").findOne().children().find(className("android.widget.Button").descStartsWith("收集能量")).
     forEach((child)=>{
-        let xy=child.bounds()
-        Tap(xy.centerX(),xy.centerY(),100)
+            let xy=child.bounds()
+            click(xy.centerX(),xy.centerY())
+            sleep(800)
         });
+        
         }
 function test() {
     //前置操作();
     //enterOthers();
     //requestScreenCapture();
    
-    收取能量()
+    log(isRankEnd())
+   //log( className("com.uc.webview.export.WebView").findOne())
+
+    //log(className("com.uc.webkit.bf").findOne())
+    // let 长度=className("android.webkit.WebView").findOne().child(1).children().length
+    // let 范围= className("android.webkit.WebView").findOne().child(1).child(长度-1).bounds()
+    // log(范围.top)
+    // log(id("J_rank_list").findOne())
+
     exit();
 }
 //程序主入口
 function mainEntrence() {
     prepareThings();
-    
-    //前置操作  包括解锁
-    //前置操作();
-    killZFB();
-    console.log("前置操作完成");
     //从主页进入蚂蚁森林主页
     enterMyMainPage();
-    
-    
     while(true){
         if (isMorningTime() && !checkInMorning ) {
             tLog("检查自己的");
@@ -404,8 +377,8 @@ function mainEntrence() {
             enterOthers();//收集其他好友能量
 
         }
-        whenComplete();
+        //whenComplete();
     };
 }
- //   mainEntrence();
-      test();
+      mainEntrence();
+    // test();
