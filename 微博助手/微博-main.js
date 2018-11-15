@@ -224,7 +224,7 @@ function error_dispose(){//错误计数检查
  * 重启微博并等待加载完成
  */
 function init_app(app_name) {
-    var sh = new Shell(true);
+    var sh = new Shell(false);
     let packageName = app.getPackageName(app_name);
     sh.exec("am force-stop "+packageName);
     sh.exitAndWaitFor();
@@ -289,18 +289,20 @@ function 抢热评() {
             {
                 完成列表.shift();//从头弹出一个元素
             } 
-            评论 = comment_array[random(1,comment_array.length)]
+            评论 = comment_array[random(1,comment_array.length)]//获取评论
             返回主页();
             分析页面(完成列表,计数对象); 
-            if(计数对象.本次已完成计数 <=5){
-                休眠并提示(config.抢热评_第三个延时,config.抢热评_第四个延时,"等待评论下一页")
-                返回主页();
-                翻页(true)
-            }else{
-                计数对象.本次已完成计数 = 0;//重置计数
-                休眠并提示(config.抢热评_第一个延时,config.抢热评_第二个延时,"等待刷新")
-                id("tabhost_right").findOne().child(1).click()//点击首页刷新
-            }
+            休眠并提示(config.抢热评_第一个延时,config.抢热评_第二个延时,"等待刷新")
+            id("tabhost_right").findOne().child(1).click()//点击首页刷新
+            // if(计数对象.本次已完成计数 <=5){
+            //     休眠并提示(config.抢热评_第三个延时,config.抢热评_第四个延时,"等待评论下一页")
+            //     返回主页();
+            //     翻页(true)
+            // }else{
+            //     计数对象.本次已完成计数 = 0;//重置计数
+            //     休眠并提示(config.抢热评_第一个延时,config.抢热评_第二个延时,"等待刷新")
+            //     id("tabhost_right").findOne().child(1).click()//点击首页刷新
+            // }
         }
     } catch (error) {
         log("function_Name:"+arguments.callee.name+":"+error)

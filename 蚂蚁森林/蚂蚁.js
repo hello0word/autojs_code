@@ -158,9 +158,11 @@ function isRankEnd() {
             let 长度=className("android.webkit.WebView").findOne().child(1).children().length
             //let 范围= className("android.webkit.WebView").findOne().child(1).child(长度-1).bounds()
             let 按钮内容 = className("android.webkit.WebView").findOne().child(1).child(长度-2).child(2).desc()
+            let 按钮位置 = className("android.webkit.WebView").findOne().child(1).child(长度-2).child(2).bounds()
+            log(按钮位置.centerY())
             //log(范围)
             log(按钮内容)
-            if (按钮内容 == "邀请") {
+            if (按钮内容 == "邀请" && 按钮位置.centerY() < 1720) {
                 return true;
             }
         
@@ -335,28 +337,29 @@ function 前置操作() {
     }
 
 }
+console.log('');
+
 function 收取能量(){
     className("android.webkit.WebView").findOne().children().find(className("android.widget.Button").descStartsWith("收集能量")).
     forEach((child)=>{
             let xy=child.bounds()
-            click(xy.centerX(),xy.centerY())
-            sleep(800)
+            press(xy.centerX(),xy.centerY(),10)
+            //sleep(800)
         });
-        
+        sleep(800);
         }
 function test() {
     //前置操作();
     //enterOthers();
     //requestScreenCapture();
+   //className("android.webkit.WebView").findOne().children().find(className("android.widget.Button")).
+      let 长度=className("android.webkit.WebView").findOne().child(1).children().length
+          
    
-    log(isRankEnd())
-   //log( className("com.uc.webview.export.WebView").findOne())
-
-    //log(className("com.uc.webkit.bf").findOne())
-    // let 长度=className("android.webkit.WebView").findOne().child(1).children().length
-    // let 范围= className("android.webkit.WebView").findOne().child(1).child(长度-1).bounds()
-    // log(范围.top)
-    // log(id("J_rank_list").findOne())
+   //let ss= className("android.webkit.WebView").findOne().child(0).findOne(id("J_barrier_free"))//.findOne().find(className("android.widget.Button"))//.findOne(id("J_barrier_free"))
+   let 按钮位置 = className("android.webkit.WebView").findOne().child(1).child(长度-2).child(2).bounds()
+            log(按钮位置.centerY())
+  
 
     exit();
 }
@@ -377,7 +380,6 @@ function mainEntrence() {
             enterOthers();//收集其他好友能量
 
         }
-        //whenComplete();
     };
 }
       mainEntrence();

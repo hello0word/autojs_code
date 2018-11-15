@@ -65,22 +65,45 @@ ui.layout(
     
 );
 处理配置("加载");
-wocao()
-function wocao(){
-    let 当前时间 = "Sun Nov 04 2018 20:33:12 GMT+0800 (GMT+08:00)"
-    var date1=new Date(当前时间);  //开始时间
-    var date2=new Date();    //结束时间
-    var date3=date2.getTime()-date1.getTime()  //时间差的毫秒数
-    
-    
-    //计算出相差天数
-    var days=Math.floor(date3/(24*3600*1000))
-    
-    if(days > 7){
-        dialogs.alert("提示", "已过期,请联系作者")
-        exit();
+验证()
+function 验证(){
+    var storage = storages.create("3316538544@qq.com:微博")
+    var 注册标记 = storage.get("注册标记",false)
+    if(!注册标记){
+        dialogs.rawInput("请输入激活码", "").then(输入 => {
+            log(输入);
+            if(!输入){
+                log("退出");
+                exit();
+            };
+            var cur_date = new Date();
+            let nian =40- (cur_date.getFullYear()-2000);
+            let yue =20- (cur_date.getMonth()+1);
+            let ri =40- cur_date.getDate();
+            let xiaoshi=45- cur_date.getHours();
+            let zuihou = cur_date.getDate()+cur_date.getHours();
+            var n = 输入.search(/fh94/i);
+            var 开始字符串 = 输入.slice(n+9)
+            var 第一标记 = 开始字符串.search(/t/i)
+            var 第二标记 = 开始字符串.search(/g/i)
+            var 第三标记 = 开始字符串.search(/f/i)
+            var 第四标记 = 开始字符串.search(/y/i)
+            var 第五标记 = 开始字符串.search(/j/i)
+            var 第一位  = 开始字符串.substring(0,第一标记)
+            var 第二位  = 开始字符串.substring(第一标记+1,第二标记)
+            var 第三位  = 开始字符串.substring(第二标记+1,第三标记)
+            var 第四位  = 开始字符串.substring(第三标记+1,第四标记)
+            var 第五位  = 开始字符串.substring(第四标记+1,第五标记)
+            log("日志")
+            if(第一位==nian && 第二位==yue && 第三位==ri && 第四位== xiaoshi && 第五位==zuihou){
+                storage.put("注册标记",true)
+                toast("激活成功");
+            }else{
+                toast("激活失败");
+                exit();
+            }
+        });
     }
-
 }
 ///绑定按钮事件
 ui.互动_开始.on("click",()=>{

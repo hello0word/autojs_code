@@ -1,11 +1,14 @@
 {
-    "name": "微博辅助工具",
-    "icon":"res/logo.png",
-    "main": "微博界面.js",
-    "ignore": [
-        "build"
-    ],
-    "packageName": "weibo.fuzhu",
-    "versionName": "1.0.0",
-    "versionCode": 1
+  "assets": [],
+  "build": {
+    "build_id": "E78A3B3D-2",
+    "build_number": 2,
+    "build_time": 1542187521880
+  },
+  "icon": "res/logo.png",
+  "main": "微博界面.js",
+  "name": "微博助手",
+  "packageName": "weibo.fuzhu",
+  "versionCode": 1,
+  "versionName": "1.0.0"
 }
