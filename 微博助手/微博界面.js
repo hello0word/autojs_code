@@ -1,7 +1,5 @@
 "ui";
-
 var color = "#009688";
-
 ui.layout(
     <drawer id="drawer">
         <vertical>
@@ -12,6 +10,10 @@ ui.layout(
             <viewpager id="viewpager">
                 <frame>
                     <vertical h="auto" align="center" margin="0 50">
+                        <linear>
+                            <text w="130" gravity="center" color="#111111" size="16" line="2">多次评论次数</text>
+                            <input id="全局_多次评论次数" w="*" h="40" inputType="number|numberDecimal" />
+                        </linear>
                         <linear>
                             <text w="130" gravity="center" color="#111111" size="16">延时最短时间(秒)</text>
                             <input id="互动_第一个延时" w="*" h="40" inputType="number|numberDecimal"/>
@@ -65,7 +67,9 @@ ui.layout(
     
 );
 处理配置("加载");
-验证()
+if(!app.autojs.versionCode){
+    验证()
+}
 function 验证(){
     var storage = storages.create("3316538544@qq.com:微博")
     var 注册标记 = storage.get("注册标记",false)
@@ -114,7 +118,6 @@ ui.互动_开始.on("click",()=>{
     setTimeout(()=>{
         互动.getEngine().emit("互动","互动")
     },2000);
-    toastLog("正在启动");
 });
 
 ui.抢热评_开始.on("click",()=>{
@@ -124,34 +127,65 @@ ui.抢热评_开始.on("click",()=>{
     setTimeout(()=>{
         抢热评.getEngine().emit("抢热评","抢热评")
     },2000);
-    toastLog("正在启动");
+});
+function 选择文件(参数){
+    处理配置("保存");
+    var 存储标记 =参数;
+    var storage = storages.create("3316538544@qq.com:微博")
+    var current_dir_array, dir = ["/", "sdcard", "/"]; //存储当前目录
+    function file_select(select_index) {
+        switch (select_index) {
+            case undefined:
+                break;
+            case -1:
+                return;
+            case 0:
+                if (dir.length > 3) {
+                    dir.pop();
+                }
+                break;
+            default:
+                if (files.isFile(files.join(dir.join(""), current_dir_array[select_index]))) {
+                    let file_name = (files.join(dir.join(""), current_dir_array[select_index]))
+                    if (files.getExtension(file_name) != "txt"){
+                        toast("请选择文本文件");
+                    }else{
+                        if (存储标记 == "互动"){
+                            storage.put("互动_路径输入框",file_name)
+                            log("互动已存储为:"+file_name)
+                            处理配置('加载');
+                            return null;
+                        }else if(存储标记 == "抢热评"){
+                            storage.put("抢热评_路径输入框",file_name)
+                            log("抢热评已存储为:"+file_name)
+                            处理配置('加载');
+                            return null;
+                        }
+                    }
+                    return;
+
+                } else if (files.isDir(files.join(dir.join(""), current_dir_array[select_index]))) {
+                    dir.push(current_dir_array[select_index])
+                }
+        };
+        current_dir_array = pathToArray(dir)
+        dialogs.select("文件选择", current_dir_array).then(n => {
+            file_select(n)
+        });
+    };
+    file_select();
+}
+ui.互动_路径.on("click",()=>{
+    选择文件("互动");
 });
 
-ui.互动_路径.on("click",()=>{
-    ui.互动_路径.setClickable(false)
-    处理配置("保存");
-    let e= engines.execScriptFile("./微博-文件选择.js");
-    setTimeout(()=>{
-        e.getEngine().emit("互动","互动")
-        ui.互动_路径.setClickable(true)
-    },1000)
-});
 ui.抢热评_路径.on("click",()=>{
-    ui.抢热评_路径.setClickable(false);
-    处理配置("保存");
-    let e= engines.execScriptFile("./微博-文件选择.js");
-    setTimeout(()=>{
-        e.getEngine().emit("抢热评","抢热评")
-        ui.抢热评_路径.setClickable(true);
-    },1000)
+    选择文件("抢热评");
 });
-events.on("配置完成",()=>{
-    处理配置('加载');
-    log("事件加载完成")
-})
 function 处理配置(方法){
     var storage = storages.create("3316538544@qq.com:微博")
     if(方法 == "加载"){
+        ui.全局_多次评论次数.setText(   storage.get("全局_多次评论次数","未设置")                  )
         ui.互动_第一个延时.setText(     storage.get("互动_第一个延时","未设置")                   )
         ui.互动_第二个延时.setText(     storage.get("互动_第二个延时","未设置")                   )        
         ui.互动_路径输入框.text(     storage.get("互动_路径输入框","未设置")                    )
@@ -170,8 +204,23 @@ function 处理配置(方法){
         storage.put("抢热评_第三个延时",        ui.抢热评_第三个延时.text()     )
         storage.put("抢热评_第四个延时",        ui.抢热评_第四个延时.text()     )
         storage.put("抢热评_路径输入框",        ui.抢热评_路径输入框.text()     )
+        storage.put("全局_多次评论次数",        ui.全局_多次评论次数.text()     )
     }
 }
+
+function pathToArray(dir) {
+    current_dir_array = new Array();
+    current_dir_array = ["返回上级目录"];
+    files.listDir(dir.join("")).forEach((i) => {
+        if (files.isDir(dir.join("") + i)) {
+            current_dir_array.push(i + "/");
+        } else if (files.isFile(dir.join("") + i)) {
+            current_dir_array.push(i);
+        }
+    });
+    return current_dir_array;
+}
+
 
 function 使用帮助(){
     alert("首次运行,请填写配置,然后点击右上角的保存配置已方便下次使用")
@@ -184,6 +233,7 @@ ui.emitter.on("create_options_menu", menu=>{
     menu.add("关于");
     menu.add("保存配置");
     menu.add("使用帮助");
+    menu.add("日志");
     menu.add("退出");
 });
 //监听选项菜单点击
@@ -197,12 +247,14 @@ ui.emitter.on("options_item_selected", (e, item)=>{
             break;
         case "退出":
             ui.finish();
-            //toast("还没有设置");
+            engines.stopAll();
             break;
         case "使用帮助":
             使用帮助()
             break;
-
+        case "日志":
+            app.startActivity("console");
+            break;
         case "关于":
             alert("关于", "微博助手 v1.0.0");
             break;
