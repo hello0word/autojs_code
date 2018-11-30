@@ -1,0 +1,10 @@
+{
+    "name": "探探引流",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.tantan.stream",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}

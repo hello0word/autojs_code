@@ -2,18 +2,14 @@ auto;
 var myEnergeType = ["线下支付", "行走", "共享单车", "地铁购票", "网络购票", "网购火车票", "生活缴费", "ETC缴费", "电子发票", "绿色办公", "咸鱼交易", "预约挂号"];
 var morningTime = "7:15"; //自己运动能量生成时间
 var checkInMorning = false; // 运动能量收集状态
-var G_可收取图片 = images.read("./take.png");
+var G_可收取图片 = images.read("/sdcard/脚本/蚂蚁森林/take.png");
 function tLog(msg) {
     toast(msg);
     console.log(msg)
 }
 /**
  * 获取权限和设置参数
- 
- className("android.widget.Button").desc("收集能量13克").findOne()
- 
  */
- 
 function prepareThings() {
     console.log("开始");
     setScreenMetrics(1080, 1920);
@@ -29,26 +25,33 @@ function prepareThings() {
 }
 
 function 解锁() {
-    //解锁按键时间间隔
-    var interval = 200;
-    //如果屏幕没有唤醒,则唤醒
-    device.wakeUpIfNeeded()
-    sleep(1500);
-    if (device.isScreenOn()) {
-        swipe(520, 0, 520, 1800, 200);
-        sleep(1000);
-        click(200, 165);
+    
+    if (!device.isScreenOn()) {
+        device.wakeUp();
+        sleep(1500);
+        swipe(540,0,540,1920,100);
         sleep(500);
-        click(540, 1370);
-        sleep(interval);
-        click(870, 1370);
-        sleep(interval);
-        click(220, 1370);
-        sleep(interval);
-        click(540, 1170)
-        sleep(1000);
-        home();
+        click(160,160);
+        sleep(500);
+        KeyCode(15);//8
+        sleep(300);
+        KeyCode(16);//9
+        sleep(300);
+        KeyCode(14);//7
+        sleep(300);
+        KeyCode(12);//5
+        sleep(2500);
+        if(currentPackage()== "com.android.deskclock"){
+            home();
+            log("解锁完成");
+            return true;
+        }
+        else{
+            return false;
+        }
         
+    }else{
+        return true;
     }
 }
 
@@ -58,18 +61,6 @@ function killZFB() {
     sleep(500);
     sh.exit;
 };
-/**
- * 设置按键监听 当脚本执行时候按音量减 退出脚本
- */
-function registEvent() {
-    //启用按键监听
-    events.observeKey();
-    //监听音量上键按下
-    events.onKeyDown("volume_down", function (event) {
-        tLog("脚本手动退出");
-        exit();
-    });
-}
 /**
  * 获取截图
  */
@@ -203,88 +194,7 @@ function enterOthers() {
 
     }
 }
-/**
- * 根据描述值 点击
- * @param energyType
- * @param noFindExit
- */
-function clickByDesc(energyType, paddingY, noFindExit, exceptionMsg) {
-    if (descEndsWith(energyType).exists()) {
-        descEndsWith(energyType).find().forEach(function (pos) {
-            var posb = pos.bounds();
-            Tap(posb.centerX(), posb.centerY() - paddingY);
-            sleep(2000);
-        });
-    } else {
-        if (noFindExit != null && noFindExit) {
-            if (exceptionMsg != null) {
-                tLog(exceptionMsg);
-                exit();
-            } else {
-                defaultException();
-            }
-        }
-    }
-}
 
-
-
-/**
- * 根据text值 点击
- * @param energyType
- * @param noFindExit
- */
-function clickByText(energyType, noFindExit, exceptionMsg) {
-    if (textEndsWith(energyType).exists()) {
-        textEndsWith(energyType).find().forEach(function (pos) {
-            var posb = pos.bounds();
-            Tap(posb.centerX(), posb.centerY() - 60);
-        });
-    } else {
-        if (noFindExit != null && noFindExit) {
-            if (exceptionMsg != null) {
-                tLog(exceptionMsg);
-                exit();
-            } else {
-                defaultException();
-            }
-        }
-    }
-}
-/**
- * 遍历能量类型,收集自己的能量
- */
-function collectionMyEnergy() {
-    var energyRegex = generateCollectionType();
-    
-    //如果是早上7点10分左右的话.等待主页能量出现 每隔一秒检测一次
-    while (isMorningTime() && descEndsWith("行走").exists()) {
-        if (!checkInMorning) {
-            tLog("等待运动能量生成中...");
-            checkInMorning = true;
-
-        }
-        descEndsWith("行走").find().forEach(function (pos) {
-            var posb = pos.bounds();
-            Tap(posb.centerX(), posb.centerY() - 80);
-            sleep(1500);
-        });
-    }
-    if (checkInMorning) {
-        tLog("运动能量收集完成");
-    }
-    if (descMatches(energyRegex).exists()) {
-        if (!checkInMorning) {
-            tLog("防止小树的提示遮挡,等待中");
-            sleep(7000);
-        }
-        descMatches(energyRegex).find().forEach(function (pos) {
-            var posb = pos.bounds();
-            Tap(posb.centerX(), posb.centerY() - 80);
-            sleep(2000);
-        });
-    }
-}
 /**
  * 
  * 时间超过7.35 则退出
@@ -299,23 +209,6 @@ function whenComplete() {
         exit();
     }
 }
-/**
- * 根据能量类型数组生成我的能量类型正则查找字符串
- * @returns {string}
- */
-function generateCollectionType() {
-    var regex = "/";
-    myEnergeType.forEach(function (t, num) {
-        if (num == 0) {
-            regex += "(\\s*" + t + "$)";
-        } else {
-            regex += "|(\\s*" + t + "$)";
-        }
-    });
-    regex += "/";
-    return regex;
-}
-
 function isMorningTime() {
     var now = new Date();
     var hour = now.getHours();
@@ -331,55 +224,31 @@ function isMorningTime() {
 /*
 解锁屏幕请求截图权限
 */
-function 前置操作() {
-    if(currentPackage() !="org.autojs.autojs"){
-        解锁();
-    }
-
-}
-console.log('');
-
 function 收取能量(){
     className("android.webkit.WebView").findOne().children().find(className("android.widget.Button").descStartsWith("收集能量")).
     forEach((child)=>{
             let xy=child.bounds()
-            press(xy.centerX(),xy.centerY(),10)
-            //sleep(800)
-        });
-        sleep(800);
-        }
+            click(xy.centerX(),xy.centerY())
+    });
+    sleep(800);
+}
 function test() {
-    //前置操作();
-    //enterOthers();
-    //requestScreenCapture();
-   //className("android.webkit.WebView").findOne().children().find(className("android.widget.Button")).
-      let 长度=className("android.webkit.WebView").findOne().child(1).children().length
-          
    
-   //let ss= className("android.webkit.WebView").findOne().child(0).findOne(id("J_barrier_free"))//.findOne().find(className("android.widget.Button"))//.findOne(id("J_barrier_free"))
-   let 按钮位置 = className("android.webkit.WebView").findOne().child(1).child(长度-2).child(2).bounds()
-            log(按钮位置.centerY())
-  
 
     exit();
 }
 //程序主入口
 function mainEntrence() {
+    if(!解锁()){
+        exit();
+    };
     prepareThings();
     //从主页进入蚂蚁森林主页
     enterMyMainPage();
     while(true){
-        if (isMorningTime() && !checkInMorning ) {
-            tLog("检查自己的");
-            swipe(520, 300,520, 1800,100);
-            sleep(500);
-            sleep(1500);
-            collectionMyEnergy();//收集自己的能量
-        }else{
-            
-            enterOthers();//收集其他好友能量
-
-        }
+        收取能量();//收自己的
+        enterOthers();//收集其他好友能量
+        whenComplete()
     };
 }
       mainEntrence();

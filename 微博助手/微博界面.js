@@ -1,5 +1,6 @@
 "ui";
 var color = "#009688";
+const release = true
 ui.layout(
     <drawer id="drawer">
         <vertical>
@@ -67,9 +68,9 @@ ui.layout(
     
 );
 处理配置("加载");
-if(!app.autojs.versionCode){
+if(release){
     验证()
-}
+};
 function 验证(){
     var storage = storages.create("3316538544@qq.com:微博")
     var 注册标记 = storage.get("注册标记",false)
@@ -107,6 +108,8 @@ function 验证(){
                 exit();
             }
         });
+    }else{
+        toastLog("验证通过");
     }
 }
 ///绑定按钮事件
