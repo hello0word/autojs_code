@@ -3,32 +3,29 @@ var myEnergeType = ["线下支付", "行走", "共享单车", "地铁购票", "�
 var morningTime = "7:15"; //自己运动能量生成时间
 var checkInMorning = false; // 运动能量收集状态
 var G_可收取图片 = images.read("/sdcard/脚本/蚂蚁森林/take.png");
-function tLog(msg) {
-    toast(msg);
-    console.log(msg)
-}
+
 /**
  * 获取权限和设置参数
  */
-function prepareThings() {
+function 请求截图权限() {
     console.log("开始");
     setScreenMetrics(1080, 1920);
     //请求截图
     if (!requestScreenCapture()) {
-        tLog("请求截图失败");
+        toastLog("请求截图失败");
         exit();
     }else{
-        tLog("请求截图ok");
+        toastLog("请求截图ok");
     }
-    //
-
 }
 
+
 function 解锁() {
-    
     if (!device.isScreenOn()) {
         device.wakeUp();
         sleep(1500);
+    };
+    if(!id("hot_seats").findOne(1000) && currentPackage()=="com.miui.home"){
         swipe(540,0,540,1920,100);
         sleep(500);
         click(160,160);
@@ -47,10 +44,10 @@ function 解锁() {
             return true;
         }
         else{
-            return false;
+            解锁();
         }
-        
     }else{
+        log("解锁完成");
         return true;
     }
 }
@@ -67,7 +64,7 @@ function killZFB() {
 function getCaptureImg() {
     var img0 = captureScreen();
     if (img0 == null || typeof (img0) == "undifined") {
-        tLog("截图失败,退出脚本");
+        toastLog("截图失败,退出脚本");
         exit();
     } else {
         return img0;
@@ -77,7 +74,7 @@ function getCaptureImg() {
  * 默认程序出错提示操作
  */
 function defaultException() {
-    tLog("程序当前所处状态不合预期,脚本退出");
+    toastLog("程序当前所处状态不合预期,脚本退出");
     exit();
 }
 /**
@@ -98,11 +95,12 @@ function waitPage(type) {
 /**
  * 进入蚂蚁森林我的主页
  */
-function enterMyMainPage() {
+function 进入我的蚂蚁森林() {
+    killZFB();
     app.startActivity({
             action: "VIEW",
             data: "alipays://platformapi/startapp?appId=60000002"
-        });
+    });
 }
 /**
  * 进入排行榜
@@ -204,7 +202,7 @@ function whenComplete() {
     h = now.getHours();
     m = now.getMinutes();
     if(h >= 7 && m >= 35){
-        tLog("结束");
+        toastLog("结束");
         killZFB();
         exit();
     }
@@ -233,23 +231,29 @@ function 收取能量(){
     sleep(800);
 }
 function test() {
-   
-
-    exit();
+    //解锁();
+    //进入我的蚂蚁森林();
+    //启用触摸监听
+    events.observeTouch();
+    //注册触摸监听器
+    events.onTouch(function(p){
+        //触摸事件发生时, 打印出触摸的点的坐标
+        log(p.x + ", " + p.y);
+    });
+    setInterval(()=>{},1000)
+    //exit();
 }
 //程序主入口
 function mainEntrence() {
-    if(!解锁()){
-        exit();
-    };
-    prepareThings();
+    解锁();
+    请求截图权限();
     //从主页进入蚂蚁森林主页
-    enterMyMainPage();
+    进入我的蚂蚁森林();
     while(true){
         收取能量();//收自己的
         enterOthers();//收集其他好友能量
         whenComplete()
     };
 }
-      mainEntrence();
-    // test();
+    //   mainEntrence();
+    test();

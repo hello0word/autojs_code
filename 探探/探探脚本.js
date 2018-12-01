@@ -206,7 +206,7 @@ function 发送消息(内容,内容类型){
 function 发送语音并确认(内容){
     let 当前条数 = 获取当前聊天信息条数().self;
     发送消息(内容,"语音");
-    sleep(2000);
+    sleep(3000);
     let 发送后消息 = 获取当前聊天信息条数().self;
     if (发送后消息 == 当前条数){
         toastLog("本次语音发送失败,重试中");
@@ -473,6 +473,62 @@ function 第二个功能(){
     
 }
 
+function 第三个功能(){
+    toastLog("后台监听开始");
+    var 点击状态 = false;
+    var thread=threads.start(function(){
+        //启用触摸监听
+        events.observeTouch();
+        //注册触摸监听器
+        events.onTouch(function(p){
+            //触摸事件发生时, 打印出触摸的点的坐标
+            log("点击了"+p.x + ", " + p.y+",本次监听结束");
+            点击状态 = true;
+        });
+        setInterval(function(){}, 1000);
+        });
+    thread.waitFor();
+    while(true){
+        if(currentActivity() == 探探聊天界面活动名){
+            sleep(700);
+            点击状态 = false;
+            log("监听开始");
+            for(let 计时=0;计时<1000;计时++){
+                //log("等待用户点击");
+                if(点击状态){
+                    //events.removeAllTouchListeners();
+                    //threads.shutDownAll();
+                    break;
+                }
+                sleep(10);
+            };
+            if(!点击状态){
+                toastLog('脚本操作开始,请不要动');
+                发送语音并确认(用户配置.语音第一句路径());
+                发送语音并确认(用户配置.语音第二句路径());
+            }else{
+                toastLog("本次由用户操作完成");
+            }
+            while(currentActivity() !=探探初始页面活动名 ){
+                //toastLog("等待用户返回聊天列表");
+                sleep(100);
+            }
+        }
+        sleep(200);
+    }
+}
+function 监听语音发送(){
+    for(let i = 0 ;i<10;i++){
+        let 表情发送 = className("android.widget.ImageView").clickable(true).depth(7).findOne(100);
+        if(表情发送){
+            log(表情发送);
+            sleep(1000);
+        }else{
+
+        }
+    };
+}
+
 function 用户配置检查(){
     files.ensureDir("/sdcard/探探脚本/第一句语音/");
     files.ensureDir("/sdcard/探探脚本/第二句语音/");
@@ -496,17 +552,22 @@ function 用户配置检查(){
 }
 
 
+
+
 function 入口(){
     用户配置检查();
-    var options = ["初始运行", "第二个功能:善后"]
+    var options = ["初始运行", "第二个功能:善后","第三个功能,监听"]
     var i = dialogs.select("请选择功能", options);
     if(i >= 0){
         switch (i) {
             case 0:
-                第一个功能()
+                第一个功能();
                 break;
             case 1:
-                第二个功能()
+                第二个功能();
+                break;
+            case 2:
+                第三个功能();
                 break;
             default:
                 break;
@@ -517,10 +578,14 @@ function 入口(){
     
 }
 
+
+
 入口();
 // 测试();
 
 function 测试(){
+    
+
     
     // let startTime = new Date();
     // startTime = startTime.getTime();

@@ -1,7 +1,6 @@
 var url="https://gitee.com/jixiangxia/autojs/raw/master/%E6%8E%A2%E6%8E%A2/%E6%8E%A2%E6%8E%A2%E8%84%9A%E6%9C%AC.js"
 var re = http.get(url);
 var text = re.body.string();
-log(text);
 var window = floaty.window(
     <frame>
         <button id="action" text="开始运行" w="90" h="40" bg="#77ffffff"/>
