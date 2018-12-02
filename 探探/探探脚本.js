@@ -1,5 +1,5 @@
 auto.waitFor();
-//用户配区
+//用户配置区
 var 用户配置 = {
     聊天文本集合:{
         第一句:function(){
@@ -37,6 +37,19 @@ const 探探初始页面活动名 = "com.p1.mobile.putong.ui.main.MainAct"
 const 探探互相喜欢活动名 = "com.p1.mobile.putong.ui.match.MatchAct"
 const 宝宝生气了活动名 = "com.p1.mobile.putong.ui.popup.ProfileThinPopup"
 
+
+threads.start(function(){
+    events.observeKey();
+    events.onKeyDown("volume_up", function(event){
+        engines.stopAll();
+        exit();
+    });
+    events.onKeyDown("volume_down", function(event){
+        engines.stopAll();
+        exit();
+    });
+    setInterval(()=>{},1000)
+})
 ////////////////////////////////
 //原型增加
 Array.prototype.in_array = function (element) {
@@ -47,6 +60,24 @@ Array.prototype.in_array = function (element) {
     　}
     　return false;
 };
+function log(message){
+    files.createWithDirs("/sdcard/探探脚本/探探日志.txt");
+    let f=files.open("/sdcard/探探脚本/探探日志.txt","a","utf-8");
+    var myDate = new Date();
+    let ss = myDate.toLocaleString()
+    let message_all = ss + ":::" + message
+    f.writeline(message_all)
+    f.close()
+    console.log(message_all);
+};
+toastLog = function(message){
+    log(message)
+    toast(message)
+}
+
+
+
+
 /**
  * 
  * @param {String} id: String
@@ -69,11 +100,15 @@ events.on('exit', function(){
  * 参数: 输入内容;按住说话
  * @param {string} 界面 测试完成
  */
-function 聊天页界面切换(界面){
+function 聊天内部页界面切换(界面){
     if (currentActivity()!=探探聊天界面活动名) {
         throw "不在探探聊天界面"
     }
-    let 表情发送 = className("android.widget.ImageView").clickable(true).depth(7).findOne()
+    let 表情发送 = className("android.widget.ImageView").clickable(true).depth(7).findOne(2000);
+    if (!表情发送) {
+        log("聊天内部页界面切换:::"+"表情发送没找到");
+        exit();
+    }
     let 中间框类型 = 表情发送.parent().child(2).child(0).className();
     switch (界面) {
         case "输入内容":
@@ -94,7 +129,13 @@ function 聊天页界面切换(界面){
  * 返回当前聊天界面里双方除最初发送的图片外,剩余条数  需要在聊天界面内执行
  */
 function 获取当前聊天信息条数(){
-    var 列表 = className("android.widget.ListView").findOne().children()// android.widget.LinearLayout
+    var 列表 = className("android.widget.ListView").findOne(2000);
+    if(列表){
+        列表= 列表.children()// android.widget.LinearLayout
+    }else{
+        log("获取当前聊天信息条数:::"+"列表获取失败");
+        exit();
+    }
     var 计数 = {
         self:0,
         other:0,
@@ -122,47 +163,63 @@ function 获取当前聊天信息条数(){
 /**
  * 返回的数组内每个对象有 id,red,bounds 属性
  */
-function 返回当前页面所有元素状态(){
+function 当前聊天列表元素状态(){
     let 页面 = Array();
     //确保页面正确
-    let 所有配对=className("android.widget.TextView").text("所有配对").depth(6).exists()
-    if (所有配对){
-        let 列表=className("l.ᓱ").findOne().findOne(className("android.widget.ListView"));
-        列表.children().forEach((element)=>{
-            let name = element.findOne(className("android.widget.LinearLayout")).findOne(className("android.widget.LinearLayout")).findOne(className("android.widget.TextView")).text()
-            let 小红点;
-            let 位置 = element.bounds();//rect 对象
-            try {
-                element.child(1).child(0).child(1).className()
-                小红点 = true;
-            } catch (error) {
-                小红点 = false;
-            }
-            let currentElement={
-                id:name,
-                red:小红点,
-                bounds:位置,
-            }
-            页面.push(currentElement)
-        });
-        return 页面;
-    }else{
-        throw "不在所有配对页面"
+    let 所有配对=className("android.widget.TextView").text("所有配对").depth(6).findOne(2000);
+    if(!所有配对){
+        log("所有配对"+"没找到");
+        exit();
     }
+    let 聊天列表的根 = className("android.widget.TextView").text("所有配对").depth(6).findOne(2000);
+    let 聊天列表上一级;
+    if(聊天列表的根){
+        聊天列表上一级 = 聊天列表的根.parent().parent().child(3);
+    }else{
+        log("聊天列表的根"+"获取失败");
+        exit();
+    }
+    let 列表=聊天列表上一级.findOne(className("android.widget.ListView"));
+    
+    列表.children().forEach((element)=>{
+        let name = element.findOne(className("android.widget.LinearLayout")).findOne(className("android.widget.LinearLayout")).findOne(className("android.widget.TextView")).text()
+        let 小红点;
+        let 位置 = element.bounds();//rect 对象
+        try {
+            element.child(1).child(0).child(1).className();
+            小红点 = true;
+        } catch (error) {
+            小红点 = false;
+        }
+        let currentElement={
+            id:name,
+            red:小红点,
+            bounds:位置,
+        }
+        页面.push(currentElement)
+    });
+    return 页面;
+    
 }
 
 /**
  * 返回空则当前页面没有小红点  每次只处理一条 因为聊天后会刷新列表
  */
-function 聊天列表页面处理(){
-    let 当前列表 = 返回当前页面所有元素状态();
+function 聊天列表找小红点点击(){
+    let 当前列表 = 当前聊天列表元素状态();
     当前列表.forEach((elemnet)=>{
         if (elemnet.red && elemnet.id != "探探小助手"){
             //有小红点
             ra.press(elemnet.bounds.centerX(),elemnet.bounds.centerY(),100);
-            聊天页面内部处理();
+            聊天页面内部消息分配();
             sleep(1000);
-            className("android.widget.ImageButton").findOne().click()//返回上一页
+            let 返回按钮 = className("android.widget.ImageButton").findOne(2000)
+            if(返回按钮){
+                返回按钮.click()//返回上一页
+            }else{
+                log("返回按钮不存在");
+                exit();
+            }
             sleep(500);
             return true;
         }else{
@@ -173,22 +230,38 @@ function 聊天列表页面处理(){
     return false;//运行到这里说明该页面没有消息;
 }
 
-function 向上翻页(){
-    let 列表=className("l.ᓱ").findOne().findOne(className("android.widget.ListView"));
-    let 状态 = 列表.scrollUp();
-    return 状态;
-}
+/**
+ * 
+ * @param {Boolean} 方向 true 为向上
+ */
+function 聊天列表翻页(方向){
+    let 聊天列表的根 = className("android.widget.TextView").text("所有配对").depth(6).findOne(2000);
+    let 聊天列表上一级;
+    if(聊天列表的根){
+        聊天列表上一级 = 聊天列表的根.parent().parent().child(3);
+    }else{
+        log("聊天列表的根"+"获取失败");
+        exit();
+    }
 
-function 向下翻页(){
-    let 列表=className("l.ᓱ").findOne().findOne(className("android.widget.ListView"));
-    let 状态 = 列表.scrollDown();
+    let 列表=聊天列表上一级.findOne(className("android.widget.ListView"));
+    let 状态;
+    if(方向){
+        状态 = 列表.scrollUp();
+    }else{
+        状态 = 列表.scrollDown();
+    }
     return 状态;
 }
 
 function 发送消息(内容,内容类型){
     if (内容类型 == "文字"){
-        聊天页界面切换("输入内容");
-        let 表情发送 = className("android.widget.ImageView").clickable(true).depth(7).findOne()
+        聊天内部页界面切换("输入内容");
+        let 表情发送 = className("android.widget.ImageView").clickable(true).depth(7).findOne(2000)
+        if(!表情发送){
+            log("发送消息::"+"表情发送没找到");
+            exit();
+        }
         let 中间框 = 表情发送.parent().child(2).child(0);
         中间框.setText(内容);
         sleep(300);
@@ -196,7 +269,7 @@ function 发送消息(内容,内容类型){
         发送.click();
     }
     if(内容类型 == "语音"){
-        聊天页界面切换("按住说话");
+        聊天内部页界面切换("按住说话");
         sleep(1000);
         按住录音并播放(内容);
     }
@@ -214,7 +287,7 @@ function 发送语音并确认(内容){
     }
 }
 
-function 聊天页面内部处理(){
+function 聊天页面内部消息分配(){
     waitForActivity(探探聊天界面活动名);
     var 聊天信息=获取当前聊天信息条数();
     var 对方发送消息条数初始 = 聊天信息.other;
@@ -243,7 +316,7 @@ function 聊天页面内部处理(){
     聊天信息=获取当前聊天信息条数();
     if(聊天信息.other > 对方发送消息条数初始){
         toastLog("聊天页面内部处理中");
-        聊天页面内部处理();
+        聊天页面内部消息分配();
     }else{
         return null;
     } 
@@ -276,7 +349,11 @@ function 按住指定位置(rect,时长){
  * @param {string} 播放文件路径 
  */
 function 按住录音并播放(播放文件路径){
-    let 表情发送 = className("android.widget.ImageView").clickable(true).depth(7).findOne()
+    let 表情发送 = className("android.widget.ImageView").clickable(true).depth(7).findOne(2000)
+    if(!表情发送){
+        log("按住录音并播放::"+"表情发送没找到");
+        exit();
+    }
     let 中间框 = 表情发送.parent().child(2).child(0);
     media.playMusic(播放文件路径, 1);
     let 时长 = media.getMusicDuration();
@@ -291,12 +368,12 @@ function 聊天页检查(){
     主页切换("聊天");
     let 向上翻页状态 = true;
     while(向上翻页状态){
-        向上翻页状态 = 向上翻页();
+        向上翻页状态 = 聊天列表翻页(1);
     }
     let 向下翻页状态 = true;
     while(向下翻页状态){
-        if (!聊天列表页面处理()){
-            向下翻页状态 = 向下翻页();
+        if (!聊天列表找小红点点击()){
+            向下翻页状态 = 聊天列表翻页();
         }
         sleep(1000);
     }
@@ -311,23 +388,22 @@ function 主页右滑(){
 function 主页左滑(){
     ra.swipe(device.width *(7/9) ,device.height *( 1/2),device.width * (2 / 9),device.height *( 1/2) ,500);
 }
-function 提示检查(){
-    if(currentActivity() == 探探互相喜欢活动名 ){
+function 干扰检查(){
+    let 当前活动 = currentActivity();
+    if(当前活动 == 探探互相喜欢活动名 ){
         let weizhi= className("android.widget.CompoundButton").text("继续探索").findOne().bounds()
         ra.press(weizhi.centerX(),weizhi.centerY(),100);
         sleep(100);
         return ;
     }
-    if(currentActivity() == 宝宝生气了活动名){
+    if(当前活动 == 宝宝生气了活动名){
         back();
         return ;
     }
     if(className("android.widget.TextView").text("支付宝获取").exists()){
         toast("检测到支付宝支付,脚本退出");
         exit();
-        return true;
-    }else{
-        return false;
+        return ;
     }
     
 }
@@ -341,7 +417,7 @@ function 提示检查(){
  */
 function 主页切换(页面){
     toastLog("切换中::即将进入"+页面);
-    sleep(2000);
+    sleep(1000);
     if(currentActivity() == 探探聊天界面活动名){
         back();
         sleep(500);
@@ -353,7 +429,6 @@ function 主页切换(页面){
     if(!探探标题){
         toastLog("探探标题没找到");
         sleep(2000);
-
         exit();
     }
     var 探探位置 = 探探标题.bounds().centerX();
@@ -365,26 +440,27 @@ function 主页切换(页面){
                 主页切换("主页");
             }else{
                 toastLog("切换到"+页面+"完成");
-                sleep(2000);
+                sleep(500);
                 return true;
             }
             break;
         case "聊天":
             if (探探位置 > 0 ) {
-                let 聊天按钮= 探探标题.parent().child(2);
+                let 聊天按钮= 探探标题.parent().findOne(className("FrameLayout"));
                 if(!聊天按钮){
                     toastLog("聊天按钮没找到");
                     sleep(2000)
                     exit();
                 }
-                let 聊天按钮位置=聊天按钮.child(0).bounds()//聊天按钮
+                let 聊天按钮位置=聊天按钮.bounds()//聊天按钮
     
                 ra.press(聊天按钮位置.centerX(),聊天按钮位置.centerY(),100);
+                //log(聊天按钮位置.centerY())
                 sleep(500)
                 主页切换("聊天");
             }else{
                 toastLog("切换到"+页面+"完成");
-                sleep(2000);
+                sleep(500);
                 return true;
             }
             break;
@@ -398,18 +474,17 @@ function 添加新好友(){
     for(let i= 0;i<本次滑动随机数;i++){
         主页右滑();
         sleep(2000);
-        提示检查();
-        sleep(2000);
+        干扰检查();
+        sleep(500)
     }
     主页左滑();
     sleep(1000);
-    //提示检查(); 
     toastLog("本次添加好友完成,将切换到聊天界面");
     sleep(2000);
+    干扰检查();
 }
 
 function 第一个功能(){
-    //app.launchApp("探探");
     toast("请手动打开探探,并切换到聊天页面后不要动");
     waitForActivity(探探初始页面活动名);
     while (currentPackage()==探探包名) {
@@ -424,15 +499,15 @@ function 第一个功能(){
 
 
 function 剩余列表项处理(已完成列表){
-    let 当前列表 = 返回当前页面所有元素状态();
+    let 当前列表 = 当前聊天列表元素状态();
     当前列表.forEach((elemnet)=>{
         if (elemnet.id != "探探小助手" && elemnet.id != "99+" && !已完成列表.in_array(elemnet.id)){
             //有小红点
             ra.press(elemnet.bounds.centerX(),elemnet.bounds.centerY(),100);
-            let 返回值 =  聊天页面内部处理();
+            let 返回值 =  聊天页面内部消息分配();
             sleep(1000);
             while(返回值 != "本条完成"){
-                返回值 =  聊天页面内部处理();
+                返回值 =  聊天页面内部消息分配();
                 sleep(500);
             }
             className("android.widget.ImageButton").findOne().click()//返回上一页
@@ -455,7 +530,7 @@ function 聊天页剩余处理(){
     let 已处理数组 = Array();
     while(向下翻页状态){
         if (!剩余列表项处理(已处理数组)){
-            向下翻页状态 = 向下翻页();
+            向下翻页状态 = 聊天列表翻页();
         }
         sleep(1000);
     }
@@ -519,7 +594,7 @@ function 第三个功能(){
 }
 function 监听语音发送(){
     for(let i = 0 ;i<10;i++){
-        let 表情发送 = className("android.widget.ImageView").clickable(true).depth(7).findOne(100);
+        let 表情发送 = className("android.widget.ImageView").clickable(true).depth(7).findOne(2000);
         if(表情发送){
             log(表情发送);
             sleep(1000);
@@ -578,34 +653,22 @@ function 入口(){
     
 }
 
+try {  
+    
+    入口();
+
+} catch (error) {
+    log(error);
+}
 
 
-入口();
 // 测试();
 
 function 测试(){
     
 
-    
-    // let startTime = new Date();
-    // startTime = startTime.getTime();
-    // var 现在时间 = new Date();
-    // while(现在时间 - startTime < 10000 ){
-    //     现在时间 = new Date()
-    //     现在时间 = 现在时间.getTime();
-    //     sleep(200);
-    // };
-    //发送语音并确认(用户配置.语音第一句路径());
-    //主页切换("主页");
-    // let 向上翻页状态 = true;
-    // while(向上翻页状态){
-        
-    //     向上翻页状态 = 向上翻页();
-    //     //sleep();
-    // }
-   
-    // sleep(5000);
-    
+    主页切换("聊天");
+
 
 
     

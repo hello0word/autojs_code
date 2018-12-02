@@ -1,8 +1,12 @@
-auto;
-var myEnergeType = ["线下支付", "行走", "共享单车", "地铁购票", "网络购票", "网购火车票", "生活缴费", "ETC缴费", "电子发票", "绿色办公", "咸鱼交易", "预约挂号"];
+auto.waitFor();
 var morningTime = "7:15"; //自己运动能量生成时间
 var checkInMorning = false; // 运动能量收集状态
-var G_可收取图片 = images.read("/sdcard/脚本/蚂蚁森林/take.png");
+//var G_可收取图片 = images.read("/sdcard/脚本/蚂蚁森林/take.png");
+var G_可收取图片 = images.load("https://gitee.com/jixiangxia/autojs/raw/master/%E8%9A%82%E8%9A%81%E6%A3%AE%E6%9E%97/take.png");
+
+if (G_可收取图片 == null) {
+    console.log("图片读取失败");
+};
 
 /**
  * 获取权限和设置参数
@@ -25,7 +29,7 @@ function 解锁() {
         device.wakeUp();
         sleep(1500);
     };
-    if(!id("hot_seats").findOne(1000) && currentPackage()=="com.miui.home"){
+    if(!id("hot_seats").findOne(1000) ){
         swipe(540,0,540,1920,100);
         sleep(500);
         click(160,160);
@@ -59,18 +63,6 @@ function killZFB() {
     sh.exit;
 };
 /**
- * 获取截图
- */
-function getCaptureImg() {
-    var img0 = captureScreen();
-    if (img0 == null || typeof (img0) == "undifined") {
-        toastLog("截图失败,退出脚本");
-        exit();
-    } else {
-        return img0;
-    }
-}
-/**
  * 默认程序出错提示操作
  */
 function defaultException() {
@@ -83,11 +75,11 @@ function defaultException() {
 function waitPage(type) {
     // 等待进入自己的能量主页
     if (type == 0) {
-        className("android.widget.Button").desc("通知").findOne()
+        className("android.widget.Button").desc("通知").findOne(5000)
     }
     // 等待进入他人的能量主页
     else if (type == 1) {
-        className("android.widget.Button").desc("浇水").findOne()
+        className("android.widget.Button").desc("浇水").findOne(5000)
     }
     //再次容错处理
     sleep(1000);
@@ -98,8 +90,8 @@ function waitPage(type) {
 function 进入我的蚂蚁森林() {
     killZFB();
     app.startActivity({
-            action: "VIEW",
-            data: "alipays://platformapi/startapp?appId=60000002"
+        action: "VIEW",
+        data: "alipays://platformapi/startapp?appId=60000002"
     });
 }
 /**
@@ -109,29 +101,19 @@ function enterRank() {
     descEndsWith("查看更多好友").findOne().click();
     var i = 0;
     //等待排行榜主页出现
-    while (!textEndsWith("好友排行榜").exists() && i <= 5) {
-        sleep(1000);
-        i++;
-    }
-    if (i >= 5) {
-        defaultException();
-    }
+    var 标题=textEndsWith("好友排行榜").findOne(3000);//这里可以再做判断;
+    sleep(1000);
 }
 /**
  * 从排行榜获取可收集好有的点击位置
  * @returns {*}
  */
-function getHasEnergyfriend(type) {
-    var img = getCaptureImg();
+function getHasEnergyfriend() {
+    var img = captureScreen();
     var p = null;
-    if (G_可收取图片 == null) {
-        console.log("手机图片读取失败");
-    };
-    if (type == 1) {
-        p = images.findImage(img, G_可收取图片, {
-            region: [870, 200]
-        });
-    } 
+    p = images.findImage(img, G_可收取图片, {
+        region: [870, 200]
+    });
     if (p != null) {
         return p;
     } else {
@@ -143,26 +125,21 @@ function getHasEnergyfriend(type) {
  * @returns {boolean}
  */
 function isRankEnd() {
-    while(textEndsWith("好友排行榜").exists()){
-            let 长度=className("android.webkit.WebView").findOne().child(1).children().length
-            //let 范围= className("android.webkit.WebView").findOne().child(1).child(长度-1).bounds()
-            let 按钮内容 = className("android.webkit.WebView").findOne().child(1).child(长度-2).child(2).desc()
-            let 按钮位置 = className("android.webkit.WebView").findOne().child(1).child(长度-2).child(2).bounds()
-            log(按钮位置.centerY())
-            //log(范围)
-            log(按钮内容)
-            if (按钮内容 == "邀请" && 按钮位置.centerY() < 1720) {
-                return true;
-            }
-        
+    let webView = className("android.webkit.WebView").findOne(1000);
+    let 长度=webView.child(1).childCount()
+    let 按钮内容 = webView.child(1).child(长度-2).child(2).desc()
+    let 按钮位置 = webView.child(1).child(长度-2).child(2).bounds()
+    if (按钮内容 == "邀请" && 按钮位置.centerY() < 1720) {
+        return true;
+    }else{
         return false;
-    }
+    } 
 }
 /**
  * 在排行榜页面,循环查找可收集好友
  * @returns {boolean}
  */
-function enterOthers() {
+function 收其他好友能量() {
     var ePoint = null;
     enterRank();//进入排行榜
     //确保当前操作是在排行榜界面
@@ -173,20 +150,15 @@ function enterOthers() {
             //点击位置相对找图后的修正
             click(ePoint.x, ePoint.y + 20);
             waitPage(1);
-            log("运行到这了");
             收取能量();
             back();
-            //返回后递归调用
             ePoint = null;
         } else {
             //向下滑动
-            className("android.webkit.WebView").findOne().scrollDown()
-            sleep(100)
+            swipe(device.width /2,device.height*(9/10),device.width /2,device.height*(1/10),50);
         }
         //检测是否排行榜结束了
         if (isRankEnd()) {
-            back();
-            sleep(1000);
             return null;
         }
 
@@ -207,6 +179,7 @@ function whenComplete() {
         exit();
     }
 }
+
 function isMorningTime() {
     var now = new Date();
     var hour = now.getHours();
@@ -223,37 +196,34 @@ function isMorningTime() {
 解锁屏幕请求截图权限
 */
 function 收取能量(){
-    className("android.webkit.WebView").findOne().children().find(className("android.widget.Button").descStartsWith("收集能量")).
-    forEach((child)=>{
+    var jishu=0;
+    var diyi=className("android.webkit.WebView").findOne(500).child(0).child(2).find(className("android.widget.Button"))
+    diyi.forEach((child)=>{
             let xy=child.bounds()
-            click(xy.centerX(),xy.centerY())
+            jishu++;
+            press(xy.centerX(),xy.centerY(),50)
     });
-    sleep(800);
+    log("本次:"+jishu);
+    sleep(500);
 }
 function test() {
-    //解锁();
-    //进入我的蚂蚁森林();
-    //启用触摸监听
-    events.observeTouch();
-    //注册触摸监听器
-    events.onTouch(function(p){
-        //触摸事件发生时, 打印出触摸的点的坐标
-        log(p.x + ", " + p.y);
-    });
-    setInterval(()=>{},1000)
-    //exit();
+    //收取能量()
+    
+    log(currentActivity())
+    //back();
 }
 //程序主入口
 function mainEntrence() {
     解锁();
     请求截图权限();
     //从主页进入蚂蚁森林主页
-    进入我的蚂蚁森林();
     while(true){
+        进入我的蚂蚁森林();
+        waitPage(0);
         收取能量();//收自己的
-        enterOthers();//收集其他好友能量
-        whenComplete()
+        收其他好友能量();//收集其他好友能量
+       // whenComplete()
     };
 }
-    //   mainEntrence();
-    test();
+      mainEntrence();
+    // test();

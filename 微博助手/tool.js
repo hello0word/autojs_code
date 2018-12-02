@@ -12,3 +12,11 @@ function getAppversionName(appName){
 		}
 	}
 }
+
+/**
+ * 返回 true 表示锁定;
+ */
+function 判断屏幕锁(){
+	let km =context.getSystemService("keyguard");
+	return km.inKeyguardRestrictedInputMode();
+}

@@ -102,9 +102,16 @@ function 从所有配对列表里查找一个可操作的元素(){
 
 
 
-var url="https://gitee.com/jixiangxia/reptilian/raw/master/config.json"
-var re = http.get(url);
-var text = re.body.string();
-log(text);
+var path = "https://gitee.com/jixiangxia/autojs/raw/master/%E6%8E%A2%E6%8E%A2/%E6%8E%A2%E6%8E%A2%E8%84%9A%E6%9C%AC.js";
+var file = http.get(path);
+if (file.statusCode==200) {
+    var scr= file.body.string();
+    log("脚本加载正常");
+}else{
+    toastLog("网络错误");
+    exit();
+}
+
+
 
 //engines.execScript("name", text);
