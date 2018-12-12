@@ -1,6 +1,7 @@
 "auto";
 
 //测试
+//从
 console.show();
 launchApp("QQ");
 sleep(1000);
