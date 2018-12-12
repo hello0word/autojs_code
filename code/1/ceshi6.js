@@ -4,7 +4,7 @@ var morningTime = "7:15"; //自己运动能量生成时间
 var checkInMorning = false; // 运动能量收集状态
 var G_可收取图片 = images.read("/sdcard/脚本/蚂蚁森林/take.png");
 
-//126455
+//1264557985
 
 function tLog(msg) {
     toast(msg);

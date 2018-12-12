@@ -5,7 +5,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 print("----------------------------------------");
-
+log("")
 // Use the XML constructor to parse an string into an XML object
 var John = "<employee><name>John</name><age>25</age></employee>";
 var Sue ="<employee><name>Sue</name><age>32</age></employee>";

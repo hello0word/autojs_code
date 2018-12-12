@@ -6,5 +6,4 @@ events.onToast(function(toast){
         " 来自: " + getAppName(pkg) +
         " 包名: " + pkg);
 });
-log("ttu")
 toast("监听中，请在日志中查看记录的Toast及其内容");

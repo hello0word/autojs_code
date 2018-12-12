@@ -1,12 +1,10 @@
 "auto";
-log(files.cwd());
-log(files.path())
-log("ss")
-exit();
+
+//测试
 console.show();
 launchApp("QQ");
 sleep(1000);
-//夏吉祥55665588摸
+
 Text = "";
 while (true) {
     var UIOB = className("android.widget.AbsListView").findOne();

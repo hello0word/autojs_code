@@ -1,9 +1,11 @@
 const KEY = "SCRIPT_QUEUE_LIST";
 
+
 if (!(time && name)) {
     flash("测试");
     wait(3000);
     exit();
+    
 }
 
 var str = global(KEY);
