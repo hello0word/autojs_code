@@ -1,0 +1,10 @@
+{
+    "name": "陌陌注册",
+    "main": "momo.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.example",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}
