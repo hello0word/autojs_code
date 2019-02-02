@@ -8,7 +8,7 @@ ui.layout(
             <appbar>
                 <toolbar id="toolbar" title="Todo" />
             </appbar>
-            <list id="todoList">
+            <list id="todoList" w="150">
                 <card w="*" h="70" margin="10 5" cardCornerRadius="2dp"
                     cardElevation="1dp" foreground="?selectableItemBackground">
                     <horizontal gravity="center_vertical">

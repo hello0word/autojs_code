@@ -1,0 +1,279 @@
+
+{
+	"AppClean" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"AppDisable" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"AppEnable" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"AppFirstInstallTime" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"AppLastUpdateTime" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"AppVersion" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Base64De" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Base64En" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"BaseDe" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"CallIncomingNumber" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"CallState" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"ChangeFolder" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"CloseAirplane" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"CompareTime" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Coordinate" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"DataConnectionPossible" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Description" : null,
+	"DeviceVersion" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"FindFileDelete" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"GetDistance" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"GetIP" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Install" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"IsScreenOn" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"KillClean" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"LateTime" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"ListPackage" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Listall" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Notification" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"OpenAirplane" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"OpenWeb" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"RanDiffarr" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"SecToDay" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Switchinput" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"ToTime" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"TopActivityName" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Unicode2Utf8" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Uninstall" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"UpdatePicture" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Utf82Unicode" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Visit" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"WeiXinUrl" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"appclean" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"appclear" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"datetime" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"findfile" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"gsub" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"install" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"killclear" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"listall" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"match" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"mount" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"randiffarr" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"rannum" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"unicode2utf8" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"uninstall" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"utf82unicode" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	}
+}

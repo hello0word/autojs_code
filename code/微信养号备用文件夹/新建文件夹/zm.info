@@ -1,0 +1,221 @@
+
+{
+	"About" : 
+	{
+		"Description" : "格式：zm.About([命令字符串])\n解释：输出插件介绍文本内容与更新记录",
+		"Name" : "关于([命令字符串])｛输出插件介绍文本或命令在线文档地址｝",
+		"TranslateTemplate" : "关于紫猫插件"
+	},
+	"ArrayInsert" : 
+	{
+		"Description" : "格式：zm.ArrayInsert(一维数组, 待插入值[, 下标位置])\n解释：在一维数组的指定位置插入元素",
+		"Name" : "插入数组元素(一维数组, 待插入值[, 下标位置])【返回数组，参数中的数组也会改动】",
+		"TranslateTemplate" : "在 $1 数组的 $3 下标位置插入 $2 值"
+	},
+	"ArrayRemove" : 
+	{
+		"Description" : "格式：zm.ArrayRemove(一维数组, 下标位置)\n解释：移除一维数组的某个下标元素",
+		"Name" : "删除数组元素(一维数组, 下标位置)【返回数组，参数中的数组也会改动】",
+		"TranslateTemplate" : "删除 $1 数组中下标为 $2 的元素"
+	},
+	"ArraySearch" : 
+	{
+		"Description" : "格式：zm.ArraySearch(一维数组, 搜索内容[, 是否模糊搜索[, 是否忽略大小写[, 返回个数]]])\n解释：搜索一维数组的成员下标；\n返回个数为null时，返回数值型为第一个成员下标；\n返回个数为0时，返回table型为所有成员下标；\n返回个数为其它数值时，返回table型表示指定个数的成员。",
+		"Name" : "搜索数组元素(一维数组, 搜索内容[, 是否模糊搜索[, 是否忽略大小写[, 返回个数]]])【返回下标{类型根据返回个数而定}】",
+		"TranslateTemplate" : "搜索 $1 数组中 $2 元素的下标"
+	},
+	"ArraySort" : 
+	{
+		"Description" : "格式：zm.ArraySort(一维数组[, 是否降序[, 是否转数值]])\n解释：对一维数组进行排序；\n省略排序方式默认为升序，其它为降序",
+		"Name" : "数组元素排序(一维数组[, 是否降序[, 是否转数值]])【返回数组，参数中的数组也会改动】",
+		"TranslateTemplate" : "对 $1 数组进行排序"
+	},
+	"BGRToColor" : 
+	{
+		"Description" : "格式：zm.BGRToColor(b, g, r)\n解释：合成三个BGR颜色分量到十六进制BGR字符串中",
+		"Name" : "合成BGR颜色(b, g, r)【返回合成后颜色字符串】",
+		"TranslateTemplate" : "将B分量:$1，G分量:$2，R分量:$3合成BGR颜色。"
+	},
+	"BGRToRGB" : 
+	{
+		"Description" : "格式：zm.BGRToRGB(颜色)\n解释：RGB与BGR互换",
+		"Name" : "BGR转RGB(颜色)【返回颜色】",
+		"TranslateTemplate" : "将 $1 BGR颜色转换成RGB"
+	},
+	"BaseConvert" : 
+	{
+		"Description" : "格式：zm.BaseConvert(原数值, 原进制, 目标进制)\n解释：2到62进制任意转换",
+		"Name" : "任意进制转换(原数值, 原进制, 目标进制)【返回转换后字符串】",
+		"TranslateTemplate" : "原进制为 $2 的 $1 数值转换成 $3 进制"
+	},
+	"CheckForUpdates" : 
+	{
+		"Description" : "格式：zm.CheckForUpdates()\n解释：检查是否有新版",
+		"Name" : "检查插件更新()【返回布尔值，输出检查结果】",
+		"TranslateTemplate" : "检查插件更新"
+	},
+	"Clone" : 
+	{
+		"Description" : "格式：zm.Clone(原表)\n解释：克隆表或数组",
+		"Name" : "超级克隆(原表)【返回新表】",
+		"TranslateTemplate" : "克隆 $1"
+	},
+	"ColorToHSV" : 
+	{
+		"Description" : "格式：zm.ColorToHSV(HSV[, 返回表])\n解释：分解HSV颜色至H、S、V三个分量中",
+		"Name" : "分解HSV颜色(HSV[, 返回表])【返回颜色表，支持下标或键名访问】",
+		"TranslateTemplate" : "分解HSV颜色 $1 到 $2中"
+	},
+	"ColorToRGB" : 
+	{
+		"Description" : "格式：zm.ColorToRGB(RGB[, 返回表])\n解释：分解RGB颜色至R、G、B三个分量中",
+		"Name" : "分解RGB颜色(RGB[, 返回表])【返回颜色表，支持下标或键名访问】",
+		"TranslateTemplate" : "分解RGB颜色 $1 到 $2中"
+	},
+	"DecodeAES" : 
+	{
+		"Description" : "格式：zm.DecodeAes(密文,密钥[,高级参数表])\n解释：对EncodeAes()生成的密文进行解密。\n高级参数表：表类型，格式为{\"属性名\":\"属性值\"}，例如{\"m\":\"ecb\",\"o\":\"1\"}。\n加密模式属性 m:{ecb(默认),cbc,ctr,ofb,cfb}\n填充属性 pad:{zero(默认),pkcs5,pkcs7,iso10126,ansix923}\n数据块属性 block:{128(默认),192,256}\n输出属性 o:{0(默认,base64格式),1(hex格式)}\n字符集属性 s:{gb2312(默认),gbk,gb18030,utf-8}\n偏移量属性 i：{ecb无需此参数，其他模式必须填写大于16字节的长度}",
+		"Name" : "AES解密(密文,密钥[,高级参数表])【返回明文字符串，失败返回空】",
+		"TranslateTemplate" : "对密文 $1 密钥 $2 高级属性 $3 进行AES解密"
+	},
+	"DecodeURL" : 
+	{
+		"Description" : "格式：zm.DecodeURL(待解码字符串)\n解释：对参数进行URL解码",
+		"Name" : "URL解码(待解码字符串)【返回URL字符串】",
+		"TranslateTemplate" : "对 $1 进行URL解码"
+	},
+	"Delay" : 
+	{
+		"Description" : "格式：zm.Delay(时长1[, 时长2])\n解释：延迟一段时间，支持随机时长",
+		"Name" : "超级延时(时长1[, 时长2])【返回时长{省略时长2时，固定延迟时长1}】",
+		"TranslateTemplate" : "随机延时 $1 到 $2"
+	},
+	"Description" : "由紫猫学院倾力打造的安卓全能插件。\n详细文档见http://m.zimaoxy.com/，有任何意见或建议请联系QQ345911220",
+	"EncodeAES" : 
+	{
+		"Description" : "格式：zm.EncodeAes(明文,密钥[,高级参数表])\n解释：对明文进行AES加密。\n高级参数表：表类型，格式为{\"属性名\":\"属性值\"}，例如{\"m\":\"ecb\",\"o\":\"1\"}。\n加密模式属性 m:{ecb(默认),cbc,ctr,ofb,cfb}\n填充属性 pad:{zero(默认),pkcs5,pkcs7,iso10126,ansix923}\n数据块属性 block:{128(默认),192,256}\n输出属性 o:{0(默认,base64格式),1(hex格式)}\n字符集属性 s:{gb2312(默认),gbk,gb18030,utf-8}\n偏移量属性 i：{ecb无需此参数，其他模式必须填写大于16字节的长度}",
+		"Name" : "AES加密(明文,密钥[,高级参数表])【返回密文字符串，失败返回空】",
+		"TranslateTemplate" : "对明文 $1 密钥 $2 高级属性 $3 进行AES加密"
+	},
+	"EncodeURL" : 
+	{
+		"Description" : "格式：zm.EncodeURL(待编码字符串)\n解释：对参数进行URL编码",
+		"Name" : "URL编码(待编码字符串)【返回字符串】",
+		"TranslateTemplate" : "对 $1 进行URL编码"
+	},
+	"HSVToRGB" : 
+	{
+		"Description" : "格式：zm.HSVToRGB(HSV)\n解释：将HSV颜色转换成RGB颜色",
+		"Name" : "HSV转RGB(HSV)【返回转换后的颜色】",
+		"TranslateTemplate" : "将 $1 HSV颜色转换成RGB颜色"
+	},
+	"Init" : 
+	{
+		"Description" : "格式：zm.Init()\n解释：初始化插件环境",
+		"Name" : "初始化环境()｛初始化只需调用一次｝",
+		"TranslateTemplate" : "初始化插件环境"
+	},
+	"Name" : "紫猫插件V1.1724 QQ345911220",
+	"RGBToBGR" : 
+	{
+		"Description" : "格式：zm.RGBToBGR(颜色)\n解释：RGB与BGR互换",
+		"Name" : "RGB转BGR(颜色)【返回转换后的颜色】",
+		"TranslateTemplate" : "将 $1 RGB颜色转换成BGR"
+	},
+	"RGBToColor" : 
+	{
+		"Description" : "格式：zm.RGBToColor(r, g, b)\n解释：合成三个RGB颜色分量到十六进制RGB字符串中",
+		"Name" : "合成RGB颜色(r, g, b)【返回合成颜色】",
+		"TranslateTemplate" : "将R分量:$1，B分量:$2，G分量:$3合成RGB颜色。"
+	},
+	"RGBToHSV" : 
+	{
+		"Description" : "格式：zm.RGBToHSV(RGB)\n解释：将RGB颜色转换成HSV颜色",
+		"Name" : "RGB转HSV(RGB)【返回转换后的颜色】",
+		"TranslateTemplate" : "将 $1 RGB颜色转换成HSV颜色"
+	},
+	"RndArrElement" : 
+	{
+		"Description" : "格式：zm.RndArrElement(一维数组[, 起始下标[, 终止下标]])\n解释：从一维数组的指定下标范围随机取元素",
+		"Name" : "随机数组元素(一维数组[, 起始下标[, 终止下标]])【返回随机元素】",
+		"TranslateTemplate" : "在数组 $1 的 $2 到 #3 下标中随机取数组元素"
+	},
+	"RndInitSeed" : 
+	{
+		"Description" : "格式：zm.RndInitSeed()\n解释：使用socket库初始化随机种子",
+		"Name" : "初始化随机种子()【返回随机种子】",
+		"TranslateTemplate" : "初始化随机种子"
+	},
+	"RndName" : 
+	{
+		"Description" : "格式：zm.RndName([性别])\n解释：随机取姓名；性别为0是女性，为1是男性，省略默认为null，为全随机",
+		"Name" : "随机取姓名([性别{0:女性,1:男性,null:全部}])【返回姓名】",
+		"TranslateTemplate" : "随机取姓名"
+	},
+	"RndNoRepeatArr" : 
+	{
+		"Description" : "格式：zm.RndNoRepeatArr(数组, 个数)\n解释：从一维数组中取指定个数的不重复元素值",
+		"Name" : "不重复随机数(数组, 个数)【返回数组】",
+		"TranslateTemplate" : "从 $1 数组中随机取 $2 个不重复随机元素"
+	},
+	"RndNum" : 
+	{
+		"Description" : "格式：zm.RndNum([数值1[, 数值2]])\n解释：获取指定范围的随机数",
+		"Name" : "随机整数([数值1[, 数值2{省略为0}]])【返回随机数】",
+		"TranslateTemplate" : "在范围 $1, $2 中取随机整数"
+	},
+	"RndStr" : 
+	{
+		"Description" : "格式：zm.RndStr(个数[, 模式[, 是否不重复随机]])\n解释：获取随机字符串；模式为1时，随机0-9；模式为2时，随机a-z；模式为4时，随机A-Z；支持或运算叠加；省略默认为全随机",
+		"Name" : "随机字符串(个数[, 模式[, 是否不重复随机{1:随机0~9,2:随机a~z,4:随机A-Z;支持或运算}]])【返回随机字符串】",
+		"TranslateTemplate" : "随机取 $1 个字符"
+	},
+	"Swipe" : 
+	{
+		"Description" : "格式：zm.Swipe(x1,y1,x2,y2[,划动耗时[,模式]])\n解释：精准快速无惯性划动,支持切换模拟模式",
+		"Name" : "超级划动(x1,y1,x2,y2[,划动耗时[,模式{0:普通模拟,1:硬件模拟}}]])｛快速精准无惯性划动｝",
+		"TranslateTemplate" : "从 $1, $2 耗时$5精准滑动到 $3, $4"
+	},
+	"Test" : 
+	{
+		"Description" : null,
+		"Name" : "紫猫老师开发测试专用函数",
+		"TranslateTemplate" : null
+	},
+	"ThreadStatus" : 
+	{
+		"Description" : "格式：zm.ThreadStatus(线程ID)\n解释：获取多线程的状态，例如运行中，被取消了等等。",
+		"Name" : "获取线程状态(线程ID)【返回表示状态的字符串】",
+		"TranslateTemplate" : null
+	},
+	"TracePrint" : 
+	{
+		"Description" : "格式：zm.TracePrint(...)\n解释：调试输出数据类型、长度、值",
+		"Name" : "超级调试输出(...)｛第一个参数填\"_行号\"时，定位该行输出。｝",
+		"TranslateTemplate" : "超级调试输出"
+	},
+	"Type" : 
+	{
+		"Description" : "格式：zm.Type(数据)\n解释：获取参数的数据类型。",
+		"Name" : "获取数据类型(数据)【返回数据类型字符串】",
+		"TranslateTemplate" : "获取 $1 的数据类型"
+	},
+	"VarInfo" : 
+	{
+		"Description" : "格式：zm.VarInfo(...)\n解释：获取每个参数的数据类型、长度与值",
+		"Name" : "获取参数信息(...)【返回字符串】",
+		"TranslateTemplate" : "获取参数信息"
+	},
+	"getLuaVersion" : 
+	{
+		"Description" : "格式：zm.getLuaVersion()\n解释：获取当前lua环境版本",
+		"Name" : "获取Lua版本()【返回Lua版本】",
+		"TranslateTemplate" : "获取Lua版本"
+	},
+	"getVersion" : 
+	{
+		"Description" : "格式：zm.getVersion()\n解释：获取当前紫猫插件版本",
+		"Name" : "获取插件版本()【返回插件版本】",
+		"TranslateTemplate" : "获取紫猫插件版本"
+	}
+}

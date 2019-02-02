@@ -1,0 +1,69 @@
+
+{
+	"Description" : null,
+	"GetTime" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Now" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"RndChr" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"RndLetter" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"RndNum" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Strtrim" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"decrypt" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"encrypt" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"find" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"getvalue" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"match" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"replace" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"string" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	}
+}

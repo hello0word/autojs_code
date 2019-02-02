@@ -1,0 +1,39 @@
+
+{
+	"Description" : "数组操作",
+	"UBound" : 
+	{
+		"Description" : "功能：获取数组或字符串长度(array)\n参数：array：数组\n返回值：长度",
+		"TranslateTemplate" : null
+	},
+	"concat" : 
+	{
+		"Description" : "功能：输出指定位置数组成员,以分隔符隔开(array, sep,  start, end)\n参数：array：数组 sep：分隔符（可空）  start：起始位置（可空） end：结束位置（可空）\n返回值：欲输出数组成员字符串 ",
+		"TranslateTemplate" : null
+	},
+	"doscom" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"exect" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"insert" : 
+	{
+		"Description" : "功能：插入数组成员（array，value，pos）\n参数：array：数组 value:插入的值 pos：插入位置（可空，默认为数组尾部）\n返回值：1 成功 -1 失败",
+		"TranslateTemplate" : null
+	},
+	"remove" : 
+	{
+		"Description" : "功能：删除数组成员（array，pos）\n参数：array：数组 pos：插入位置（可空，默认为数组尾部）\n返回值：1 成功 -1 失败",
+		"TranslateTemplate" : null
+	},
+	"sort" : 
+	{
+		"Description" : "功能：数组排序（array， comp）\n 参数：array：数组 comp:排序方式（可空，默认为升序，0 降序 非0 升序）\n返回值：排序后的数组",
+		"TranslateTemplate" : null
+	}
+}

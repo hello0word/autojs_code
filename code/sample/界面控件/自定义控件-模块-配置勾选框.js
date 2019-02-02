@@ -44,4 +44,4 @@ var PrefCheckBox = (function() {
     return PrefCheckBox;
 })();
 
-module.exports = PrefCheckBox;
+exports = PrefCheckBox;

@@ -1,0 +1,69 @@
+
+{
+	"CopyFile" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"CreateFolder" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Createfile" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"DeleteFile" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"DeleteFolder" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Description" : null,
+	"IsFileExist" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"MoveFile" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"ReNameFile" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Read" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"ReadLines" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"Write" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"WriteEX" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	},
+	"WriteLines" : 
+	{
+		"Description" : null,
+		"TranslateTemplate" : null
+	}
+}

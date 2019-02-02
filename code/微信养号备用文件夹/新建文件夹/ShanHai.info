@@ -1,0 +1,911 @@
+
+{
+	"AppClean" : 
+	{
+		"Description" : "格式: ShanHai.AppClean(包名)\n解释: 清理指定应用缓存",
+		"Name" : "清理应用缓存",
+		"TranslateTemplate" : "清理 $1 缓存"
+	},
+	"AppFirstInstallTime" : 
+	{
+		"Description" : "格式: ShanHai.AppFirstInstallTime(包名)\n解释: 获取已安装应用首次安装的时间",
+		"Name" : "获取应用首次安装时间",
+		"TranslateTemplate" : "获取 $1 首次安装的时间"
+	},
+	"AppLastUpdateTime" : 
+	{
+		"Description" : "格式: ShanHai.AppLastUpdateTime(包名)\n解释: 获取已安装应用升级安装的时间",
+		"Name" : "获取应用升级时间",
+		"TranslateTemplate" : "获取 $1 升级安装的时间"
+	},
+	"AppVersion" : 
+	{
+		"Description" : "格式: ShanHai.AppVersion(包名)\n解释: 获取已安装应用的版本号",
+		"Name" : "获取应用版本号",
+		"TranslateTemplate" : "获取 $1 的版本号"
+	},
+	"AppendFileLine" : 
+	{
+		"Description" : "格式: ShanHai.AppendFileLine(文件路径,行号,内容)\n解释: 插入内容到指定行",
+		"Name" : "插入内容到指定行",
+		"TranslateTemplate" : "在文件 $1 中的 $2 行插入 $3"
+	},
+	"AppendPhone" : 
+	{
+		"Description" : "格式: ShanHai.AppendPhone(联系人)\n解释: 添加联系人信息到通讯录",
+		"Name" : "添加联系人到通讯录",
+		"TranslateTemplate" : "添加联系人信息到通讯录"
+	},
+	"ArrayChangePos" : 
+	{
+		"Description" : "格式: ShanHai.ArrayChangePos(数组,位置1,位置2)\n解释: 数组元素改变位置",
+		"Name" : "改变数组元素位置",
+		"TranslateTemplate" : "数组 $1 中 $2 和 $3 的数据相互调换位置"
+	},
+	"ArrayFilter" : 
+	{
+		"Description" : "格式: ShanHai.ArrayFilter(数组,搜索字符串,返回类型)\n解释:返回进行过滤的数组",
+		"Name" : "过滤数组",
+		"TranslateTemplate" : "从 $1 中搜索指定的 $2 字符串数据,根据 $3 条件来返回包含对应元素的数组"
+	},
+	"ArrayInsert" : 
+	{
+		"Description" : "格式: ShanHai.ArrayInsert(数组,位置,内容)\n解释:在数组中指定位置插入元素",
+		"Name" : "插入数组元素",
+		"TranslateTemplate" : "在 $1 数组中的 $2 位置插入内容 $3"
+	},
+	"ArrayRemove" : 
+	{
+		"Description" : "格式: ShanHai.ArrayRemove(数组,位置)\n解释:删除指定位置的数组元素  ",
+		"Name" : "删除指定位置的数组元素",
+		"TranslateTemplate" : "删除 $1 中 $2 位置的元素 "
+	},
+	"ArrayRemoveDup" : 
+	{
+		"Description" : "格式: ShanHai.ArrayRemoveDup(数组)\n解释:去除数组当中的重复元素",
+		"Name" : "去除数组当中的重复元素",
+		"TranslateTemplate" : "去除数组当中的重复元素"
+	},
+	"ArraySort" : 
+	{
+		"Description" : "格式: ShanHai.ArraySort(数组,类型)\n解释:对数组进行排序;类型true为升序,false为降序 ",
+		"Name" : "对数组进行排序",
+		"TranslateTemplate" : "对 $1 进行排序"
+	},
+	"Base64De" : 
+	{
+		"Description" : "格式: ShanHai.Base64De(字符串)\n解释: Base64解密",
+		"Name" : "Base64解密",
+		"TranslateTemplate" : "对 $1 进行Base64解密"
+	},
+	"Base64En" : 
+	{
+		"Description" : "格式: ShanHai.Base64En(字符串)\n解释: Base64加密",
+		"Name" : "Base64加密",
+		"TranslateTemplate" : "对 $1 进行Base64加密"
+	},
+	"CallIncomingNumber" : 
+	{
+		"Description" : "格式: ShanHai.CallIncomingNumber()\n解释: 获取来电号码 ",
+		"Name" : "获取来电号码",
+		"TranslateTemplate" : "获取来电号码"
+	},
+	"CallState" : 
+	{
+		"Description" : "格式: ShanHai.CallState()\n解释: 获取通话状态,返回值为0，表示待机状态、1表示来电未接听状态、2表示电话占线状态 ",
+		"Name" : "获取通话状态",
+		"TranslateTemplate" : "获取通话状态"
+	},
+	"CharToUrl" : 
+	{
+		"Description" : "格式: ShanHai.CharToUrl(字符串)\n解释: utf8转换URL编码",
+		"Name" : "utf8转换URL编码",
+		"TranslateTemplate" : "把 $1 转换成URL编码"
+	},
+	"Chmod" : 
+	{
+		"Description" : "格式: ShanHai.Chmod(路径,权限类型)\n解释: 设置文件权限 0表示可读写,1表示只读 ",
+		"Name" : "设置文件权限",
+		"TranslateTemplate" : "设置 $1 文件权限为 $2 "
+	},
+	"ChmodEx" : 
+	{
+		"Description" : "格式: ShanHai.ChmodEx(路径,权限)\n解释: 设置文件权限增强,可以自行设定具体的权限 ",
+		"Name" : "设置文件权限(增强)",
+		"TranslateTemplate" : "设置 $1 文件权限为 $2 "
+	},
+	"CloseAirplane" : 
+	{
+		"Description" : "格式: ShanHai.CloseAirplane()\n解释: 关闭飞行模式",
+		"Name" : "关闭飞行模式",
+		"TranslateTemplate" : "关闭飞行模式"
+	},
+	"CompareTime" : 
+	{
+		"Description" : "格式: ShanHai.CompareTime(年,月,日,时,分,秒)\n解释: 对比是否到期,到期返回-1,获取网络时间失败返回null,未到期返回距离到期剩余的时间(单位秒)",
+		"Name" : "对比时间是否到期",
+		"TranslateTemplate" : "判断当前时间是否到 $1 $2 $3 $4 $5 $6"
+	},
+	"ControlData" : 
+	{
+		"Description" : "格式: ShanHai.ControlData(开关)\n解释: 关闭\\开启数据流量;true为开启,false为关闭",
+		"Name" : "关闭\\开启数据流量",
+		"TranslateTemplate" : "关闭\\开启数据流量"
+	},
+	"ControlWifi" : 
+	{
+		"Description" : "格式: ShanHai.ControlWifi(开关)\n解释: 关闭\\开启WIFI;true为开启,false为关闭",
+		"Name" : "关闭\\开启WIFI",
+		"TranslateTemplate" : "关闭\\开启WIFI"
+	},
+	"Coordinate" : 
+	{
+		"Description" : "格式: ShanHai.Coordinate(横向分辨率,纵向分辨率,扫描周期)\n解释: 获取用户点击屏幕坐标 ",
+		"Name" : "获取用户点击屏幕坐标",
+		"TranslateTemplate" : "在 $1 x $2 分辨率下等待 $3 秒获取用户点击的坐标"
+	},
+	"CountStr" : 
+	{
+		"Description" : "格式: ShanHai.CountStr(字符串1,字符串2)\n解释: 在字符串1中统计字符串2的数量 ",
+		"Name" : "获取指定字符串数量",
+		"TranslateTemplate" : "在 $1 中统计 $2 的数量 "
+	},
+	"DelFilStr" : 
+	{
+		"Description" : "格式: ShanHai.DelFilStr(原字符,指定字符)\n解释: 删除字符串中指定的字符",
+		"Name" : "删除字符串中指定的字符",
+		"TranslateTemplate" : "从 $1 中删除指定的 $2 字符串"
+	},
+	"DelPartStr" : 
+	{
+		"Description" : "格式: ShanHai.DelPartStr(原字符,开始位置,结束位置)\n解释: 删除指定区间字符 ",
+		"Name" : "删除指定区间字符",
+		"TranslateTemplate" : "从 $1 中删除指定的 $2 到 $3 位置的字符"
+	},
+	"Description" : "山海师功能",
+	"DisableApp" : 
+	{
+		"Description" : "格式: ShanHai.DisableApp(包名)\n解释: 隐藏\\锁定APP",
+		"Name" : "隐藏\\锁定APP",
+		"TranslateTemplate" : "隐藏\\锁定APP"
+	},
+	"EnableApp" : 
+	{
+		"Description" : "格式: ShanHai.EnableApp(包名)\n解释: 显示\\解锁APP",
+		"Name" : "显示\\解锁APP",
+		"TranslateTemplate" : "显示\\解锁APP"
+	},
+	"Eqv" : 
+	{
+		"Description" : "格式: ShanHai.Eqv(数值1,数值2)\n解释: 对参数进行逻辑等价运算",
+		"Name" : "逻辑等价运算",
+		"TranslateTemplate" : "对 $1 和 $2 进行逻辑等价运算"
+	},
+	"Eval" : 
+	{
+		"Description" : "格式: ShanHai.Eval(算式)\n解释: 对算式进行计算并返回计算结果",
+		"Name" : "计算算式",
+		"TranslateTemplate" : "返回 $1 的计算结果"
+	},
+	"Execute" : 
+	{
+		"Description" : "格式: ShanHai.Execute(命令语句)\n解释: 执行shell命令",
+		"Name" : "执行shell命令",
+		"TranslateTemplate" : "执行 $1 shell命令"
+	},
+	"ExistApp" : 
+	{
+		"Description" : "格式: ShanHai.ExistApp(包名)\n解释: 判断设备中是否有安装指定app ",
+		"Name" : "判断是否安装指定app",
+		"TranslateTemplate" : "判断设备中是否有有安装 $1 APP"
+	},
+	"FindFileDelete" : 
+	{
+		"Description" : "格式: ShanHai.FindFileDelete(路径,后缀)\n解释:删除指定目录下指定后缀的文件 ",
+		"Name" : "删除指定后缀的文件",
+		"TranslateTemplate" : "删除指定 $1 目录下包含 $2 后缀名的文件"
+	},
+	"FindXmlKey" : 
+	{
+		"Description" : "格式: ShanHai.FindXmlKey(XML字符串,节点名,节点值,要查询的节点名)\n解释:根据指定的key和val的内容来查找指定的key的内容",
+		"Name" : "查找XML节点内容",
+		"TranslateTemplate" : "根据指定的key和val的内容来查找指定的key的内容"
+	},
+	"FindXmlKeyA" : 
+	{
+		"Description" : "格式: ShanHai.FindXmlKeyA(XML字符串,节点名,节点值,要查询的节点名)\n解释:根据指定的key和val的内容来查找所有指定的key的内容 ",
+		"Name" : "查找XML文件多个节点内容",
+		"TranslateTemplate" : "根据指定的key和val的内容来查找所有指定的key的内容 "
+	},
+	"GetAndroidVer" : 
+	{
+		"Description" : "格式: ShanHai.GetAndroidVer()\n解释:返回安卓系统版本号 ",
+		"Name" : "返回安卓系统版本号",
+		"TranslateTemplate" : "返回安卓系统版本号 "
+	},
+	"GetAppList" : 
+	{
+		"Description" : "格式: ShanHai.GetAppList(类型)\n解释:获取设备中的应用;类型0为获取第三方应用,1为获取全部应用 ",
+		"Name" : "获取设备中的应用",
+		"TranslateTemplate" : "获取设备中的应用"
+	},
+	"GetBatteryState" : 
+	{
+		"Description" : "格式: ShanHai.GetBatteryState()\n解释:判断充电状态 ",
+		"Name" : "判断充电状态",
+		"TranslateTemplate" : "判断充电状态"
+	},
+	"GetBrightness" : 
+	{
+		"Description" : "格式: ShanHai.GetBrightness()\n解释:获取屏幕亮度 ",
+		"Name" : "获取屏幕亮度",
+		"TranslateTemplate" : "获取屏幕亮度"
+	},
+	"GetDistance" : 
+	{
+		"Description" : "格式: ShanHai.GetDistance(纬度1,经度1,纬度2,经度2)\n解释:获取两点经纬度之间的直线距离 ",
+		"Name" : "获取两点经纬度之间的直线距离",
+		"TranslateTemplate" : "返回 $1 $2 到 $3 $4 之间的距离"
+	},
+	"GetFileInfo" : 
+	{
+		"Description" : "格式: ShanHai.GetFileInfo(文件路径)\n解释:获取文件的属性信息",
+		"Name" : "获取文件的属性信息",
+		"TranslateTemplate" : "返回 $1 文件的属性信息"
+	},
+	"GetFileName" : 
+	{
+		"Description" : "格式: ShanHai.GetFileName(路径)\n解释:提取路径中包含的文件名 ",
+		"Name" : "提取路径中包含的文件名",
+		"TranslateTemplate" : "提取 $1 中包含的文件名称"
+	},
+	"GetFileType" : 
+	{
+		"Description" : "格式: ShanHai.GetFileType(路径)\n解释:提取路径中包含的文件后缀 ",
+		"Name" : "提取路径中包含的文件后缀",
+		"TranslateTemplate" : "提取 $1 中包含的文件名后缀"
+	},
+	"GetHttp" : 
+	{
+		"Description" : "格式: ShanHai.GetHttp(网址,超时时间,自定义信息头)\n解释:Get访问HTTP资源 ",
+		"Name" : "Get访问HTTP资源",
+		"TranslateTemplate" : "Get访问HTTP资源"
+	},
+	"GetHttpC" : 
+	{
+		"Description" : "格式: ShanHai.GetHttpC(网址,cookie文件路径,超时时间,自定义信息头)\n解释:GET提交信息可附带cookie信息 ",
+		"Name" : "Get访问HTTP资源(附带cookie)",
+		"TranslateTemplate" : "GET提交信息可附带cookie信息 "
+	},
+	"GetHttpFile" : 
+	{
+		"Description" : "格式: ShanHai.GetHttp(网址,保存文件的路径,自定义信息头)\n解释:Get访问下载资源 ",
+		"Name" : "Get访问下载资源",
+		"TranslateTemplate" : "Get访问下载资源"
+	},
+	"GetIME" : 
+	{
+		"Description" : "格式: ShanHai.GetIME()\n解释:获取已安装的输入法 ",
+		"Name" : "获取已安装的输入法",
+		"TranslateTemplate" : "获取已安装的输入法"
+	},
+	"GetMAC" : 
+	{
+		"Description" : "格式: ShanHai.GetMAC()\n解释:获取MAC地址",
+		"Name" : "获取MAC地址",
+		"TranslateTemplate" : "获取MAC地址"
+	},
+	"GetNavigationBar" : 
+	{
+		"Description" : "格式: ShanHai.GetNavigationBar()\n解释:获取虚拟键高度",
+		"Name" : "获取虚拟键高度",
+		"TranslateTemplate" : "获取虚拟键高度"
+	},
+	"GetNetIP" : 
+	{
+		"Description" : "格式: ShanHai.GetNetIP()\n解释:获取外网ip",
+		"Name" : "获取外网ip",
+		"TranslateTemplate" : "获取外网ip"
+	},
+	"GetNetTime" : 
+	{
+		"Description" : "格式: ShanHai.GetNetTime()\n解释:获取网络时间",
+		"Name" : "获取网络时间",
+		"TranslateTemplate" : "获取网络时间"
+	},
+	"GetNotification" : 
+	{
+		"Description" : "格式: ShanHai.GetNotification(包名)\n解释:获取指定APP通知栏消息",
+		"Name" : "获取指定APP通知栏消息",
+		"TranslateTemplate" : "获取 $1 通知栏消息"
+	},
+	"GetRAM" : 
+	{
+		"Description" : "格式: ShanHai.GetRAM()\n解释:获取剩余内存百分比",
+		"Name" : "获取剩余内存百分比",
+		"TranslateTemplate" : "获取剩余内存百分比"
+	},
+	"GetSIMState" : 
+	{
+		"Description" : "格式: ShanHai.GetSIMState()\n解释:获取SIM卡的状态",
+		"Name" : "获取SIM卡的状态",
+		"TranslateTemplate" : "获取SIM卡的状态"
+	},
+	"GetSMS" : 
+	{
+		"Description" : "格式: ShanHai.GetSMS(号码)\n解释:获取指定号码短信",
+		"Name" : "获取指定号码短信",
+		"TranslateTemplate" : "获取指定号码短信"
+	},
+	"GetScreen" : 
+	{
+		"Description" : "格式: ShanHai.GetScreen()\n解释:获取屏幕分辨率和DPI ",
+		"Name" : "获取屏幕分辨率和DPI",
+		"TranslateTemplate" : "获取屏幕分辨率和DPI"
+	},
+	"GetScreenSleep" : 
+	{
+		"Description" : "格式: ShanHai.GetScreenSleep()\n解释:获取屏幕休眠时间",
+		"Name" : "获取屏幕休眠时间",
+		"TranslateTemplate" : "获取屏幕休眠时间"
+	},
+	"GetStatusBar" : 
+	{
+		"Description" : "格式: ShanHai.GetStatusBar()\n解释:获取通知栏高度",
+		"Name" : "获取通知栏高度",
+		"TranslateTemplate" : "获取通知栏高度"
+	},
+	"GetTempFile" : 
+	{
+		"Description" : "格式: ShanHai.GetTempFile(路径,前缀,后缀,随机长度)\n解释:生成指定前缀和后缀的随机文件",
+		"Name" : "生成指定前缀和后缀的随机文件",
+		"TranslateTemplate" : "生成指定前缀和后缀的随机文件"
+	},
+	"GetTopActivity" : 
+	{
+		"Description" : "格式: ShanHai.GetTopActivity()\n解释:获取当前应用包名与组件名",
+		"Name" : "获取当前应用包名与组件名",
+		"TranslateTemplate" : "获取当前应用包名与组件名"
+	},
+	"GetUIXml" : 
+	{
+		"Description" : "格式: ShanHai.GetUIXml()\n解释:获取当前界面UI XML信息 ",
+		"Name" : "获取当前界面UI的XML信息",
+		"TranslateTemplate" : "获取当前界面UI XML信息 "
+	},
+	"GetUnixTime" : 
+	{
+		"Description" : "格式: ShanHai.GetUnixTime(时间格式)\n解释:转换Unix时间",
+		"Name" : "转换Unix时间戳",
+		"TranslateTemplate" : "把 $1 转换成Unix时间戳"
+	},
+	"GetUpTime" : 
+	{
+		"Description" : "格式: ShanHai.GetUpTime()\n解释:获取从系统开机到现在的秒数",
+		"Name" : "获取系统开机至今秒数",
+		"TranslateTemplate" : "获取从系统开机到现在的秒数"
+	},
+	"GetVer" : 
+	{
+		"Description" : "格式: ShanHai.GetVer()\n解释:获取当前插件版本号",
+		"Name" : "获取当前插件版本号",
+		"TranslateTemplate" : "获取当前插件版本号"
+	},
+	"HLog_AddLog" : 
+	{
+		"Description" : "格式: ShanHai.HLog_AddLog(内容,等级)\n解释:为网页日志添加一条日志内容",
+		"Name" : "添加一条网页日志",
+		"TranslateTemplate" : "添加一条 $1 日志内容"
+	},
+	"HLog_AutoSave" : 
+	{
+		"Description" : "格式: ShanHai.HLog_AutoSave(模式)\n解释: 设置是否自动保存网页日志内容",
+		"Name" : "设置是否自动保存网页日志内容",
+		"TranslateTemplate" : "设置是否自动保存网页日志内容"
+	},
+	"HLog_GetTemplet" : 
+	{
+		"Description" : "格式: ShanHai.HLog_GetTemplet()\n解释:获取网页日之后模版数据内容",
+		"Name" : "获取网页日之后模版数据内容",
+		"TranslateTemplate" : "获取网页日之后模版数据内容"
+	},
+	"HLog_Save" : 
+	{
+		"Description" : "格式: ShanHai.HLog_Save(日志路径)\n解释:保存网页日志内容",
+		"Name" : "保存网页日志内容",
+		"TranslateTemplate" : "保存网页日志内容"
+	},
+	"HLog_SetTemplet" : 
+	{
+		"Description" : "格式: ShanHai.HLog_SetTemplet(模版数据)\n解释:设置网页日志模版内容",
+		"Name" : "设置网页日志模版内容",
+		"TranslateTemplate" : "设置网页日志模版内容"
+	},
+	"Iif" : 
+	{
+		"Description" : "格式: ShanHai.Iif(条件表达式,条件成立返回内容,不成立返回内容)\n解释:用于根据条件的真假，来返回指定的内容",
+		"Name" : "判断表达式",
+		"TranslateTemplate" : "用于根据条件的真假，来返回指定的内容"
+	},
+	"Install" : 
+	{
+		"Description" : "格式: ShanHai.Install(路径)\n解释:静默安装指定apk",
+		"Name" : "静默安装指定apk",
+		"TranslateTemplate" : "静默安装指定apk"
+	},
+	"IsAutoBrightness" : 
+	{
+		"Description" : "格式: ShanHai.IsAutoBrightness()\n解释:判断当前是否设置自动调节亮度",
+		"Name" : "判断当前是否设置自动调节亮度",
+		"TranslateTemplate" : "判断当前是否设置自动调节亮度"
+	},
+	"IsBluetooth" : 
+	{
+		"Description" : "格式: ShanHai.IsBluetooth()\n解释:判断蓝牙是否开启",
+		"Name" : "判断蓝牙是否开启",
+		"TranslateTemplate" : "判断蓝牙是否开启"
+	},
+	"IsConnectWifi" : 
+	{
+		"Description" : "格式: ShanHai.IsConnectWifi()\n解释:判断WiFi是否开启",
+		"Name" : "判断WiFi是否开启",
+		"TranslateTemplate" : "判断WiFi是否开启"
+	},
+	"IsDisplayChange" : 
+	{
+		"Description" : "格式: ShanHai.IsDisplayChange(左上角x坐标,左上角y坐标,右下角x坐标,右下角x坐标,指定时间,频率)\n解释:判断区域颜色一定时间是否变化",
+		"Name" : "判断区域颜色一定时间是否变化",
+		"TranslateTemplate" : "判断 $1 $2 $3 $4 范围内颜色在 $5 时间内是否变化"
+	},
+	"IsScreenOn" : 
+	{
+		"Description" : "格式: ShanHai.IsScreenOn()\n解释:判断设备是否亮屏",
+		"Name" : "判断设备是否亮屏",
+		"TranslateTemplate" : "判断设备是否亮屏"
+	},
+	"IsVM" : 
+	{
+		"Description" : "格式: ShanHai.IsVM()\n解释:判断设备是否是模拟器",
+		"Name" : "判断设备是否是模拟器",
+		"TranslateTemplate" : "判断设备是否是模拟器"
+	},
+	"KeepScreenOn" : 
+	{
+		"Description" : "格式: ShanHai.KeepScreenOn(是否常亮)\n解释:控制屏幕是否常亮 ",
+		"Name" : "控制屏幕是否常亮",
+		"TranslateTemplate" : "控制屏幕是否常亮 "
+	},
+	"KillClean" : 
+	{
+		"Description" : "格式: ShanHai.KillClean(包名)\n解释:清理后台(一键加速);参数为白名单应用,不清理",
+		"Name" : "清理后台",
+		"TranslateTemplate" : "清理后台(一键加速) "
+	},
+	"LTrimEx" : 
+	{
+		"Description" : "格式: ShanHai.LTrimEx(原字符,过滤字符)\n解释:过滤前导字符 ",
+		"Name" : "过滤前导字符",
+		"TranslateTemplate" : "从 $1 中过滤 $2"
+	},
+	"LastSMS" : 
+	{
+		"Description" : "格式: ShanHai.LastSMS()\n解释:获取最近一条短信内容",
+		"Name" : "获取最近一条短信内容",
+		"TranslateTemplate" : "获取最近一条短信内容"
+	},
+	"LateTime" : 
+	{
+		"Description" : "格式: ShanHai.LateTime(天,年,月,日)\n解释:计算几天后的日期  ",
+		"Name" : "计算几天后的日期",
+		"TranslateTemplate" : "计算几天后的日期"
+	},
+	"LeftDel" : 
+	{
+		"Description" : "格式: ShanHai.LeftDel(字符, 数量)\n解释:从左侧删除指定数量的字符",
+		"Name" : "从左侧删除指定数量的字符",
+		"TranslateTemplate" : "从 $1 左侧删除指定数量 $2 的字符"
+	},
+	"Mount" : 
+	{
+		"Description" : "格式: ShanHai.Mount(路径)\n解释:挂载系统文件夹",
+		"Name" : "挂载系统文件夹",
+		"TranslateTemplate" : "挂载 $1 路径"
+	},
+	"MoveFile" : 
+	{
+		"Description" : "格式: ShanHai.MoveFile(原路径, 新路径)\n解释:移动文件到新路径",
+		"Name" : "移动文件到新路径",
+		"TranslateTemplate" : "把文件 $1 移动到 $2"
+	},
+	"Name" : "山海插件命令v2.8.0",
+	"OpenAirplane" : 
+	{
+		"Description" : "格式: ShanHai.OpenAirplane()\n解释:开启飞行模式",
+		"Name" : "开启飞行模式",
+		"TranslateTemplate" : "开启飞行模式"
+	},
+	"OpenWeb" : 
+	{
+		"Description" : "格式: ShanHai.OpenWeb(网址)\n解释:用默认浏览器打开网页",
+		"Name" : "用默认浏览器打开网页",
+		"TranslateTemplate" : "用默认浏览器打开网页"
+	},
+	"ParseByXmlFile" : 
+	{
+		"Description" : "格式: ShanHai.ParseByXmlFile(文件路径)\n解释:从文件中加载XML ",
+		"Name" : "从文件中加载XML ",
+		"TranslateTemplate" : "从 $1 中加载XML信息"
+	},
+	"ParseByXmlStr" : 
+	{
+		"Description" : "格式: ShanHai.ParseByXmlStr(字符串)\n解释:从字符串中加载XML ",
+		"Name" : "从字符串中加载XML ",
+		"TranslateTemplate" : "从 $1 中加载XML信息"
+	},
+	"PostHttp" : 
+	{
+		"Description" : "格式: ShanHai.PostHttp(网址,post信息,超时时间,自定义信息头)\n解释:Post访问HTTP资源",
+		"Name" : "Post访问HTTP资源",
+		"TranslateTemplate" : "Post访问HTTP资源"
+	},
+	"PostHttpC" : 
+	{
+		"Description" : "格式: ShanHai.PostHttpC(网址,post信息,cookie文件路径,超时时间,自定义信息头)\n解释:Post提交信息可附带cookie信息 ",
+		"Name" : "Post访问HTTP资源(附带cookie)",
+		"TranslateTemplate" : "Post提交信息可附带cookie信息 "
+	},
+	"Print" : 
+	{
+		"Description" : "格式: ShanHai.Print(输出信息)\n解释:多功能输出函数 ",
+		"Name" : "多功能输出函数",
+		"TranslateTemplate" : "输出 $1 信息 "
+	},
+	"RTrimEx" : 
+	{
+		"Description" : "格式: ShanHai.RTrimEx(原字符,过滤字符)\n解释:过滤后导字符",
+		"Name" : "过滤后导字符",
+		"TranslateTemplate" : "从 $1 中过滤 $2"
+	},
+	"RandArray" : 
+	{
+		"Description" : "格式: ShanHai.RandArray(数组)\n解释:随机数组内容 ",
+		"Name" : "随机数组内容",
+		"TranslateTemplate" : "从 $1 中随机取出一个值"
+	},
+	"RandArrayEx" : 
+	{
+		"Description" : "格式: ShanHai.RandArrayEx(数组,位数)\n解释:获取随机数组元素指定个数",
+		"Name" : "获取随机数组元素指定个数",
+		"TranslateTemplate" : "打乱 $1 数组的顺序, 并且去除 $2 个元素"
+	},
+	"ReadFile" : 
+	{
+		"Description" : "格式: ShanHai.ReadFile(文件路径,是否删除)\n解释:读取文件内容",
+		"Name" : "读取文件内容",
+		"TranslateTemplate" : "读取文件 $1 内容"
+	},
+	"ReadFileBase" : 
+	{
+		"Description" : "格式: ShanHai.ReadFileBase(文件路径)\n解释:读取文件转换成base64编码 ",
+		"Name" : "读取文件转换成base64编码",
+		"TranslateTemplate" : "把 $1 文件转换成base64编码"
+	},
+	"ReadFileByte" : 
+	{
+		"Description" : "格式: ShanHai.ReadFileByte(文件路径)\n解释:读取文件为二进制数据 ",
+		"Name" : "读取文件为二进制数据",
+		"TranslateTemplate" : "把 $1 读取为二进制数据"
+	},
+	"ReadFileLine" : 
+	{
+		"Description" : "格式: ShanHai.ReadFileLine(文件路径,行号)\n解释:读取指定行的内容 ",
+		"Name" : "读取指定行的内容",
+		"TranslateTemplate" : "读取 $1 中的第 $2 行内容"
+	},
+	"ReadFileLines" : 
+	{
+		"Description" : "格式: ShanHai.ReadFileLines(文件路径)\n解释:读取文件为数组 ",
+		"Name" : "读取文件为数组",
+		"TranslateTemplate" : "读取 $1 为数组"
+	},
+	"ReadFileSize" : 
+	{
+		"Description" : "格式: ShanHai.ReadFileSize(文件路径)\n解释:读取文件大小 ",
+		"Name" : "读取文件大小",
+		"TranslateTemplate" : "读取 $1 文件大小"
+	},
+	"Reboot" : 
+	{
+		"Description" : "格式: ShanHai.Reboot()\n解释:重启手机 ",
+		"Name" : "重启手机",
+		"TranslateTemplate" : "重启手机"
+	},
+	"RegexFind" : 
+	{
+		"Description" : "格式: ShanHai.Reboot(原字符串,匹配格式)\n解释:全局正则匹配(包含单子串) ",
+		"Name" : "全局正则匹配(包含单子串)",
+		"TranslateTemplate" : "全局正则匹配(包含单子串)"
+	},
+	"RegexFindEx" : 
+	{
+		"Description" : "格式: ShanHai.RegexFindEx(原字符串,匹配格式)\n解释:全局正则匹配多子串 ",
+		"Name" : "全局正则匹配多子串",
+		"TranslateTemplate" : "全局正则匹配多子串"
+	},
+	"ReplaceFile" : 
+	{
+		"Description" : "格式: ShanHai.ReplaceFile(路径, 原字符, 替换字符)\n解释:替换文件内容",
+		"Name" : "替换文件内容",
+		"TranslateTemplate" : "在 $1 中把 $2 替换成 $3 "
+	},
+	"RightDel" : 
+	{
+		"Description" : "格式: ShanHai.RightDel(字符, 数量)\n解释:从右侧删除指定数量的字符",
+		"Name" : "从右侧删除指定数量的字符",
+		"TranslateTemplate" : "从 $1 右侧删除指定数量 $2 的字符"
+	},
+	"RndBool" : 
+	{
+		"Description" : "格式: ShanHai.RndBool()\n解释:生成随机布尔值",
+		"Name" : "生成随机布尔值",
+		"TranslateTemplate" : "生成随机布尔值"
+	},
+	"RndChr" : 
+	{
+		"Description" : "格式: ShanHai.RndChr()\n解释:生成随机汉字",
+		"Name" : "生成随机汉字",
+		"TranslateTemplate" : "生成随机汉字"
+	},
+	"RndEx" : 
+	{
+		"Description" : "格式: ShanHai.RndEx(最大值,最小值)\n解释:根据范围生成随机数",
+		"Name" : "根据范围生成随机数",
+		"TranslateTemplate" : "生成 $1 到 $2 之间的随机数"
+	},
+	"RunUrl" : 
+	{
+		"Description" : "格式: ShanHai.RunUrl(网址,APP类型)\n解释:使用指定APP打开网址",
+		"Name" : "使用指定APP打开网址",
+		"TranslateTemplate" : "使用指定APP打开网址"
+	},
+	"SQLAddField" : 
+	{
+		"Description" : "格式: ShanHai.SQLAddField(数据库路径,表名,字段)\n解释:为数据库添加字段",
+		"Name" : "为数据库添加字段",
+		"TranslateTemplate" : "为数据库添加字段"
+	},
+	"SQLCreate" : 
+	{
+		"Description" : "格式: ShanHai.SQLCreate(数据库路径,表名,字段)\n解释:创建新的数据库",
+		"Name" : "创建新的数据库",
+		"TranslateTemplate" : "创建新的数据库"
+	},
+	"SQLDelete" : 
+	{
+		"Description" : "格式: ShanHai.SQLDelete(数据库路径, 表名, 筛选条件)\n解释:SQL删除数据库内容",
+		"Name" : "SQL删除数据库内容",
+		"TranslateTemplate" : "SQL删除数据库内容"
+	},
+	"SQLInsert" : 
+	{
+		"Description" : "格式: ShanHai.SQLInsert(数据库路径, 表名, 插入内容)\n解释:SQL插入数据库内容",
+		"Name" : "SQL插入数据库内容",
+		"TranslateTemplate" : "SQL插入数据库内容"
+	},
+	"SQLSelect" : 
+	{
+		"Description" : "格式: ShanHai.SQLSelect(数据库路径, 表名, 查询字段名, 过滤条件, 筛选条件)\n解释:SQL查询数据库内容",
+		"Name" : "SQL查询数据库内容",
+		"TranslateTemplate" : "SQL查询数据库内容"
+	},
+	"SQLUpdate" : 
+	{
+		"Description" : "格式: ShanHai.SQLUpdate(数据库路径, 表名, 修改内容, 过滤条件)\n解释:SQL修改数据库内容",
+		"Name" : "SQL修改数据库内容",
+		"TranslateTemplate" : "SQL修改数据库内容"
+	},
+	"ScanPath" : 
+	{
+		"Description" : "格式: ShanHai.ScanPath(路径,类型)\n解释:遍历目录下的文件;类型不填时为遍历文件,填1表示遍历文件夹",
+		"Name" : "遍历目录下的文件",
+		"TranslateTemplate" : "遍历 $1 目录下包含的文件"
+	},
+	"ScanPathEx" : 
+	{
+		"Description" : "格式: ShanHai.ScanPathEx(路径)\n解释:递归遍历指定路径,返回包括子文件夹在内的所有文件",
+		"Name" : "遍历目录下的文件(递归遍历)",
+		"TranslateTemplate" : "遍历 $1 中包括子文件夹在内的所有文件"
+	},
+	"SecToDay" : 
+	{
+		"Description" : "格式: ShanHai.SecToDay(秒)\n解释:秒数转换为天数 ",
+		"Name" : "秒数转换为天数",
+		"TranslateTemplate" : "把 $1 秒数转换成天数"
+	},
+	"SetAutoBrightness" : 
+	{
+		"Description" : "格式: ShanHai.SetAutoBrightness(开关)\n解释:设置自动调节亮度; 0为关闭,1为打开",
+		"Name" : "设置自动调节亮度",
+		"TranslateTemplate" : "设置自动调节亮度"
+	},
+	"SetBrightness" : 
+	{
+		"Description" : "格式: ShanHai.SetBrightness(亮度)\n解释:设置手机亮度,范围0-255",
+		"Name" : "设置手机亮度",
+		"TranslateTemplate" : "设置手机亮度"
+	},
+	"SetIME" : 
+	{
+		"Description" : "格式: ShanHai.SetIME(类型)\n解释:设置输入法 ",
+		"Name" : "设置输入法",
+		"TranslateTemplate" : "设置成 $1 输入法"
+	},
+	"SetMAC" : 
+	{
+		"Description" : "格式: ShanHai.SetMAC(MAC地址)\n解释:设置MAC地址 ",
+		"Name" : "设置MAC地址",
+		"TranslateTemplate" : "设置 $1 为新的MAC地址"
+	},
+	"SetNavigationBar" : 
+	{
+		"Description" : "格式: ShanHai.SetNavigationBar(类型)\n解释:隐藏\\显示虚拟键 ",
+		"Name" : "隐藏\\显示虚拟键",
+		"TranslateTemplate" : "隐藏\\显示虚拟键"
+	},
+	"SetScreenSleep" : 
+	{
+		"Description" : "格式: ShanHai.SetScreenSleep(时间)\n解释:设置屏幕休眠时间,单位为秒",
+		"Name" : "设置屏幕休眠时间",
+		"TranslateTemplate" : "设置屏幕休眠时间"
+	},
+	"SetTime" : 
+	{
+		"Description" : "格式: ShanHai.SetTime(日期,时间)\n解释:设置手机时间 ",
+		"Name" : "设置手机时间",
+		"TranslateTemplate" : "设置手机时间"
+	},
+	"ShutDown" : 
+	{
+		"Description" : "格式: ShanHai.ShutDown()\n解释:关机 ",
+		"Name" : "关机",
+		"TranslateTemplate" : "关机"
+	},
+	"TLog_LogPath" : 
+	{
+		"Description" : "格式: ShanHai.TLog_LogPath(路径)\n解释:设置文本日志路径",
+		"Name" : "设置日志路径",
+		"TranslateTemplate" : "设置日志路径"
+	},
+	"TLog_OutLog" : 
+	{
+		"Description" : "格式: ShanHai.TLog_OutLog(日志内容)\n解释:写入日志内容",
+		"Name" : "写入日志内容",
+		"TranslateTemplate" : "往日志内写入 $1 "
+	},
+	"TimeSign" : 
+	{
+		"Description" : "格式: ShanHai.TimeSign(编号)\n解释:设置定时器标记 ",
+		"Name" : "设置定时器标记",
+		"TranslateTemplate" : "设置定时器标记"
+	},
+	"Timer" : 
+	{
+		"Description" : "格式: ShanHai.Timer(编号,间隔)\n解释:定时器功能,用来判断指定时间间隔是否到达",
+		"Name" : "定时器功能",
+		"TranslateTemplate" : "定时器功能,用来判断是否到达 $2 间隔时间"
+	},
+	"ToTime" : 
+	{
+		"Description" : "格式: ShanHai.ToTime(日期,匹配字符)\n解释:日期转换成时间戳 ",
+		"Name" : "日期转换成时间戳",
+		"TranslateTemplate" : "日期转换成时间戳"
+	},
+	"Transcoding" : 
+	{
+		"Description" : "格式: ShanHai.Transcoding(目标编码,原编码,字符串)\n解释:字符串编码转换 ",
+		"Name" : "字符串编码转换",
+		"TranslateTemplate" : "把 $3 从 $2 转换成 $1 编码"
+	},
+	"TrimEx" : 
+	{
+		"Description" : "格式: ShanHai.TrimEx(原字符,过滤字符)\n解释:过滤前导与后导字符 ",
+		"Name" : "过滤前导与后导字符",
+		"TranslateTemplate" : "过滤前导与后导字符"
+	},
+	"Type" : 
+	{
+		"Description" : "格式: ShanHai.Type(变量名)\n解释:判断变量类型",
+		"Name" : "判断数据类型",
+		"TranslateTemplate" : "判断变量 $1 类型"
+	},
+	"Unicode2Utf8" : 
+	{
+		"Description" : "格式: ShanHai.Unicode2Utf8(原字符串)\n解释:unicode转utf8  ",
+		"Name" : "unicode转utf8",
+		"TranslateTemplate" : "把unicode编码的 $1 字符转换成utf8编码"
+	},
+	"Uninstall" : 
+	{
+		"Description" : "格式: ShanHai.Uninstall(包名)\n解释:卸载指定APP",
+		"Name" : "卸载指定APP",
+		"TranslateTemplate" : "卸载指定APP"
+	},
+	"UpdateFileLine" : 
+	{
+		"Description" : "格式: ShanHai.UpdateFileLine(文件路径,行号,内容)\n解释:替换内容到指定行",
+		"Name" : "替换内容到指定行",
+		"TranslateTemplate" : "替换内容到指定行"
+	},
+	"UpdatePicture" : 
+	{
+		"Description" : "格式: ShanHai.UpdatePicture(图片路径)\n解释:发送广播强制刷新指定目录下的图片到图库展示 ",
+		"Name" : "刷新图库显示",
+		"TranslateTemplate" : "发送广播强制刷新指定目录下的图片到图库展示 "
+	},
+	"UrlToChar" : 
+	{
+		"Description" : "格式: ShanHai.UrlToChar(字符串)\n解释:URL编码转换成utf8 ",
+		"Name" : "URL编码转换成utf8",
+		"TranslateTemplate" : "把 $1 转换成utf8编码"
+	},
+	"Utf82Unicode" : 
+	{
+		"Description" : "格式: ShanHai.Utf82Unicode(原字符串)\n解释:utf8转Unicode",
+		"Name" : "utf8转Unicode",
+		"TranslateTemplate" : "utf8转Unicode "
+	},
+	"WeiXinUrl" : 
+	{
+		"Description" : "格式: ShanHai.WeiXinUrl(包名,网址)\n解释:用微信浏览器打开网页",
+		"Name" : "用微信浏览器打开网页",
+		"TranslateTemplate" : "用微信浏览器打开网址 $1"
+	},
+	"WriteFile" : 
+	{
+		"Description" : "格式: ShanHai.WriteFile(文件路径,内容,模式)\n解释:写内容到文件",
+		"Name" : "写内容到文件",
+		"TranslateTemplate" : "写 $2 到文件 $1"
+	},
+	"WriteFileLines" : 
+	{
+		"Description" : "格式: ShanHai.WriteFileLines(文件路径,数组)\n解释:写入数组内容到文件",
+		"Name" : "写入数组内容到文件",
+		"TranslateTemplate" : "在 $1 文件里写入 $2"
+	},
+	"XmlToTable" : 
+	{
+		"Description" : "格式: ShanHai.XmlToTable(XML字符串)\n解释:把GetUIXml()命令获取到的XML字符串转换成table ",
+		"Name" : "XML转table数据(仅限由GetUIXml()获取的XML文件)",
+		"TranslateTemplate" : "把GetUIXml()命令获取到的XML字符串转换成table"
+	},
+	"Xml_Append" : 
+	{
+		"Description" : "格式: ShanHai.Xml_Append(XML数据,节点名)\n解释:设置XML节点键值",
+		"Name" : "设置XML节点键值",
+		"TranslateTemplate" : "设置XML节点键值"
+	},
+	"Xml_Find" : 
+	{
+		"Description" : "格式: ShanHai.Xml_Find(XML数据,节点名)\n解释:查找XML节点",
+		"Name" : "查找XML节点",
+		"TranslateTemplate" : "查找XML节点"
+	},
+	"Xml_New" : 
+	{
+		"Description" : "格式: ShanHai.Xml_New(节点名)\n解释:创建XML子节点",
+		"Name" : "创建XML子节点",
+		"TranslateTemplate" : "创建XML子节点"
+	},
+	"Xml_Save" : 
+	{
+		"Description" : "格式: ShanHai.Xml_Save(XML数据,文件路径)\n解释:保存XML数据为文件",
+		"Name" : "保存XML数据为文件",
+		"TranslateTemplate" : "保存XML数据为文件"
+	},
+	"Xor" : 
+	{
+		"Description" : "格式: ShanHai.Xor(数值1,数值2)\n解释:对参数进行逻辑或运算",
+		"Name" : "逻辑或运算",
+		"TranslateTemplate" : "对 $1 $2 进行逻辑或运算"
+	},
+}
