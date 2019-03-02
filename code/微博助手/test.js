@@ -286,19 +286,17 @@ function 打开端口(i) {
 		
 }
  */
+ var base_path  ="/sdcard/tencent/TIMfile_recv/"
+// 	var filename="2580.jpg"
+// 	var img = images.read(base_path+filename)
 
 
 
-function test( grap){
-	// var ss=text("昵称").findOne().parent().child(1).setText(grap)
-	var ss=editable(true).find()
-	// var dd =1231
-	log(ss.length)
-	// var ee= dd.toString()
-	// log(parseInt(ee))
-	// var ss= className("android.widget.Button").text("注册").depth(12).clickable(true).findOne()
-	//.parent().child(1).setText(grap)
+
+
+
+function test2(){
 	
+	
+	//swipe(222,960,896,960,1000)
 }
-
-test("89556565")

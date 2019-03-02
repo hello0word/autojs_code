@@ -1,10 +1,14 @@
 {
-    "name": "微信养号",
+    "assets": [],
+    "build": {
+      "build_number": 0,
+      "build_time": 0
+    },
+    "icon": "res/logo.png",
     "main": "ui.js",
-    "ignore": [
-        "build"
-    ],
-    "packageName": "com.example",
-    "versionName": "1.0.0",
-    "versionCode": 1
-}
+    "name": "微信养号",
+    "packageName": "tenct.weixin.yanghao",
+    "versionCode": 1,
+    "versionName": "1.0.0"
+  }
+  

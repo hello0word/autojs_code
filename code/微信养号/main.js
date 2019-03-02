@@ -1,5 +1,7 @@
 auto.waitFor()
 
+
+console.show()
 function click(x,y){
     x=x+random(-5,5)
     y=y+random(-5,5)
@@ -11,7 +13,7 @@ function click(x,y){
 var text_path = "/sdcard/hook/聊天内容.txt"
 var 语音输出路径 = "/sdcard/hook/temp.mp3"
 var 正确的客户端 = "/sdcard/hook/正确客户端.txt"
-
+var 通讯录 = "/sdcard/hook/通讯录.txt"
 
 // files.write(正确的客户端,"1----xiajixaing----xo1425----031425")
 
@@ -23,6 +25,10 @@ text_path_open.close()
 var 正确的客户端_open = files.open(正确的客户端,mode = "r", encoding = "utf-8", bufferSize = 8192)
 var 正确的客户端_array = 正确的客户端_open.readlines()
 正确的客户端_open.close()
+//读取通讯录
+var 通讯录_open = files.open(通讯录,mode = "r", encoding = "utf-8")
+var 通讯录_array = 通讯录_open.readlines()
+通讯录_open.close()
 //解析
 var 正确的客户端_list = Array()
 正确的客户端_array.forEach((element)=>{
@@ -47,8 +53,7 @@ var storage = storages.create("hm5p-多-667")
 
 
 
-test()
-// main()
+
 
 /**
  * 添加好友的通过部分
@@ -64,10 +69,14 @@ function passFriend(){
     
     //为空则全部处理
     text("通讯录").findOne().parent().parent().click()//切换到通讯录
-    sleep(1500)
-    if (id("brf").exists()){
-        toastLog("有好友添加")
-        id("brf").findOne().parent().parent().parent().parent().click()
+    sleep(1500)// 先进入通讯录
+    var 群聊标签=text("群聊").depth(17).findOne().bounds()
+    var 新的朋友位置 = {x:群聊标签.centerX(),y: 群聊标签.top - 群聊标签.height() / 2}
+    click(新的朋友位置.x,新的朋友位置.y)
+    sleep(1000)
+    //判断有没有接受按钮
+    var ss=text("接受").findOne(2000)
+    if(ss){
         if(config_passFriend_1==false){
             //全部添加
            while( passFriend_1() ){}
@@ -79,7 +88,10 @@ function passFriend(){
 
         }
     }else{
-        log("没有好友添加")
+        toastLog('没有朋友加我');
+        back()
+        sleep(500)
+        return 
     }
 }
 function passFriend_1(){      
@@ -106,17 +118,23 @@ function addFriend_active(){
     text("添加朋友").findOne().parent().parent().parent().click()
     var coordinate= text("微信号/QQ号/手机号").findOne().parent().parent().parent().parent().parent().bounds()
     click(coordinate.centerX(),coordinate.centerY())
-    var config_addFriend_activie = 10
+    var config_addFriend_activie = parseInt( storage.get("搜索加_input", 10))
     for (let index = 0; index < config_addFriend_activie; index++) {
-        phone_number = "15532341789"
+        phone_number = 通讯录_array[random(0,通讯录_array.length-1)]
+        if(!phone_number){
+            log("没有要添加的好友了")
+            return 
+        }
+        sleep(1000)
+        editable(true).depth(12).findOne().setText(phone_number)
         sleep(500)
-        id("ka").findOne().setText(phone_number)
-        sleep(500)
-        textStartsWith("搜索:").findOne().parent().parent().click()
+        textStartsWith("搜索:").findOne().parent().parent().click()//点击搜索
         //这里可能用户不存在 可能已经是好友
-        sleep(2500)
+        sleep(2000)
         if(text("该用户不存在").exists()){
             log("该用户不存在")
+            //
+            text("确定").clickable(true).findOne().click()
             continue
         }else if(text("添加到通讯录").exists()){
             text("添加到通讯录").findOne().parent().parent().click()
@@ -124,12 +142,16 @@ function addFriend_active(){
             var fs=text("发送").findOne(5000)
             fs ? fs.click() : pass
             desc("返回").findOne().parent().click()
+            sleep(random(50,100) * 1000)
+            log("添加一次完成")
+        }else if(text("发消息").depth(13).exists() && text("音视频通话").depth(13).exists()){
+            //已经是好友了
+            // phone_number 
+            log(phone_number+ "已经是好友了")
         }else{
             toastLog("未知错误")
             return 
         }
-        sleep(random(50,100) * 1000)
-        log("一次完成")
     }
 }
 
@@ -138,12 +160,13 @@ function open_app(config){
     var dd= ss.split("-")
     var ff=dd[parseInt(config)]
     var pack="com.duoduo."+ff
-    log(pack)
     app.openAppSetting(pack)
     sleep(1000)
-    click("结束运行")
+    var 结束运行=  text("结束运行").clickable(true).findOne(1000) 
+    结束运行 ? 结束运行.click() : toastLog("没找到结束运行")
     sleep(500)
-    click("确定")
+    var 确定结束运行=text("确定").clickable(true).findOne(2000)
+    确定结束运行 ? 确定结束运行.click() : toastLog("没找到确定")
     app.launch(pack)            
     waitForPackage(pack) 
 }
@@ -412,26 +435,58 @@ function 收钱(){
 
 function start_run(config_zhanghao){
     passFriend()//通过好友
-    addFriend_active()//主动加好友
-    chat_activi(config_zhanghao)//聊天: 收红包,随机文字,表情,语音,转账,发红包
+
+    if(storage.get("搜索加",false)){
+        addFriend_active()//主动加好友
+    }
+    if(storage.get("聊会天",false)){
+        chat_activi(config_zhanghao)//聊天: 收红包,随机文字,表情,语音,转账,发红包
+    }
+    
 }
 
 
-function main(){
-    if(storage.get('正常顺序')){
-        for (let index = 0; index < 正确的客户端_list.length; index++) {
+function 账号登陆(){
+    if(storage.get('正常顺序')){ 
+        for (let index = parseInt( storage.get("软件端口1") )|| 0 ; (index < 正确的客户端_list.length) && (index <= parseInt( storage.get("软件端口2")) ); index++) {
             var element = 正确的客户端_list[index];
-            open_app(element.序号)
-            start_run(element)
+            open_app(element.序号)//打开app
+            //写登陆是否成功
+            start_run(element)//进入界面以后,判断有没有好友,主动加好友,根据  聊天
+            sleep(2000)
         }  
     }else{
         while(正确的客户端_list.length > 0 ) {
-            var current_元素=random(0,正确的客户端_list-1)
+            var current_元素=random(0,正确的客户端_list.length-1)
+            if(!正确的客户端_list.length){
+                log(正确的客户端_list.length)
+                exit()
+            }
             var element = 正确的客户端_list[current_元素];
             open_app(element.序号)
             正确的客户端_list.splice(current_元素,1)//使用过了就删除
             start_run(element)
+            sleep(2000)
         } 
+    }
+}
+
+
+function main(){
+    var 功能选择 = storage.get("功能选择",0)
+    switch (功能选择) {
+        case 0:
+            账号登陆()
+            break;
+        case 1:
+            toastLog("该功能还没有实现")
+            break;
+        case 2:
+            toastLog("该功能还没有实现")
+            break;
+        case 3:
+            toastLog("该功能还没有实现")
+            break;
     }
     
 }
@@ -441,5 +496,8 @@ function main(){
 
 function test(){
     
+
 }
 
+// test()
+main()
