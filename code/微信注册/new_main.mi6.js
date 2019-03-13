@@ -5,11 +5,19 @@ if(!requestScreenCapture()){
     toast("请求截图失败");
     exit();
 }
-_G={
+
+
+
+var _G={
 	改机完成标记:false,
-
+	注册结果标记:false,
+	当前号码信息:null,
+	jishiqi:0,
+	zhucejishu:0,
+	huakuaijishu:0,
+	载入数据计数:0,
 }
-
+var storage= storages.create("微信")
 threads.start(function(){
     events.observeToast();
 	events.onToast(function(toast){
@@ -83,31 +91,23 @@ function test(){
 
 	}
 	main()
+
+	// 全局检测循环()
 	
-	// var 验证码=get_yanzhengma("10011131851894")
-	// 			log("输入验证码")
-	// 			textContains("请输入验证码").findOne().setText(验证码)
-	// 			sleep(1000)
-	// 			log("点击下一步")
-	// 			text(current_语言.下一步).clickable(true).findOne().click()
-	// 			log("完成")
-	// 			// var info = 转换对象到字符串(phone_number)
-				// var info = "1131851894"+"----"+"ucsk1346"+"----"+"60"
-	// 			log(info)
-				// 上传信息(info)
-	// 			log("上传完成")
+	// var info = "167147669"+"----"+"mncf3586"+"----"+"60"+"----"+"0"
+	// log(info)
+	// 上传信息(info)
+	// log("上传完成")
 	// 			查找你的微信朋友()
 	// 查找你的微信朋友()
 	// 账号状态异常()
 	// log(Math.random().toString(24).substr(2).slice(0,4))
 	// 返回注册流程()
-	// get_yanzhengma("10011131850092")
+	// get_yanzhengma("10011131850144")
 	// log(get_password())
 	// anquan_yanzheng()
 	// gaiji()
-	// 等待验证手机号()
-	// textStartsWith("收不到验证码").findOne().click()
-	// var dd ="0000000我擦"
+	
 	// CheckChinese(dd)
 	exit()
 }
@@ -204,12 +204,21 @@ function check_ok(){
 
 
 function zhuce(){
-	var zhuce_button = text(current_语言.注册).className("android.widget.Button").depth(9).findOne()
-	if(zhuce_button){
-		log(zhuce_button.click())
-	}else{
-		log("没有注册按钮")
+	log("等待注册按钮")
+	for (let index = 0; index < 2; index++) {
+		var timeout = 5000
+		var zhuce_button = text(current_语言.注册).className("android.widget.Button").depth(9).findOne(timeout)
+		if(zhuce_button){
+			log(zhuce_button.click())
+			log("注册点击完成")
+			return true
+		}else{
+			log("没有注册按钮")
+			return false
+		}
+		
 	}
+	
 
 
 }
@@ -247,25 +256,27 @@ function getName(){
     }
 function select_guojia(g_j_num){
 	g_j_num=String(g_j_num)
-	var sousuo= className("android.widget.TextView").clickable(true).depth(9).findOne()
-	sousuo.click()
-	log("搜索按钮")
-	sleep(500)
-	var shuru = className("android.widget.EditText").clickable(true).findOne()
-	shuru.setText(g_j_num)
-	sleep(1500)
+	var timeout =70
+	
 	do {
+		var sousuo= className("android.widget.TextView").clickable(true).depth(9).findOne(timeout)
+		sousuo ? sousuo.click() : null
+		log("搜索按钮")
+		sleep(500)
+		var shuru = className("android.widget.EditText").clickable(true).findOne(timeout)
+		shuru ? shuru.setText(g_j_num) : null
+		sleep(1500)
 		var dd=text(g_j_num).className("android.widget.TextView").depth(13).clickable(false).exists()
 		if (dd) {
-			dd=text(g_j_num).className("android.widget.TextView").depth(13).clickable(false).findOne()
-			dd.parent().parent().click()
+			dd=text(g_j_num).className("android.widget.TextView").depth(13).clickable(false).findOne(timeout)
+			dd ? dd.parent().parent().click() :null
 			return true
 		}
-		var listView=className("android.widget.ListView").depth(10).scrollable(true).findOne(1000)
-		var tag=listView.scrollDown()
-		sleep(700)
-	} while (tag);
-	return false
+		// var listView=className("android.widget.ListView").depth(10).scrollable(true).findOne(timeout)
+		// var tag=listView.scrollDown()
+		// sleep(700)
+	} while (true);
+	
 	
 }
 
@@ -291,47 +302,8 @@ function tianxie_info(guojia_number,phone_n,password){
 	
 
 }
-function yinsi(){
-	for (let index = 0; index < 90; index++) {
-		log("yinsi")
-		var check_box=className("android.widget.CheckBox").depth(19).clickable(true).exists()
-		var xiyibu= className(className_lsit.view).text(current_语言.下一步).exists()
-		var anquan_check = clickable(true).text(current_语言.开始).exists()
-		if(check_box && xiyibu){
-			
-			log("checkbox")
-			var check = className("android.widget.CheckBox").depth(19).clickable(true).findOne()
-			//
-			check.click()
-			var xiyibu= className(className_lsit.view).text(current_语言.下一步).findOne()
-			log("xiayibu")
-			xiyibu.parent().click()
-			
-			sleep(1000)
-			return 
-		}
-		sleep(2000)
-	}
-}
 
-function anquan_yanzheng(){
-	log("安全验证检测")
-	for (let index = 0; index < 60; index++) {
-		var anquan_check = clickable(true).text(current_语言.开始).exists()
-		if(anquan_check){
-			log("安全验证")
-			var ff=clickable(true).text(current_语言.开始).depth(17).findOne()
-			ff? ff.click() : log("安全验证出错")//开始安全验证
-			text(current_语言.拖动下方滑块完成拼图).findOne()
-			sleep(5000)
-			return true
-		}
-		log("anquan_yanzheng")
-		sleep(1000)
-		
-	}
-	
-}
+
 
 
 
@@ -340,25 +312,46 @@ function get_token(){
 	return "a27e4764ee990f64933b01760c13febc"
 }
 function get_phone_number(){
-	var token=get_token()
-	var resource  = http.get("http://47.74.144.186/yhapi.ashx?act=getPhone&token="+token+"&iid=1001&did=3d84993a9f91e75c5449b0679fdd5856&operator=&provi=&city=&mobile=")
-	res= resource.body.string()
-	log("原始数据:"+res)
-	var arr_phone=res.split("|")
-	if(arr_phone[0]=="0" ){
-		toastLog("取号失败:错误代码:"+arr_phone[1])
-	}else if(arr_phone[0]=="1"){
-		log("取号成功")
-		return {
-			pid:arr_phone[1],
-		  	提取时间:arr_phone[2],
-			串口号:arr_phone[3],
-			手机号:arr_phone[4],
-			运营商:arr_phone[5],
-			归属地:arr_phone[6],
+	while(true){
+		var token=get_token()
+		var resource  = http.get("http://47.74.144.186/yhapi.ashx?act=getPhone&token="+token+"&iid=1001&did=3d84993a9f91e75c5449b0679fdd5856&operator=&provi=&city=&mobile=")
+		res= resource.body.string()//1001167147649
+		log("原始数据:"+res)//        1001167147649
+		var arr_phone=res.split("|")
+		if(arr_phone[0]=="0" ){
+			toastLog("取号失败:错误代码:"+arr_phone[1])
+			sleep(10000)
+		}else if(arr_phone[0]=="1"){
+			log("取号成功")
+			return {
+				pid:arr_phone[1],
+				  提取时间:arr_phone[2],
+				串口号:arr_phone[3],
+				手机号:arr_phone[4],
+				运营商:arr_phone[5],
+				归属地:arr_phone[6],
+// 				{ pid: '1001167146521',
+//   '提取时间': '2019-03-09T22:45:34',
+//   '串口号': 'COM40',
+//   '手机号': '167146521',
+//   '运营商': '60马来西亚',
+//   '归属地': '马来西亚' }
+			}
 		}
 	}
 	
+	
+}
+
+function get_phone_number2(){
+	return {
+			pid:"1001167146521",
+			提取时间:"2019-03-09T22:45:34",
+			串口号:"COM40",
+			手机号:"167146521",
+			运营商:"60马来西亚",
+			归属地:"马来西亚",
+	}
 }
 
 function get_password(){
@@ -376,24 +369,14 @@ function get_password(){
 
 
 
-function jiance_anquanxiaoyan(){
-	var qr=className(className_lsit.image).exists()
-	if (qr){
-		qrs=className(className_lsit.image).findOne()
-		if(qrs.bounds().height() == qrs.bounds().width()){
-			return true
-		}else{
-			return false
-		}
-	}
-
-}
 
 function gaiji(){
 	app.launchApp("IG刺猬精灵")
 	while(true){
+		
 		var yijian = text("一键新机").exists()
 		var denglu = text("登录").exists()
+		var quedin = text("确定").exists()
 		if(yijian){
 			var yijian=text("一键新机").findOne(2000)
 			if(yijian){
@@ -404,72 +387,72 @@ function gaiji(){
 					
 				}
 				log("改机完成")
-				back()
-				text("确定").findOne().click()
+				sleep(1000)
+				home()
+				
+				log("退出改机软件")
 				break
 			}
 		}else if(denglu){
 			var ff= text("登录").findOne()
 			ff ? ff.click() : null
 			break
+		}else if(quedin){
+			log("状态异常")
+			quedin.click()
+
 		}
 	}
 }
 
 
-function lahei(pid){
-	pid=String(pid)
-	var token=get_token()
-	var res=http.get("http://47.74.144.186/yhapi.ashx?act=addBlack&token="+token+"&pid="+pid+"&reason=used")
-	log(res.body.string())
-}
+// function lahei(pid){
+// 	pid=String(pid)
+// 	var token=get_token()
+// 	var res=http.get("http://47.74.144.186/yhapi.ashx?act=addBlack&token="+token+"&pid="+pid+"&reason=used")
+// 	log(res.body.string())
+// }
 
 function get_yanzhengma(pid){
 	pid=String(pid)
 	var token=get_token()
+	log("本次token："+token)
+	log("本次pid："+pid)
 	for (let index = 0; index < 3; index++) {
-		for (let index2 = 0;  index2< 30; index2++) {
-			var res=http.get("http://47.74.144.186/yhapi.ashx?act=getPhoneCode&token="+token+"&pid="+pid)//http://47.74.144.186/yhapi.ashx?act=getPhoneCode&token=ad718214bdf8e7ad80344bf9743ec307&pid=100118456007026
-			res_tostr=res.body.string()
-			log(res_tostr)
-			var res_to_arr=res_tostr.split("|")
-			if(res_to_arr[0]==1){
-				log(res_to_arr[1])
-				return res_to_arr[1]
-			}else{
-				
+		for (let index2 = 0;  index2< 10; index2++) {
+			try {
+				var res=http.get("http://47.74.144.186/yhapi.ashx?act=getPhoneCode&token="+token+"&pid="+pid)//http://47.74.144.186/yhapi.ashx?act=getPhoneCode&token=ad718214bdf8e7ad80344bf9743ec307&pid=100118456007026
+				res_tostr=res.body.string()
+				log(res_tostr)
+				var res_to_arr=res_tostr.split("|")
+				if(res_to_arr[0]==1){
+					return res_to_arr[1]
+				}else if( res_to_arr[0]==0 ){
+					switch (res_to_arr[1]) {
+						case -4:
+							_G.注册结果标记 = 3 //直接通知结果  重来
+							break;
+					
+						default:
+							break;
+					}
+				}
+			} catch (error) {
+				log(error)
 			}
-			sleep(5000)
+			sleep(15000)
 		}
 		textContains("收不到验证码").findOne().click()
 		textContains("重新获取验证码").findOne().parent().parent().click()
 
 	}
-	
+	log("三次都无法获取，脚本停止")
+	exit()
 }
 
 
 
-function 返回注册流程(){
-	log("等待返回注册流程")
-	while(true){
-		var dd=textContains("返回注册流程").exists()
-		var ff=className("android.view.View").text("返回 ").findOne(1000)
-		
-		if (dd) {
-			textContains("返回注册流程").findOne().click()
-			return 
-		}else if(ff){
-			log("点击返回")
-			desc("返回").findOne().parent().click()
-			log("返回完成")
-			return 
-		}
-		
-	}
-	
-	
-}
+
 function 等待验证手机号(){
 	log("等待验证手机号")
 	textContains("验证手机号").findOne()
@@ -488,135 +471,227 @@ function 上传信息(info){
 	// log()
 
 }
-
+function 启动微信(){
+	app.launchApp("微信分身")
+	while(currentPackage() != "com.tencent.mm"){
+		
+		sleep(2000)
+		log("等待微信加载")
+	}
+}
 
 function main(){
-	while(true){
-		gaiji()
-		
-		while(currentPackage() != "com.tencent.mm"){
-			app.launch("com.tencent.mm")
-			sleep(1000)
-			log("sssss")
-		}
-		
-		zhuce()
-		var phone_number=get_phone_number()
-		log(phone_number)
-		var password_ss=get_password()
-		phone_number.password = password_ss
-		log(password_ss)//i0vm6jc4
-		phone_number.国家代码 = 提取国家代码(phone_number.运营商)
-		tianxie_info(phone_number.国家代码,phone_number.手机号,password_ss)
-		for (let index = 0; index <5 ; index++) {
-			主页注册按钮点击()
-			var current_thread=threads.start(yinsi)//隐私协议第二次时没有
-			anquan_yanzheng()
-			current_thread.interrupt()
-			huakuai_start()
-			var 滑块返回=滑动完状态检测()
-			if(滑块返回 == 2){
-				
-			}else if( 滑块返回 ==1){//需要扫二维码
-				返回注册流程()
-				break
-			}else if(滑块返回 ==0){
-
-			}
+		while(true){
+			_G.改机完成标记=false
+			_G.当前号码信息=null
+			改机_启动微信()
 			
+			var phone_number=get_phone_number()
+			log(phone_number)
+			var password_ss=get_password()
+			phone_number.password = password_ss
+			log(password_ss)//i0vm6jc4
+			phone_number.国家代码 = 提取国家代码(phone_number.运营商)
+			tianxie_info(phone_number.国家代码,phone_number.手机号,password_ss)
+			_G.注册结果标记=false//重置标记
+			_G.huakuaijishu=0
+			_G.载入数据计数=0
+			_G.当前号码信息 = phone_number
+			storage.put("当前号码信息",phone_number)
+			var th= threads.start( 全局检测循环)
+			等待结果()
+			th.interrupt()
 		}
-		
-		// lahei(phone_number.pid)
-		
-		等待验证手机号()
-		var 验证码=get_yanzhengma(phone_number.pid)
-		log("输入验证码")
-		textContains("请输入验证码").findOne().setText(验证码)
-		sleep(1000)
-		log("点击下一步")
-		text(current_语言.下一步).clickable(true).findOne().click()
-		log("完成")
-		注册完状态检测()
-		var zhuangtai=账号状态检测()
-		// var info = 转换对象到字符串(phone_number)
-		var info = phone_number.手机号+"----"+password_ss+"----"+phone_number.国家代码+"----"+zhuangtai
-		log(info)
-		上传信息(info)
-		log("上传完成")
-		return
-		sleep(1000)
-	}
-}
-function 滑动完状态检测(){
-	log("滑动完状态检测开始")
-	sleep(1000)
-	for (let index = 0; index < 180; index++) {
-		var qr=className(className_lsit.image).exists()//二维码
-		var ff=textContains("系统繁忙").exists() //滑动完系统繁忙
-		if(qr){
-			qrs=className(className_lsit.image).findOne()
-			if(qrs.bounds().height() == qrs.bounds().width()){
-				log("发现二维码")
-				return 1
-			}else{
-				
-			}
 			
-		}else if(ff){
-			log("点击返回")
-			desc("返回").findOne().parent().click()
-			log("返回完成")
-			return 2
-		}
-		sleep(1000)
-	}
 	
-
 }
-function 注册完状态检测(){
-	log("注册完检测开始")
+
+function 改机_启动微信(){
 	while (true) {
-		var info=text("查找你的微信朋友").exists()
-		var info2=text("欢迎回来").exists()
-		if (info) {
-			log("微信朋友")
-			var hao = text("好").findOne().click()
-			log("注册完检测结束")
-			return 
-		} else  if(info2){
-			log("欢迎回来")
-			var jixu = textContains("不是我的").className(className_lsit.button).findOne().click()
-			log("注册完检测结束")
-			return 
+		// gaiji()
+			
+		for (let index = 0; ; index++) {
+			启动微信()
+			if( zhuce() ){
+				log("退出改机_启动微信")
+				return
+			}
+			if(index > 5){
+				break
+			}
 		}
 	}
 	
-
 }
 
 
-
-function 账号状态检测(){
-	log("账号状态检测开始")
-	
-	for (let index = 0; index < 90; index++) {
-		var info = text("确定").exists()
-		var info2= text("通讯录").exists()
-		var info3= textContains("载入数据").exists()
-		if (info) {
-			log("账号状态检测结束")
-			return "0"
-		} else if(info2) {
-			log("账号状态检测结束")
-			return "1"
-		}else if (info3){
-			log("载入数据")
+function 等待结果(){
+	while (true) {
+		phone_number=_G.当前号码信息
+		switch (_G.注册结果标记) {
+			
+			case 1://环境异常  // 重新开始 /0是死的
+				var info = phone_number.手机号+"----"+phone_number.password+"----"+phone_number.国家代码+"----"+"0"
+				log(info)
+				上传信息(info)
+				log("上传完成")
+				log("异常")
+				return 
+			case 2://通过 /上传信息  /1为活的
+				var info = phone_number.手机号+"----"+phone_number.password+"----"+phone_number.国家代码+"----"+"1"
+				log(info)
+				上传信息(info)
+				log("上传完成")
+				return
+				
+			case 3://   
+				log("号码异常")
+				return
+				break;
+			case 4:
+				log("微信状态异常")
+				return
+				break;
+		
+			default:
+				break;
 		}
 		sleep(1000)
 	}
-	log("账号状态检测结束")
-	return "0"
 }
+function 全局检测循环(){
+	var timeout=20
+	_G.当前号码信息 = storage.get("当前号码信息")
+	while(true){
+		
+    var tag_1  = text("请稍候...").className("android.widget.TextView").depth(5).findOne(timeout)          //主页注册  背景为月亮那个 click
+    var tag_2  = clickable(true).text(current_语言.开始).depth(17).findOne(timeout) //click //安全验证的开始按钮
+    
+	var tag_3  = className("android.widget.CheckBox").depth(19).clickable(true).checked(false).findOne(timeout)//协议勾选框
+	
+	
+	var tag_4  = text("语言").depth(7).findOne(timeout)//下一步 p.click
+	
+    var tag_5  = className("android.view.View").text("返回 ").findOne(timeout)// desc("返回").findOne().parent().click()
+    var tag_6  = text(current_语言.拖动下方滑块完成拼图).depth(23).findOne(timeout)//调用函数
+    var tag_7  = textStartsWith("让用户用微信扫描下面的二维码").depth(17).findOne(timeout)
+    var tag_8  = text(current_语言.注册).className("android.widget.Button").depth(12).findOne(timeout)//填写信息页注册按钮 click
+    var tag_9  = textContains("不是我的").className(className_lsit.button).findOne(timeout)//click
+    var tag_10 = textContains("返回注册流程").findOne(timeout)//click
+    var tag_11 = textContains("验证手机号").findOne(timeout)// 
+    var tag_12 = text("填写验证码").depth(10).findOne(timeout)
+    var tag_13 = text("下一步").className(className_lsit.button).depth(12).findOne(timeout)//验证码页面的下一步 //click
+    var tag_14 = textStartsWith("你当前注册环境异常").className("android.widget.TextView").depth(9).findOne(timeout)//这里直接结束
+    var tag_15 = text("确定").className("android.widget.Button").depth(7).findOne(timeout)//环境异常的确定
+    var tag_16 = text("好").findOne(timeout)//获取通讯录
+    var tag_17 = textContains("系统繁忙").findOne(timeout)
+    var tag_18 = text("通讯录").findOne(timeout)
+    var tag_19 = className("android.view.View").text("WeChat 隐私保护概述").depth(18).findOne(timeout)//找   隐私保护  
+    var tag_20 = text("正在载入数据...").findOne(timeout)
+    var tag_21 = text("").findOne(timeout)
+    var tag_22 = text("").findOne(timeout)
+    var tag_23 = text("").findOne(timeout)
+    var tag_24 = text("").findOne(timeout)
+    if (tag_1) {
+		log("请稍候")
+		_G.jishiqi+=1
+		sleep(2000)
+		if (_G.jishiqi>50) {
+			_G.jishiqi=0
+			log("已经卡死，重新开始，计时器归零")
+			continue
+		}
+	}
+        tag_2   ?  tag_2.click()   : null
+		if(tag_3){
+			tag_3.click()
+			sleep(1500)
+			tag_3= className("android.widget.CheckBox").depth(19).clickable(true).checked(true).findOne(timeout)
+			log(tag_3.checked())
+			dd=text("下一步").findOne(timeout).parent()
+			log(dd.click())
+			sleep(3000)
+			continue
+		}
+        if (tag_4) {
+			log("弹出到主页")
+			_G.注册结果标记 = 4
+		}
+        tag_5   ?  desc("返回").findOne().parent().click()   : null
+        tag_6   ?  huakuai_start()   : null//滑块
+		if(tag_7){
+			log("等待二维码")
+			var img = captureScreen();
+			images.save(img, "/sdcard/temp.jpg", "jpg", 100);
+			log("文件保存完成")
+			sleep(5000)
+			continue
+		}
+		
+        if(tag_8){
+			tag_8.click()
+			if (_G.zhucejishu > 2) {
+				log("注册卡死，重来")
+				continue
+			}
+			for (let index = 0; index < 10; index++) {
+				toastLog("点了注册,等待响应")
+				sleep(2000)
+				if(! text(current_语言.注册).className("android.widget.Button").depth(12).exists()){
+					break;
+					
+				}
+			}
+			
+		}
+        tag_9   ?  tag_9.click()   : null
+        tag_10  ?  tag_10.click()  : null
+        tag_11  ?  log("等待验证手机号")  : null
+        tag_12  ?  填写验证码()  : null
+        tag_13  ?  tag_13  : null
+        if(tag_14){
+			log("环境异常:14")
+			_G.注册结果标记=1 
+		}
+		
+		if(tag_15){
+			log("环境异常:15")
+			_G.注册结果标记=1 
+		}
+        tag_16  ?  tag_16.click()  : null
+        tag_17  ?  desc("返回").findOne().parent().click()  : null//系统繁忙返回
+        tag_18  ?  _G.注册结果标记=2  : null
+        // tag_19  ?    : null
+        if(tag_20){
+			_G.载入数据计数+=1
+			if(_G.载入数据计数 > 30){
+				_G.注册结果标记 = 1
+			}
+		}  
+
+		
+	}
+	log("全局轮询结束")
+}
+
+
+function 填写验证码(){
+	var 验证码=get_yanzhengma(_G.当前号码信息.pid)
+
+	// var 验证码=get_yanzhengma("1001167147628")
+		log("输入验证码")
+		var yanzheng=textContains("请输入验证码").findOne(1000)
+		yanzheng ? yanzheng.setText(验证码) : log("没有验证码框")
+		var xiyibu=text("下一步").className(className_lsit.button).depth(12).findOne(1000)
+		
+		if (xiyibu) {
+			xiyibu.click()
+			sleep(2000)
+		}else{
+			log("没有下一步")
+		}
+}
+
 
 var temp_path="/sdcard/360/abc"
 
@@ -791,7 +866,15 @@ function discernSlidingblock(img, ratio) {
 }
 
 function huakuai_start() {
-    auto.waitFor()
+	auto.waitFor()
+	_G.huakuaijishu+=1
+	if(_G.huakuaijishu > 2){
+		var ff= text("拖动下方滑块完成拼图").findOne(1000)
+		var dd= ff.parent().parent().child(2).child(1).child(0)
+		dd.click()
+		log("刷新滑块验证")
+		}
+	sleep(4000)
     for(var i=0;i<0;i++){sleep(1000);log(i);}
     while (true) {
         img = images.captureScreen();
@@ -806,7 +889,8 @@ function huakuai_start() {
     console.info("识别结果滑块X坐标：" + x);
 
     if (x > -1) {
-        randomSwipe(220, y, x, y)
+		randomSwipe(220, y, x, y)
+		sleep(2000)
         //滑动完成
     } else {
         console.log("识别有误，请确认是否在滑块界面");

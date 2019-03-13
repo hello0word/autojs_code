@@ -24,7 +24,9 @@ ui.layout(
 </horizontal>
     </vertical>
 );
-
+ui.forEach(element => {
+    log(typeof element)
+});
 threads.start(function() {
     //console.show();
 
