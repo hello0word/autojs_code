@@ -435,7 +435,7 @@ function gaiji() {
                         
                         home()
                         log("退出改机软件")
-                        break
+                        return
                     }
                     
                 } 
