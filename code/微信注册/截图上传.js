@@ -1,4 +1,4 @@
-auto.waitFor()
+
 if (!requestScreenCapture()) {
     toastLog("请求截图失败");
     exit();
@@ -144,26 +144,28 @@ function up(params) {
 }
 
 function 验证码破解(params) {
+    auto.waitFor()
     var  ime = captureScreen();
-    sleep(1000)
+    // sleep(1000)
     ime=images.cvtColor(ime,"BGR2GRAY",3)
     ff = images.threshold(ime,110,255,"BINARY")
-    images.save(ff,"/sdcard/temp.jpg")
+    // images.save(ff,"/sdcard/temp.jpg")
     // var  ff= images.threshold(img,127,255,"BINARY")
     var  arr0 = Array()
     for (let x = 5; x < 160; x+=5) {
             arr0.push([x,0+x,"#000000"])
             arr0.push([x,160-x,"#000000"])
     }
-    up()
+    // up()
+    log(arr0)
     var ee = images.findMultiColors(ff,"#000000",arr0,{
         region: [820, 550, 550, 650],
-        threshold:0,
+        // threshold:0,
     })
     
     if (ee) {
         log(ee.x+85)
-        randomSwipe(320,1400,ee.x+85,1400)
+        //randomSwipe(320,1400,ee.x+85,1400)
     }else{
         log("匹配失败")
     }

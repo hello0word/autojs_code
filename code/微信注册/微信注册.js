@@ -758,7 +758,7 @@ function 全局检测循环() {
         var tag_16 = text("好").findOne(timeout) //获取通讯录
         var tag_17 = textContains("系统繁忙").findOne(timeout)
         var tag_18 = text("通讯录").findOne(timeout)
-        var tag_19 = className("android.view.View").text("WeChat 隐私保护概述").depth(18).findOne(timeout) //找   隐私保护  
+        var tag_19 = textContains("当前手机号一个月内已成功注册微信号").findOne(timeout) //找   隐私保护  
         var tag_20 = text("正在载入数据...").findOne(timeout)
         var tag_21 = text("网页无法打开").findOne(timeout)
         var tag_22 = text("用短信验证码登录").findOne(timeout)
@@ -825,9 +825,9 @@ function 全局检测循环() {
         }
         if (tag_7) {
             log("等待二维码")
-            var img = captureScreen();
-            images.save(img, "/sdcard/temp.jpg", "jpg", 100);
-            log("文件保存完成")
+            // var img = captureScreen();
+            // images.save(img, "/sdcard/temp.jpg", "jpg", 100);
+            // log("文件保存完成")
             _G_计数器.注册结果标记 = 5
             sleep(5000)
             continue
@@ -853,7 +853,6 @@ function 全局检测循环() {
         }
         if (tag_9) {
             log("不是我的")
-            sleep(time_delay)
             tag_9.click()
             sleep(time_delay)
         }
@@ -900,7 +899,10 @@ function 全局检测循环() {
             sleep(time_delay)
         }
         tag_18 ? _G_计数器.注册结果标记 = 2 : null
-
+        if (tag_19) {
+            log("手机号一个月内已成功注册微信号")
+            _G_计数器.注册结果标记=5
+        }
         if (tag_20) {
             _G_计数器.载入数据计数 += 1
             log("载入数据")

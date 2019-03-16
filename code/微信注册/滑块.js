@@ -18,7 +18,7 @@ var y = 1400//设置滑动按钮高度
  
  
  //显示控制台
-// console.show()
+console.show()
 console.setPosition(100, 1300)
 
 //请求权限
