@@ -1,166 +1,14 @@
-auto.waitFor()
-if (!requestScreenCapture()) {
-    toastLog("请求截图失败");
-    exit();
-}
-var storage = storages.create("微信")
-const time_delay = 3000
-var y = 1058 //设置滑动按钮高度
-// var huangsha = images.load("https://gitee.com/jixiangxia/autojs/raw/master/resource/wecha/%E9%BB%84%E6%B2%99.jpg")
 
-console.setGlobalLogConfig({
-    "file": "/sdcard/微信.txt"
-});
+var ty={}
 
-console.show()
-console.setPosition(0, device.height / 2 + 200)
-events.on("exit", function() {
-    log("结束运行");
-});
-
-
-var _G_状态记录器 = {
-    改机完成标记: false,
-    改机可用标志: false,
-    注册结果标记: false,
-    当前号码信息: null,
-    请稍后计时器: 0,
-    注册点击后等待状态: false,
-    huakuaijishu: 0,
-    载入数据计数: 0,
-    检测线程:null,
-}
-
-var 取号账户,取号密码,取号api,上传账户,上传密码,国家代码,项目id,_G_token,xinhao,guojiama
-
+//1531
 var  _G_arr0 = Array()
     for (let x = 5; x < 160; x+=5) {
             _G_arr0.push([x,0+x,"#000000"])
             _G_arr0.push([x,160-x,"#000000"])
     }
-function 初始化数据() {
-    
 
-    xinhao= storage.get("xinhao",0)
-    guojiama=storage.get("guojiama")
-
-    switch (xinhao) {
-        case 0://小米4-c
-            log("选择了小米")
-            if (guojiama==0){//马来西亚) {
-                log("选择了马来")
-                取号账户 = "01malai"
-                取号密码 = "qq2018qq"
-                取号api = "api_01malai_uso"
-                上传账户="mlxy"
-                上传密码="QFWEAP"
-                项目id="1000"
-            } else if( guojiama==1){//印度尼西亚
-                log("选择了印尼")
-                取号账户 = "01yinni"
-                取号密码 = "qq2018qq"
-                取号api = "api_01yinni_cfo"
-                上传账户="YJD"
-                上传密码="UVLGVC"
-                项目id="1001"
-            }
-            break;
-        case 1://格力手机
-            log("选择了格力")    
-            if(guojiama==0){//马来西亚
-                log("选择了马来")
-                取号账户 = "01malai"
-                取号密码 = "qq2018qq"
-                取号api="api_01malai_uso"
-                上传账户="mlxy"
-                上传密码="QFWEAP"
-                项目id="1000"
-            }else if(guojiama==1){//印度尼西亚
-                log("选择了印尼")
-                取号账户 = "01yinni"
-                取号密码 = "qq2018qq"
-                取号api = "api_01yinni_cfo"
-                上传账户="YJD"
-                上传密码="UVLGVC"
-                项目id="1001"
-            }
-        default:
-            break;
-    }
-}
-function 获取token() {
-    while (true) {
-        try {
-            var res=http.get("http://47.74.144.186/yhapi.ashx?act=login&ApiName="+取号api +"&PassWord="+取号密码)
-            var data = res.body.string().split("|")
-            if (data[0]==0) {
-                log("登录失败:"+data)
-            } else {
-                _G_token=data[1]
-                log("token 读取成功:为:"+_G_token)
-                return 
-            }
-        } catch (error) {
-            log(error)
-            sleep(5000)
-        }
-    }
-    
-}
-
-
-events.onKeyDown("volume_up", function(event){
-    
-    toastLog("音量上被按下,停止所有脚本");
-    engines.stopAll()
-});
-
-threads.start(function() {
-    log("toast 监听启动")
-    events.observeToast();
-    events.onToast(function(toast) {
-        var pkg = toast.getPackageName();
-        var text = toast.getText()
-        switch (pkg) {
-            case "com.igaiji.privacy":
-                switch (text) {
-                    case "一键新机完成":
-                        _G_状态记录器.改机完成标记 = true
-                        setTimeout(function() {
-                            _G_状态记录器.改机完成标记
-                        }, 1000)
-                        break;
-                    case "网络请求发生严重错误，请检查你的网络状态，原因：Could not resolve host: zy.igaiji.com":
-                        var dd=className(my_className_lsit.button).text("登录").findOne(1000)
-                        dd ? dd.click() :null
-                        sleep(time_delay)
-                        break;
-                    case "该设备已经激活，继续使用改机服务":
-                        _G_状态记录器.改机可用标记 = true
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            case "com.tencent.mm":
-                var wangluocuowu = new RegExp(/无法连接到服务器/)
-                if (wangluocuowu.test(text)) {
-                    _G_状态记录器.注册结果标记 = 4
-                }
-
-        }
-        log("Toast内容: " + toast.getText() +
-            " 来自: " + getAppName(pkg) +
-            " 包名: " + pkg);
-    });
-
-});
-
-
-
-
-my_className_lsit = {
+var my_className_lsit = {
     bianji: "android.widget.EditText",
     text: "android.widget.TextView",
     button: "android.widget.Button",
@@ -168,9 +16,8 @@ my_className_lsit = {
     image: "android.widget.Image",
     check: "android.widget.CheckBox",
     view: "android.view.View",
+    edit: "android.widget.EditText",
 }
-
-
 
 const YUYAN = {
     中文: {
@@ -188,42 +35,6 @@ const YUYAN = {
 }
 var current_语言 = YUYAN.中文
 
-
-
-function test() {
-
-
-    //  main()
-    // get_phone_number()
-//    huakuai_start()
-    全局检测循环()
-
-}
-
-
-function 转换对象到字符串(obj) {
-    var ff = JSON.stringify(obj)
-    ff = ff.replace(/\{/g, "")
-    ff = ff.replace(/\}/g, "")
-    ff = ff.replace(/\"/g, "")
-    ff = ff.replace(/\:/g, "=")
-    ff = ff.replace(/\,/g, "|")
-    return ff
-}
-
-
-
-function 提取国家代码(val) {
-    var reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
-    var ff = reg.exec(val)
-    log(ff)
-    if (ff) {
-        var index = ff.index
-        var ee = val.substr(0, index)
-        log("国家代码:" + ee)
-        return ee
-    }
-}
 
 
 function zhuce() {
@@ -281,6 +92,9 @@ function select_guojia(g_j_num) {
     g_j_num = String(g_j_num)
     var timeout = 70
     log("国家代码:"+ g_j_num)
+    var guojia_diqu = text(current_语言.国家).className("android.widget.TextView").findOne(3000)
+    guojia_diqu ? guojia_diqu.parent().click() : null//点击国家地区选择国家
+    sleep(time_delay)
     do {
         var sousuo = className("android.widget.TextView").clickable(true).depth(9).findOne(timeout)
         if (sousuo) {
@@ -321,20 +135,8 @@ function select_guojia(g_j_num) {
 
 
 
-function tianxie_info(guojia_number, phone_n, password) {
-    var guojia_diqu = text(current_语言.国家).className("android.widget.TextView").findOne(3000)
-    guojia_diqu ? guojia_diqu.parent().click() : null//点击国家地区选择国家
-    sleep(time_delay)
-    if (guojiama==0) {
-        log("当前选择了马来西亚")
-        guojia_number=60
-    }else if(guojiama==1){
-        log("当前选择了印度尼西亚")
-        guojia_number=62
-    } 
-    select_guojia(guojia_number) //选择国家
-    
-    
+function tianxie_info( phone_n, password) {
+      
     var nicheng = text(current_语言.昵称).className("android.widget.EditText").findOne()
     nicheng.setText(getName()) //设置用户名
     log("填写用户名")
@@ -346,55 +148,6 @@ function tianxie_info(guojia_number, phone_n, password) {
     log("填写密码")
 
 }
-
-
-function get_token() {
-   return _G_token
-}
-
-function get_phone_number() {
-    log("将获取号码")
-    while (true) {
-        var token = get_token()
-        try {
-            var resource = http.get("http://47.74.144.186/yhapi.ashx?act=getPhone&token=" + token + "&iid="+项目id)
-            res = resource.body.string() //1001167147649
-            log("原始数据:" + res) //        1001167147649
-            var arr_phone = res.split("|")
-            if (arr_phone[0] == "0") {
-                toastLog("取号失败:错误代码:" + arr_phone[1])
-                switch (arr_phone[1]) {
-                    case "-1":
-                        log("没号")
-                        break;
-
-                    case "-4":
-                        log("上次获取失败,5秒后重试")
-                        break;
-
-                    default:
-                        break;
-                }
-                sleep(10000)
-            } else if (arr_phone[0] == "1") {
-                log("取号成功")
-                return {
-                    pid: arr_phone[1],
-                    提取时间: arr_phone[2],
-                    串口号: arr_phone[3],
-                    手机号: arr_phone[4],
-                    运营商: arr_phone[5],
-                    归属地: arr_phone[6],
-
-                }
-            }
-        } catch (error) {
-            log(error)
-        }
-    }
-}
-
-
 function get_password() {
     var st1 = ""
 
@@ -453,81 +206,9 @@ function gaiji() {
 }
 
 
-function lahei(pid) {
-    pid = String(pid)
-    log("准备拉黑")
-    var token = get_token()
-    try {
-        var res = http.get("http://47.74.144.186/yhapi.ashx?act=addBlack&token=" + token + "&pid=" + pid + "&reason=used")
-        log(res.body.string())
-        log("拉黑完成")
-    } catch (error) {
-        log(error)
-    }
-
-}
-
-function get_yanzhengma(pid) {
-    pid = String(pid)
-    var token = get_token()
-    log("本次token：" + token)
-    log("本次pid：" + pid)
-    for (let index = 0; index < 3; index++) {
-        for (let index2 = 0; index2 < 10; index2++) {
-            try {
-                var res = http.get("http://47.74.144.186/yhapi.ashx?act=getPhoneCode&token=" + token + "&pid=" + pid)
-                res_tostr = res.body.string()
-                log(res_tostr)
-                var res_to_arr = res_tostr.split("|")
-                if (res_to_arr[0] == 1) {
-                    return res_to_arr[1]
-                } else if (res_to_arr[0] == "0") {
-                    switch (res_to_arr[1]) {
-                        case "-4":
-                            log("号码释放")
-                            _G_状态记录器.注册结果标记 = 3 //直接通知结果  重来
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-            } catch (error) {
-                log(error)
-            }
-            sleep(15000)
-        }
-        textContains("收不到验证码").findOne().click()
-        textContains("重新获取验证码").findOne().parent().parent().click()
-
-    }
-    log("三次都无法获取，脚本停止")
-    log("号码释放")
-    _G_状态记录器.注册结果标记 = 3 //直接通知结果  重来
-}
-
-function 上传信息(info) {
-
-    for (let index = 0; index < 50; index++) {
-        try {
-            var res = http.get("http://47.74.248.9/updata?username="+上传账户 +"&password="+上传密码+"&type=1&value=" + encodeURI(info))
-            var dd = res.body.string()
-            log(dd)
-            return dd
-        } catch (error) {
-            log(error)
-        }
-        sleep(2000)
-    }
-
-
-    // log()
-
-}
-
 function 启动微信() {
     app.launch("com.tencent.mm")
-    for (let index = 0; index < 6; index++) {
+    for (let index = 0; index < 12; index++) {
         if (currentPackage() == "com.tencent.mm") {
             return true
         }
@@ -538,208 +219,11 @@ function 启动微信() {
     return false
 }
 
-function main() {
-    初始化数据()
-    获取token()
-    while (true) {
-        _G_状态记录器.改机完成标记 = false
-        _G_状态记录器.改机可用标记 = false
-        _G_状态记录器.当前号码信息 = null
-        gaiji()
-        // 改机_启动微信()
-
-        var phone_number = get_phone_number()
-        log(phone_number)
-        var password_ss = get_password()
-        phone_number.password = password_ss
-        log(password_ss) //i0vm6jc4
-        phone_number.国家代码 = 提取国家代码(phone_number.运营商)
-        修改网络(true) //连接vpn
-        if (!启动微信()) {
-            log("微信启动失败")
-            continue
-        }
-        if (zhuce()) {
-            log("启动微信成功")
-            
-        }
-
-
-        tianxie_info(phone_number.国家代码, phone_number.手机号, password_ss)
-        _G_状态记录器.注册结果标记 = false //重置标记
-        _G_状态记录器.huakuaijishu = 0
-        _G_状态记录器.载入数据计数 = 0
-        _G_状态记录器.当前号码信息 = phone_number
-        storage.put("当前号码信息", phone_number)
-        _G_状态记录器.检测线程 = threads.start(全局检测循环)
-        等待结果()
-        try {
-            _G_状态记录器.检测线程.interrupt()
-        } catch (error) {
-            
-        }
-        
-    }
-}
-
-function 修改网络(gn) {
-    var 网络模式=storage.get("net_mode",0)
-    if (网络模式=="1") {//vpn模式
-        log("vpn模式")
-        vpn(gn)
-    }else if(网络模式=="0" && gn){//开关飞行模式
-        log("开关飞行模式")
-        开关飞行()
-    }else{
-        log("错误")}
-}
-
-function 开关飞行(params) {
-    var intent=new Intent()
-    intent.setAction("android.settings.NFC_SETTINGS")
-    app.startActivity(intent);
-    log(id("android:id/switch_widget").findOne())
-    log("查找飞行模式按钮")
-    var 飞行模式=text("飞行模式").findOne()
-    log("查找状态按钮")
-    if(id("android:id/switch_widget").findOne().text()=="ON"){
-        log("飞行模式已开启,将关闭")
-        飞行模式.parent().parent().click()
-        sleep(10000)
-        log("飞行模式关闭完成")
-    }else if(id("android:id/switch_widget").findOne().text()=="OFF"){
-        log("飞行模式已关,将重置")
-        text("飞行模式").findOne().parent().parent().click()
-        log("飞行模式已开")
-        sleep(5000)
-        
-        text("飞行模式").findOne().parent().parent().click()
-        sleep(10000)
-        log("飞行模式关闭完成")
-    }else{
-        log("开关飞行为止异常")
-    }
-}
-function vpn(gn) {
-    
-    var intent = new Intent();
-    intent.setAction("android.settings.VPN_SETTINGS"); //VPN设置
-    app.startActivity(intent);
-    var sz = desc("设置").id("settings_button").depth(15).findOne()
-    sleep(1000)
-    var ylj = text("已连接").depth(14).findOne(50)
-    if (ylj) {
-        toastLog("已经连接,需要断开")
-        sleep(1000)
-        var vpn_list = className("android.support.v7.widget.RecyclerView").findOne(1000)
-        if (vpn_list) {
-            vpn_list.child(0).click()
-            toastLog("点开了vpn")
-            text("断开连接").depth(6).findOne().click()
-            sleep(2000)
-        } else {
-            log("没有可用vpn")
-        }
-    } else {
-        log("没有已经连接的vpn")
-    }
-    if (gn) { //连接
-        for (let index = 0; index < 100; index++) {
-            var vpn_list = className("android.support.v7.widget.RecyclerView").findOne(15000)
-            if (vpn_list) {
-                vpn_list.child(0).click()
-                toastLog("点开了vpn")
-                var lj = text("连接").className(my_className_lsit.button).depth(6).findOne(10000)
-                lj ? lj.click() : null
-                toastLog("点了连接")
-                sleep(time_delay)
-                while (true) {
-                    var sb = text("失败").depth(14).exists()
-                    var ylj = text("已连接").depth(14).exists()
-                    if (sb) {
-                        toastLog("vpn连接失败,重试次数:" + index)
-                        break;
-                    } else if (ylj) {
-                        toastLog("vpn连接成功")
-                        return
-                    }
-                    sleep(1000)
-                }
-
-            }
-            sleep(2000)
-        }
-    } else { //
-        log("不连接")
-    }
-}
-
-
-
-
-
-
-function 等待结果() {
-    while (true) {
-        phone_number = _G_状态记录器.当前号码信息
-        if (_G_状态记录器.注册结果标记) {
-            _G_状态记录器.检测线程.interrupt()
-        }
-        switch (_G_状态记录器.注册结果标记) {
-
-            case 1: //环境异常  // 重新开始 /0是死的
-                修改网络() //断开连接	
-                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "0"
-                log(info)
-                上传信息(info)
-                log("上传完成")
-                log("异常")
-                return
-            case 2: //通过 /上传信息  /1为活的
-                修改网络() //断开连接
-                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "1"
-                log(info)
-                上传信息(info)
-                log("上传完成")
-                return
-
-            case 3: //   
-                修改网络() //断开连接
-                log("号码异常")
-                释放号码()
-                return
-                break;
-            case 4:
-                修改网络() //断开连接
-                log("微信状态异常")
-                释放号码()
-                return
-                break;
-            case 5: //出现二维码
-                修改网络() //断开连接
-                log("微信状态异常")
-                lahei(phone_number.pid)
-                return
-                break;
-            case 6: //出现二维码
-                修改网络() //断开连接
-                log("不释放号码,继续注册")
-                
-                return
-                break;
-
-            default:
-                break ;
-        }
-        sleep(1000)
-    }
-}
-
 function 全局检测循环() {
     var timeout = 20
-    _G_状态记录器.当前号码信息 = storage.get("当前号码信息","")
+    _G_状态记录器.当前号码信息 = storage.get("当前号码信息")
     while (true) {
-        
+
         var tag_1 = text("请稍候...").className("android.widget.TextView").depth(5).findOne(timeout) //主页注册  背景为月亮那个 click
         var tag_2 = clickable(true).text(current_语言.开始).depth(17).findOne(timeout) //click //安全验证的开始按钮
 
@@ -788,24 +272,28 @@ function 全局检测循环() {
         }
         if (tag_3) {
             log("点击协议")
-            sleep(time_delay)
+            // sleep(time_delay)
             tag_3.click()
-            sleep(time_delay)
-            tag_3 = className("android.widget.CheckBox").depth(19).clickable(true).checked(true).findOne(timeout)
+            // sleep(time_delay * 2)
+            tag_3 = className("android.widget.CheckBox").depth(19).clickable(true).checked(true).findOne(time_delay *3 )
 
             if (tag_3) {
-                sleep(time_delay)
+                // sleep(time_delay)
                 tag_3.checked()
                 log("同意协议")
+                sleep(time_delay )
+                dd = text("下一步").findOne(time_delay * 3)
+                if (dd) {
+                    
+                    dd.parent().click()
+                    log("下一步已点击")
+                    sleep(time_delay)
+                }else{
+                    log("同意协议后,下一步找不到")
+                }
+            }else{
+                log("点击协议无响应")
             }
-            dd = text("下一步").findOne(timeout)
-            if (dd) {
-                sleep(time_delay)
-                dd.parent().click()
-                log("下一步")
-                sleep(time_delay)
-            }
-            sleep(time_delay)
             continue
         }
         if (tag_4) {
@@ -820,7 +308,7 @@ function 全局检测循环() {
         }
         
         if (tag_6) {//滑块
-            if (xinhao == 1) {
+            if (_G_配置记录器.型号 == 1) {
                 toastLog("发现滑块")
                 sleep(3000)
                 checknumber()
@@ -931,28 +419,159 @@ function 全局检测循环() {
     }
     log("全局轮询结束")
 }
+function 修改网络(gn) {
+    var 网络模式=_G_配置记录器.网络切换方式
+    if (网络模式=="1") {//vpn模式
+        log("vpn模式")
+        vpn(gn)
+    }else if(网络模式=="0" && gn){//开关飞行模式
+        log("开关飞行模式")
+        开关飞行()
+    }else{
+        log("错误")}
+}
 
-
-function 释放号码() {
-    pid = _G_状态记录器.当前号码信息.pid
-    var token = get_token()
-    for (let index = 0; index < 3; index++) {
-        toastLog("即将释放号码")
-        device.vibrate(2000);
-        sleep(2000)
+function 开关飞行(params) {
+    var intent=new Intent()
+    intent.setAction("android.settings.NFC_SETTINGS")
+    app.startActivity(intent);
+    log(id("android:id/switch_widget").findOne())
+    log("查找飞行模式按钮")
+    var 飞行模式=text("飞行模式").findOne()
+    log("查找状态按钮")
+    if(id("android:id/switch_widget").findOne().text()=="ON"){
+        log("飞行模式已开启,将关闭")
+        飞行模式.parent().parent().click()
+        sleep(10000)
+        log("飞行模式关闭完成")
+    }else if(id("android:id/switch_widget").findOne().text()=="OFF"){
+        log("飞行模式已关,将重置")
+        text("飞行模式").findOne().parent().parent().click()
+        log("飞行模式已开")
+        sleep(5000)
+        
+        text("飞行模式").findOne().parent().parent().click()
+        sleep(10000)
+        log("飞行模式关闭完成")
+    }else{
+        log("开关飞行为止异常")
     }
-
-    try {
-        var res = http.get("http://47.74.144.186/yhapi.ashx?act=setRel&token=" + token + "&pid=" + pid)
-        log(res.body.string())
-    } catch (error) {
-        log(error)
+}
+function vpn(gn) {
+    
+    var intent = new Intent();
+    intent.setAction("android.settings.VPN_SETTINGS"); //VPN设置
+    app.startActivity(intent);
+    var sz = desc("设置").id("settings_button").depth(15).findOne()
+    sleep(1000)
+    var ylj = text("已连接").depth(14).findOne(50)
+    if (ylj) {
+        toastLog("已经连接,需要断开")
+        sleep(1000)
+        var vpn_list = className("android.support.v7.widget.RecyclerView").findOne(1000)
+        if (vpn_list) {
+            vpn_list.child(0).click()
+            toastLog("点开了vpn")
+            text("断开连接").depth(6).findOne().click()
+            sleep(2000)
+        } else {
+            log("没有可用vpn")
+        }
+    } else {
+        log("没有已经连接的vpn")
     }
+    if (gn) { //连接
+        for (let index = 0; index < 100; index++) {
+            var vpn_list = className("android.support.v7.widget.RecyclerView").findOne(15000)
+            if (vpn_list) {
+                vpn_list.child(0).click()
+                toastLog("点开了vpn")
+                var lj = text("连接").className(my_className_lsit.button).depth(6).findOne(10000)
+                lj ? lj.click() : null
+                toastLog("点了连接")
+                sleep(time_delay)
+                while (true) {
+                    var sb = text("失败").depth(14).exists()
+                    var ylj = text("已连接").depth(14).exists()
+                    if (sb) {
+                        toastLog("vpn连接失败,重试次数:" + index)
+                        break;
+                    } else if (ylj) {
+                        toastLog("vpn连接成功")
+                        return
+                    }
+                    sleep(1000)
+                }
 
+            }
+            sleep(2000)
+        }
+    } else { //
+        log("不连接")
+    }
+}
+
+
+
+function 等待结果() {
+    while (true) {
+        phone_number = _G_状态记录器.当前号码信息
+        if (_G_状态记录器.注册结果标记) {
+            _G_状态记录器.检测线程.interrupt()
+        }
+        switch (_G_状态记录器.注册结果标记) {
+
+            case 1: //环境异常  // 重新开始 /0是死的
+                修改网络() //断开连接	
+                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "0"
+                log(info)
+                // 上传信息(info)
+                log("上传完成")
+                log("异常")
+                return {status:1,info:"环境异常"}
+            case 2: //通过 /上传信息  /1为活的
+                修改网络() //断开连接
+                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "1"
+                log(info)
+
+                // 上传信息(info)
+                log("上传完成")
+                return {status:2,info:info}
+
+            case 3: //   
+                修改网络() //断开连接
+                log("号码异常")
+                // 释放号码()
+                return {status:3,info:"号码异常"}
+                break;
+            case 4:
+                修改网络() //断开连接
+                log("微信状态异常")
+                // 释放号码()
+                return {status:4,info:"微信状态异常"}
+                break;
+            case 5: //出现二维码
+                修改网络() //断开连接
+                log("微信状态异常")
+                // lahei(phone_number.pid)
+                return {status:5,info:"出现二维码"}
+                break;
+            case 6: //
+                修改网络() //断开连接
+                log("不释放号码,继续注册")
+                
+                return {status:6,info:"不释放号码,继续注册"}
+                break;
+
+            default:
+                break ;
+        }
+        sleep(1000)
+    }
 }
 
 function 填写验证码() {
-    var 验证码 = get_yanzhengma(_G_状态记录器.当前号码信息.pid)
+    var 验证码 = _G_取号平台.取验证码()
 
     log("输入验证码")
     var yanzheng = textContains("请输入验证码").findOne(1000)
@@ -967,8 +586,69 @@ function 填写验证码() {
     }
 }
 
+function 添加指定微信发送(params) {
+    
+    var dd=desc("更多功能按钮").findOne(3000)
+    if (dd) {
+        log("找到更多功能按钮")
+        dd.click()
+        sleep(2000)
+        var ff=text('添加朋友').findOne(2000)
+        if (ff) {
+            log("找到添加朋友按钮")
+            ff.parent().parent().parent().click()
+            var coordinate= text("微信号/QQ号/手机号").findOne(2000)
+            if (coordinate) {
+                coordinate= coordinate.parent().parent().parent().parent().parent().bounds()
+                click(coordinate.centerX(),coordinate.centerY())
+                sleep(1000)
+                editable(true).depth(12).findOne().setText(_G_配置记录器.发送至好友)
+                sleep(500)
+                textStartsWith("搜索:").findOne().parent().parent().click()//点击搜索
+                //这里可能用户不存在 可能已经是好友
+                sleep(2000)
+                if(text("该用户不存在").exists()){
+                    log("该用户不存在")
+                    //
+                    text("确定").clickable(true).findOne().click()
+                    
+                }else if(text("添加到通讯录").exists()){
+                    text("添加到通讯录").findOne().parent().parent().click()
+                    //判断是否需要验证
+                    var fs=text("发送").findOne(3000)
+                    fs ? fs.click() : null
+                    发送信息()
+                    desc("返回").findOne().parent().click()
+                    // sleep(random(50,100) * 1000)
+                    log("添加一次完成")
+                }else if(text("发消息").depth(13).exists() && text("音视频通话").depth(13).exists()){
+                    //已经是好友了
+                    // phone_number 
+                    log(phone_number+ "已经是好友了")
+                }else{
+                    toastLog("未知错误")
+                    return 
+                }
+            }
+        }
+    }
 
-var temp_path = "/sdcard/360/abc"
+}
+function 发送信息() {
+    var dd=text("发消息").findOne(3000)
+    if (dd) {
+        dd.parent().parent().click()
+        var edit = className(my_className_lsit.edit).findOne(3000)
+        if(edit){
+            var info = _G_取号平台.手机号 + "----" + _G_取号平台.password + "----" + _G_取号平台.国家代码
+            edit.setText(info)
+            var fasong = text("发送").className(my_className_lsit.button).findOne(3000)
+            if (fasong) {
+                fasong.click()
+            }
+        }
+    }
+}
 
 function get_a16_703() {
     var temp_path = "/sdcard/360/abc"
@@ -1045,6 +725,7 @@ function get_a16_67() {
     });
 
 }
+
 
 /** 
  * 识别滑块位置
@@ -1358,7 +1039,70 @@ function 读取地址(params) {
     log(data)
     return data
 }
+function 上传信息(info) {
+
+    for (let index = 0; index < 50; index++) {
+        try {
+            var res = http.get("http://47.74.248.9/updata?username="+上传账户 +"&password="+上传密码+"&type=1&value=" + encodeURI(info))
+            var dd = res.body.string()
+            log(dd)
+            return dd
+        } catch (error) {
+            log(error)
+        }
+        sleep(2000)
+    }
 
 
-// test()
-main()
+    // log()
+
+}
+
+function 提取国家代码(val) {
+    var reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
+    var ff = reg.exec(val)
+    log(ff)
+    if (ff) {
+        var index = ff.index
+        var ee = val.substr(0, index)
+        log("国家代码:" + ee)
+        return ee
+    }
+}
+
+
+ty.my_className_lsit = my_className_lsit
+ty.转换对象到字符串=function (obj) {
+    var ff = JSON.stringify(obj)
+    ff = ff.replace(/\{/g, "")
+    ff = ff.replace(/\}/g, "")
+    ff = ff.replace(/\"/g, "")
+    ff = ff.replace(/\:/g, "=")
+    ff = ff.replace(/\,/g, "|")
+    return ff
+}
+ty.huakuai_start = huakuai_start
+
+ty.添加指定微信发送 =添加指定微信发送
+
+ty.填写验证码 =填写验证码
+
+ty.等待结果 =等待结果
+ty.修改网络 =修改网络
+
+ty.getName =getName
+
+ty.全局检测循环 =全局检测循环
+
+ty.启动微信=启动微信
+
+ty.zhuce =zhuce
+
+ty.select_guojia =select_guojia
+
+ty.tianxie_info=tianxie_info
+
+ty.get_password =get_password
+ty.gaiji =gaiji
+
+module.exports = ty
