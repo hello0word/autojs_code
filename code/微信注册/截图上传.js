@@ -143,37 +143,58 @@ function up(params) {
         log(res.body.string());
 }
 
-function 验证码破解(params) {
-    auto.waitFor()
-    var  ime = captureScreen();
-    // sleep(1000)
-    ime=images.cvtColor(ime,"BGR2GRAY",3)
-    ff = images.threshold(ime,110,255,"BINARY")
-    // images.save(ff,"/sdcard/temp.jpg")
-    // var  ff= images.threshold(img,127,255,"BINARY")
-    var  arr0 = Array()
-    for (let x = 5; x < 160; x+=5) {
-            arr0.push([x,0+x,"#000000"])
-            arr0.push([x,160-x,"#000000"])
+
+
+function findMultiColorss(img,first,arr,option){
+    var temp_img
+    if (option.region) {
+        temp_img = images.clip(img,option.region.x,option.region.y,option.region.width,option.region.height)
+        for (let  img_height= 0; img_height < temp_img.getHeight()-165; img_height+=5) {
+            for (let img_width = 0; img_width < temp_img.getWidth()-165; img_width+=5) {
+                if (colors.equals(temp_img.pixel(img_width,img_height), first)) {
+                    var flag=true
+                    for (let index = 0; index < arr.length; index++) {
+                        if ( ! colors.equals(temp_img.pixel(img_width+arr[index][0],img_height+arr[index][1]),arr[index][2])) {
+                            flag=false
+                        } 
+                    }
+                    if (flag) {
+                        return {x:img_width+option.region.x,y:img_height+option.region.y}
+                    }
+                }
+            }
+        }    
     }
-    // up()
-    log(arr0)
-    var ee = images.findMultiColors(ff,"#000000",arr0,{
-        region: [820, 550, 550, 650],
-        // threshold:0,
-    })
-    
-    if (ee) {
-        log(ee.x+85)
-        //randomSwipe(320,1400,ee.x+85,1400)
-    }else{
-        log("匹配失败")
-    }
-    
 }
 
-验证码破解()
+function 验证码破解() {
+    var  ime = captureScreen();
+    ime=images.cvtColor(ime,"BGR2GRAY",3)
+    ff = images.threshold(ime,110,255,"BINARY")
+    var  _G_arr0 = Array()
+    for (let x = 5; x < 160; x+=5) {
+            _G_arr0.push([x,0+x,"#000000"])
+            _G_arr0.push([x,160-x,"#000000"])
+    }
+    var dd= findMultiColorss(ff,"#000000",_G_arr0,{region:{x:820,y:550,width:550,height:650}})
+    randomSwipe(300,1400,dd.x+85,1400)
+    var err=text("请控制拼图块对齐缺口").findOne(3000)
+    if (err) {
+        
+        var dd = idContains("reload").depth(24).findOne(1000)
+        if (dd) {
+            log("刷新滑块验证")
+            dd.click()
+            sleep(time_delay)
+            _G_计数器.huakuaijishu = 0
+            
+        }
+    }
+    return 
+}
 
+// 验证码破解()
+log(text("请控制拼图块对齐缺口").findOne())
 
 
 function randomSwipe(sx, sy, ex, ey) {

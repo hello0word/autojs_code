@@ -33,7 +33,11 @@ var _G_计数器 = {
 
 var 取号账户,取号密码,取号api,上传账户,上传密码,国家代码,项目id,_G_token,xinhao,guojiama
 
-
+var  _G_arr0 = Array()
+    for (let x = 5; x < 160; x+=5) {
+            _G_arr0.push([x,0+x,"#000000"])
+            _G_arr0.push([x,160-x,"#000000"])
+    }
 function 初始化数据() {
     
 
@@ -550,7 +554,7 @@ function main() {
         phone_number.password = password_ss
         log(password_ss) //i0vm6jc4
         phone_number.国家代码 = 提取国家代码(phone_number.运营商)
-        修改网络(true) //连接vpn
+        // 修改网络(true) //连接vpn
         if (!启动微信()) {
             log("微信启动失败")
             continue
@@ -817,8 +821,9 @@ function 全局检测循环() {
         
         if (tag_6) {//滑块
             if (xinhao == 1) {
-                toastLog("请滑块")
+                toastLog("发现滑块")
                 sleep(3000)
+                checknumber()
             } else {
                 huakuai_start()
             }
@@ -1162,15 +1167,7 @@ function huakuai_start() {
         img = images.captureScreen();
         if (img) {
             log("截图成功。进行识别滑块！");
-            //判断是否黄沙图
-            // var dd=images.findImage(captureScreen(),huangsha)
-            // if (dd) {
-            //     log("发现黄沙图")
-            //     标记=200
-            // }else{
-            //     log("没有黄沙图")
-            //     标记=0
-            // }
+            
             break;
         } else {
             log('截图失败,重新截图');
@@ -1181,7 +1178,18 @@ function huakuai_start() {
 
     if (x > -1 && x > device.width / 3 * 1) {
         randomSwipe(220, y, x, y)
-        sleep(2000)
+        var err=text("请控制拼图块对齐缺口").findOne(2000)
+        if (err) {
+            
+            var dd = idContains("reload").depth(24).findOne(1000)
+            if (dd) {
+                log("刷新滑块验证")
+                dd.click()
+                sleep(time_delay)
+                _G_计数器.huakuaijishu = 0
+                
+            }
+    }
         //滑动完成
     } else {
         console.log("识别有误，请确认是否在滑块界面");
@@ -1297,6 +1305,50 @@ function randomSwipe(sx, sy, ex, ey) {
 
     //滑动
     gestures(time.concat(track))
+}
+
+function findMultiColorss(img,first,arr,option){
+    var temp_img
+    if (option.region) {
+        temp_img = images.clip(img,option.region.x,option.region.y,option.region.width,option.region.height)
+        for (let  img_height= 0; img_height < temp_img.getHeight()-165; img_height+=5) {
+            for (let img_width = 0; img_width < temp_img.getWidth()-165; img_width+=5) {
+                if (colors.equals(temp_img.pixel(img_width,img_height), first)) {
+                    var flag=true
+                    for (let index = 0; index < arr.length; index++) {
+                        if ( ! colors.equals(temp_img.pixel(img_width+arr[index][0],img_height+arr[index][1]),arr[index][2])) {
+                            flag=false
+                        } 
+                    }
+                    if (flag) {
+                        return {x:img_width+option.region.x,y:img_height+option.region.y}
+                    }
+                }
+            }
+        }    
+    }
+}
+
+function checknumber() {
+    var  ime = captureScreen();
+    ime=images.cvtColor(ime,"BGR2GRAY",3)
+    ff = images.threshold(ime,110,255,"BINARY")
+    
+    var dd= findMultiColorss(ff,"#000000",_G_arr0,{region:{x:820,y:550,width:550,height:650}})
+    randomSwipe(300,1400,dd.x+85,1400)
+    var err=text("请控制拼图块对齐缺口").findOne(3000)
+    if (err) {
+        
+        var dd = idContains("reload").depth(24).findOne(1000)
+        if (dd) {
+            log("刷新滑块验证")
+            dd.click()
+            sleep(time_delay)
+            _G_计数器.huakuaijishu = 0
+            
+        }
+    }
+    return 
 }
 
 function 读取地址(params) {
