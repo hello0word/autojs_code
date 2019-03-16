@@ -84,7 +84,7 @@ function names(params) {
 }
 // test()
 // 截图比对()
-输出所有信息()
+// 输出所有信息()
 // names()
 function 截图比对(params) {
     var img = captureScreen();
@@ -124,7 +124,7 @@ function  输出所有信息(params) {
     log(ime_new.pixel(54,507))
 }
 // 裁剪()
-1135+54
+
 function 裁剪(params) {
     var jx=310
     var dt = images.read("/sdcard/temp/d.jpg")
@@ -134,3 +134,149 @@ function 裁剪(params) {
     var pj_img =images.concat(cli_dt,cli_gt,"BOTTOM")
     images.save(pj_img,"/sdcard/temp/pj.jpg")
 }
+
+function up(params) {
+    var url= "http://192.168.43.175:5000"
+        var res = http.postMultipart(url, {
+            file: open("/sdcard/temp.jpg")
+        });
+        log(res.body.string());
+}
+
+function 验证码破解(params) {
+    var  ime = captureScreen();
+    sleep(1000)
+    ime=images.cvtColor(ime,"BGR2GRAY",3)
+    ff = images.threshold(ime,110,255,"BINARY")
+    images.save(ff,"/sdcard/temp.jpg")
+    // var  ff= images.threshold(img,127,255,"BINARY")
+    var  arr0 = Array()
+    for (let x = 5; x < 160; x+=5) {
+            arr0.push([x,0+x,"#000000"])
+            arr0.push([x,160-x,"#000000"])
+    }
+    up()
+    var ee = images.findMultiColors(ff,"#000000",arr0,{
+        region: [820, 550, 550, 650],
+        threshold:0,
+    })
+    
+    if (ee) {
+        log(ee.x+85)
+        randomSwipe(320,1400,ee.x+85,1400)
+    }else{
+        log("匹配失败")
+    }
+    
+}
+
+验证码破解()
+
+
+
+function randomSwipe(sx, sy, ex, ey) {
+    //设置随机滑动时长范围
+    var timeMin = 1000
+    var timeMax = 3000
+    //设置控制点极限距离
+    var leaveHeightLength = 500
+
+    //根据偏差距离，应用不同的随机方式
+    if (Math.abs(ex - sx) > Math.abs(ey - sy)) {
+        var my = (sy + ey) / 2
+        var y2 = my + random(0, leaveHeightLength)
+        var y3 = my - random(0, leaveHeightLength)
+
+        var lx = (sx - ex) / 3
+        if (lx < 0) {
+            lx = -lx
+        }
+        var x2 = sx + lx / 2 + random(0, lx)
+        var x3 = sx + lx + lx / 2 + random(0, lx)
+    } else {
+        var mx = (sx + ex) / 2
+        var y2 = mx + random(0, leaveHeightLength)
+        var y3 = mx - random(0, leaveHeightLength)
+
+        var ly = (sy - ey) / 3
+        if (ly < 0) {
+            ly = -ly
+        }
+        var y2 = sy + ly / 2 + random(0, ly)
+        var y3 = sy + ly + ly / 2 + random(0, ly)
+    }
+
+    //获取运行轨迹，及参数
+    var time = [0, random(timeMin, timeMax)]
+    var track = bezierCreate(sx, sy, x2, y2, x3, y3, ex, ey)
+
+    log("随机控制点A坐标：" + x2 + "," + y2)
+    log("随机控制点B坐标：" + x3 + "," + y3)
+    log("随机滑动时长：" + time[1])
+
+    //滑动
+    gestures(time.concat(track))
+}
+
+function bezierCreate(x1,y1,x2,y2,x3,y3,x4,y4){
+    //构建参数
+    var h=100;
+    var cp=[{x:x1,y:y1+h},{x:x2,y:y2+h},{x:x3,y:y3+h},{x:x4,y:y4+h}];
+    var numberOfPoints = 100;
+    var curve = [];
+    var dt = 1.0 / (numberOfPoints - 1);
+    
+    //计算轨迹
+    for (var i = 0; i < numberOfPoints; i++){
+        var ax, bx, cx;
+        var ay, by, cy;
+        var tSquared, tCubed;
+        var result_x, result_y;
+    
+        cx = 3.0 * (cp[1].x - cp[0].x);
+        bx = 3.0 * (cp[2].x - cp[1].x) - cx;
+        ax = cp[3].x - cp[0].x - cx - bx;
+        cy = 3.0 * (cp[1].y - cp[0].y);
+        by = 3.0 * (cp[2].y - cp[1].y) - cy;
+        ay = cp[3].y - cp[0].y - cy - by;
+    
+        var t=dt*i
+        tSquared = t * t;
+        tCubed = tSquared * t;
+        result_x = (ax * tCubed) + (bx * tSquared) + (cx * t) + cp[0].x;
+        result_y = (ay * tCubed) + (by * tSquared) + (cy * t) + cp[0].y;
+        curve[i] = {
+            x: result_x,
+            y: result_y
+        };
+    }
+
+    //轨迹转路数组
+    var array=[];
+    for (var i = 0;i<curve.length; i++) {
+        try {
+            var j = (i < 100) ? i : (199 - i);
+            xx = parseInt(curve[j].x)
+            yy = parseInt(Math.abs(100 - curve[j].y))
+        } catch (e) {
+            break
+        }
+        array.push([xx, yy])
+    }
+    
+    return array
+}
+
+// 66 的参数   ret1,thresh1 = cv2.threshold(ime,115,255,cv2.THRESH_TOZERO)   找白色边缘是可行的
+
+//海房  cv2.threshold(ime,127,255,cv2.THRESH_BINARY)   找白色边缘线
+//黄沙   ret1,thresh1 = cv2.threshold(ime,127,255,cv2.THRESH_BINARY)  找黑色的交叉内容
+//企鹅   ret1,thresh1 = cv2.threshold(ime,127,255,cv2.THRESH_BINARY)  找黑色的交叉内容
+//青草   ret1,thresh1 = cv2.threshold(ime,110,255,cv2.THRESH_BINARY)  找黑色的交叉内容
+//青山   ret1,thresh1 = cv2.threshold(ime,95,255,cv2.THRESH_BINARY)   找黑色的交叉内容
+//热浪 ret1,thresh1 = cv2.threshold(ime,110,255,cv2.THRESH_BINARY_INV) 找黑色的交叉内容
+//树懒   ret1,thresh1 = cv2.threshold(ime,110,255,cv2.THRESH_BINARY_INV) 找黑色的交叉内容
+//松鼠   ret1,thresh1 = cv2.threshold(ime,110,255,cv2.THRESH_BINARY_INV) 找黑色的交叉内容
+//小猪 ret1,thresh1 = cv2.threshold(ime,127,255,cv2.THRESH_BINARY)
+
+

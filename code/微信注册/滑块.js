@@ -27,8 +27,8 @@ if (!requestScreenCapture()) {
     exit();
 }
 //启动
-// start()
-randomSwipe(300, 1400, 1190, 1400)
+start()
+// randomSwipe(300, 1400, 1190, 1400)
 
 /** 
  * 识别滑块位置

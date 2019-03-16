@@ -717,9 +717,15 @@ function 等待结果() {
                 lahei(phone_number.pid)
                 return
                 break;
+            case 6: //出现二维码
+                修改网络() //断开连接
+                log("不释放号码,继续注册")
+                
+                return
+                break;
 
             default:
-                break;
+                break ;
         }
         sleep(1000)
     }
@@ -800,7 +806,7 @@ function 全局检测循环() {
         }
         if (tag_4) {
             log("弹出到主页")
-            _G_计数器.注册结果标记 = 4
+            _G_计数器.注册结果标记 = 6
         }
         if (tag_5) {
             log("关闭页面")
