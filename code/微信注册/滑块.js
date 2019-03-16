@@ -18,7 +18,7 @@ var y = 1400//设置滑动按钮高度
  
  
  //显示控制台
-console.show()
+// console.show()
 console.setPosition(100, 1300)
 
 //请求权限
@@ -27,7 +27,8 @@ if (!requestScreenCapture()) {
     exit();
 }
 //启动
-start()
+// start()
+randomSwipe(300, 1400, 1190, 1400)
 
 /** 
  * 识别滑块位置
@@ -133,11 +134,12 @@ function start() {
             log('截图失败,重新截图');
         }
     }
-    var x = discernSlidingblock(imgBy1080,1080)
+    var x = discernSlidingblock(imgBy1080(),1080)
     console.info("识别结果滑块X坐标：" + x);
-
+    x = Math.ceil( 1440 / 1080 * x)
+    log(x)
     if (x > -1) {
-        randomSwipe(220, y, x-200, y)
+        randomSwipe(300, y, x, y)
         //滑动完成
     } else {
         console.log("识别有误，请确认是否在滑块界面");
@@ -200,9 +202,13 @@ function bezierCreate(x1,y1,x2,y2,x3,y3,x4,y4){
  * 效果：模拟真人滑动
  */
 function randomSwipe(sx,sy,ex,ey){
+    log(sx)
+    log(sy)
+    log(ex)
+    log(ey)
     //设置随机滑动时长范围
-    var timeMin=500
-    var timeMax=1500
+    var timeMin=1000
+    var timeMax=3000
     //设置控制点极限距离
     var leaveHeightLength=500
     
@@ -214,8 +220,8 @@ function randomSwipe(sx,sy,ex,ey){
     
         var lx=(sx-ex)/3
         if(lx<0){lx=-lx}
-        var x2=sx+lx/2+random(0,lx)
-        var x3=sx+lx+lx/2+random(0,lx)
+        var x2=Math.ceil( sx+lx/2+random(0,lx))
+        var x3=Math.ceil( sx+lx+lx/2+random(0,lx))
     }else{
         var mx=(sx+ex)/2
         var y2=mx+random(0,leaveHeightLength)

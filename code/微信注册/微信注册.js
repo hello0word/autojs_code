@@ -19,13 +19,13 @@ events.on("exit", function() {
 });
 
 
-var _G = {
+var _G_计数器 = {
     改机完成标记: false,
     改机可用标志: false,
     注册结果标记: false,
     当前号码信息: null,
-    jishiqi: 0,
-    zhucejishu: 0,
+    请稍后计时器: 0,
+    注册点击后等待状态: false,
     huakuaijishu: 0,
     载入数据计数: 0,
     检测线程:null,
@@ -121,9 +121,9 @@ threads.start(function() {
             case "com.igaiji.privacy":
                 switch (text) {
                     case "一键新机完成":
-                        _G.改机完成标记 = true
+                        _G_计数器.改机完成标记 = true
                         setTimeout(function() {
-                            _G.改机完成标记
+                            _G_计数器.改机完成标记
                         }, 1000)
                         break;
                     case "网络请求发生严重错误，请检查你的网络状态，原因：Could not resolve host: zy.igaiji.com":
@@ -132,7 +132,7 @@ threads.start(function() {
                         sleep(time_delay)
                         break;
                     case "该设备已经激活，继续使用改机服务":
-                        _G.改机可用标记 = true
+                        _G_计数器.改机可用标记 = true
                         break;
                     default:
                         break;
@@ -142,7 +142,7 @@ threads.start(function() {
             case "com.tencent.mm":
                 var wangluocuowu = new RegExp(/无法连接到服务器/)
                 if (wangluocuowu.test(text)) {
-                    _G.注册结果标记 = 4
+                    _G_计数器.注册结果标记 = 4
                 }
 
         }
@@ -412,14 +412,13 @@ function gaiji() {
 
         var yijian = text("一键新机").depth(11).exists()
         var denglu = text("登录").exists()
-        var denglu = text("登录").exists()
+        
         var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
         if (yijian) {
             log("发现一键改机")
             sleep(time_delay)
             var xinji=text("一键新机").findOne(1000)
-            xinji ? xinji.parent().click() : null
-            xinji ? sleep(time_delay) : null
+            xinji ? xinji.parent().click() : null    
         }else if (请输入手机号) {
                 
                 log("将点击确定")
@@ -427,12 +426,11 @@ function gaiji() {
                 quedin ? quedin.click() :null
                 sleep(time_delay)
                 for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
-                    if (!_G.改机完成标记) {
+                    if (!_G_计数器.改机完成标记) {
                         log("等待改机完成,"+(10-chaoshi)*2+"秒后重试")
                         sleep(2000)
                     } else {
                         log("改机完成")
-                        
                         home()
                         log("退出改机软件")
                         return
@@ -483,7 +481,7 @@ function get_yanzhengma(pid) {
                     switch (res_to_arr[1]) {
                         case "-4":
                             log("号码释放")
-                            _G.注册结果标记 = 3 //直接通知结果  重来
+                            _G_计数器.注册结果标记 = 3 //直接通知结果  重来
                             break;
 
                         default:
@@ -501,7 +499,7 @@ function get_yanzhengma(pid) {
     }
     log("三次都无法获取，脚本停止")
     log("号码释放")
-    _G.注册结果标记 = 3 //直接通知结果  重来
+    _G_计数器.注册结果标记 = 3 //直接通知结果  重来
 }
 
 function 上传信息(info) {
@@ -540,9 +538,9 @@ function main() {
     初始化数据()
     获取token()
     while (true) {
-        _G.改机完成标记 = false
-        _G.改机可用标记 = false
-        _G.当前号码信息 = null
+        _G_计数器.改机完成标记 = false
+        _G_计数器.改机可用标记 = false
+        _G_计数器.当前号码信息 = null
         gaiji()
         // 改机_启动微信()
 
@@ -564,15 +562,15 @@ function main() {
 
 
         tianxie_info(phone_number.国家代码, phone_number.手机号, password_ss)
-        _G.注册结果标记 = false //重置标记
-        _G.huakuaijishu = 0
-        _G.载入数据计数 = 0
-        _G.当前号码信息 = phone_number
+        _G_计数器.注册结果标记 = false //重置标记
+        _G_计数器.huakuaijishu = 0
+        _G_计数器.载入数据计数 = 0
+        _G_计数器.当前号码信息 = phone_number
         storage.put("当前号码信息", phone_number)
-        _G.检测线程 = threads.start(全局检测循环)
+        _G_计数器.检测线程 = threads.start(全局检测循环)
         等待结果()
         try {
-            _G.检测线程.interrupt()
+            _G_计数器.检测线程.interrupt()
         } catch (error) {
             
         }
@@ -679,11 +677,11 @@ function vpn(gn) {
 
 function 等待结果() {
     while (true) {
-        phone_number = _G.当前号码信息
-        if (_G.注册结果标记) {
-            _G.检测线程.interrupt()
+        phone_number = _G_计数器.当前号码信息
+        if (_G_计数器.注册结果标记) {
+            _G_计数器.检测线程.interrupt()
         }
-        switch (_G.注册结果标记) {
+        switch (_G_计数器.注册结果标记) {
 
             case 1: //环境异常  // 重新开始 /0是死的
                 修改网络() //断开连接	
@@ -729,7 +727,7 @@ function 等待结果() {
 
 function 全局检测循环() {
     var timeout = 20
-    _G.当前号码信息 = storage.get("当前号码信息")
+    _G_计数器.当前号码信息 = storage.get("当前号码信息")
     while (true) {
 
         var tag_1 = text("请稍候...").className("android.widget.TextView").depth(5).findOne(timeout) //主页注册  背景为月亮那个 click
@@ -762,13 +760,13 @@ function 全局检测循环() {
         var tag_24 = text("确定").className(my_className_lsit.button).findOne(timeout)
         if (tag_1) {
             log("请稍候")
-            _G.jishiqi += 1
+            _G_计数器.请稍后计时器 += 1
             sleep(2000)
-            if (_G.jishiqi > 90) {
-                _G.jishiqi = 0
+            if (_G_计数器.请稍后计时器 > 20) {
+                _G_计数器.请稍后计时器 = 0
                 log("已经卡死，重新开始，计时器归零")
 
-                _G.注册结果标记 = 4
+                _G_计数器.注册结果标记 = 4
                 continue
             }
         }
@@ -802,7 +800,7 @@ function 全局检测循环() {
         }
         if (tag_4) {
             log("弹出到主页")
-            _G.注册结果标记 = 4
+            _G_计数器.注册结果标记 = 4
         }
         if (tag_5) {
             log("关闭页面")
@@ -824,28 +822,28 @@ function 全局检测循环() {
             var img = captureScreen();
             images.save(img, "/sdcard/temp.jpg", "jpg", 100);
             log("文件保存完成")
-            _G.注册结果标记 = 5
+            _G_计数器.注册结果标记 = 5
             sleep(5000)
             continue
         }
 
         if (tag_8) {
-            sleep(time_delay)
+            
             tag_8.click()
             sleep(time_delay)
-            if (_G.zhucejishu > 2) {
-                log("注册卡死，重来")
-                continue
-            }
+            
             for (let index = 0; index < 10; index++) {
                 toastLog("点了注册,等待响应")
-                sleep(4000)
+                sleep(2000)
                 if (!text(current_语言.注册).className("android.widget.Button").depth(12).exists()) {
+                    _G_计数器.注册点击后等待状态=true
                     break;
 
                 }
             }
-
+            if (!_G_计数器.注册点击后等待状态) {
+                _G_计数器.注册结果标记=4
+            }
         }
         if (tag_9) {
             log("不是我的")
@@ -868,17 +866,17 @@ function 全局检测循环() {
         tag_13 ? tag_13 : null
         if (tag_14) {
             log("环境异常:14")
-            _G.注册结果标记 = 1
+            _G_计数器.注册结果标记 = 1
         }
 
         if (tag_15) {
             log("环境异常:15")
-            _G.注册结果标记 = 1
+            _G_计数器.注册结果标记 = 1
         }
 
         if (tag_22) {
             log("需要重新登录")
-            _G.注册结果标记 = 1
+            _G_计数器.注册结果标记 = 1
         }
 
 
@@ -895,13 +893,13 @@ function 全局检测循环() {
             dd ? dd.parent().click() : null
             sleep(time_delay)
         }
-        tag_18 ? _G.注册结果标记 = 2 : null
+        tag_18 ? _G_计数器.注册结果标记 = 2 : null
 
         if (tag_20) {
-            _G.载入数据计数 += 1
+            _G_计数器.载入数据计数 += 1
             log("载入数据")
-            if (_G.载入数据计数 > 10) {
-                _G.注册结果标记 = 1
+            if (_G_计数器.载入数据计数 > 10) {
+                _G_计数器.注册结果标记 = 1
                 log("载入数据卡死")
             }
         }
@@ -910,11 +908,11 @@ function 全局检测循环() {
             let dd=desc("返回").findOne(1000)
             dd ? dd.parent().click() :null
             sleep(time_delay)
-            _G.注册结果标记 = 4
+            _G_计数器.注册结果标记 = 4
         }
         if (tag_23) {
             log("网络错误")
-            _G.注册结果标记 = 4
+            _G_计数器.注册结果标记 = 4
         }
         tag_24 ? tag_24.click() : null
     }
@@ -923,7 +921,7 @@ function 全局检测循环() {
 
 
 function 释放号码() {
-    pid = _G.当前号码信息.pid
+    pid = _G_计数器.当前号码信息.pid
     var token = get_token()
     for (let index = 0; index < 3; index++) {
         toastLog("即将释放号码")
@@ -941,7 +939,7 @@ function 释放号码() {
 }
 
 function 填写验证码() {
-    var 验证码 = get_yanzhengma(_G.当前号码信息.pid)
+    var 验证码 = get_yanzhengma(_G_计数器.当前号码信息.pid)
 
     log("输入验证码")
     var yanzheng = textContains("请输入验证码").findOne(1000)
@@ -1131,15 +1129,15 @@ function discernSlidingblock(img, ratio) {
 }
 
 function huakuai_start() {
-    _G.huakuaijishu += 1
-    if (_G.huakuaijishu > 5) {
+    _G_计数器.huakuaijishu += 1
+    if (_G_计数器.huakuaijishu > 5) {
         var ff = text("拖动下方滑块完成拼图").findOne(1000)
         if (ff) {
             var dd = idContains("reload").depth(24).findOne(1000)
             if (dd) {
                 dd.click()
                 sleep(time_delay)
-                _G.huakuaijishu = 0
+                _G_计数器.huakuaijishu = 0
                 log("刷新滑块验证")
             }
 
