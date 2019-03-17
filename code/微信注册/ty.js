@@ -275,6 +275,7 @@ function 全局检测循环() {
         var tag_23 = textContains("网络错误，请稍后再试").findOne(timeout)
         var tag_24 = text("确定").className(my_className_lsit.button).findOne(timeout)
         var tag_25 = textContains("加载中").findOne(timeout)
+        var tag_26 = textContains("操作太频繁").findOne(timeout)
         // try {
         //     if (auto.root.contentDescription.match(/当前所在页面/)  && ! _G_状态记录器.协议点击记录器) {
         //         _G_状态记录器.协议点击记录器= xieyi()
@@ -455,6 +456,10 @@ function 全局检测循环() {
             if (_G_状态记录器.加载中计数器> 20) {
                 _G_状态记录器.注册结果标记=4
             }
+        }
+        if (tag_26) {
+            log("操作太频繁")
+            _G_状态记录器.注册结果标记 = 5
         }
     }
     log("全局轮询结束")
@@ -643,9 +648,9 @@ function 等待结果() {
             case 5: //出现二维码
                 log("状态为5")
                 修改网络() //断开连接
-                log("微信状态异常")
+                log("拉黑号码")
                 // lahei(phone_number.pid)
-                return {status:5,info:"出现二维码"}
+                return {status:5,info:"拉黑号码"}
                 break;
             case 6: //
                 修改网络() //断开连接
@@ -665,11 +670,13 @@ function 填写验证码() {
     var 验证码 = _G_取号平台.取验证码()
 
     log("输入验证码")
-    var yanzheng = textContains("请输入验证码").findOne(1000)
+    // var yanzheng = textContains("请输入验证码").findOne(3000)
+    var yanzheng = className(my_className_lsit.edit).findOne(3000)
     yanzheng ? yanzheng.setText(验证码) : log("没有验证码框")
     var xiyibu = text("下一步").className(my_className_lsit.button).depth(12).findOne(1000)
 
     if (xiyibu) {
+        log("点了下一步")
         xiyibu.click()
         sleep(2000)
     } else {
@@ -679,7 +686,7 @@ function 填写验证码() {
 
 function 添加指定微信发送(params) {
     
-    var dd=desc("更多功能按钮").findOne(3000)
+    var dd=desc("更多功能按钮").findOne(6000)
     if (dd) {
         log("找到更多功能按钮")
         dd.click()
@@ -1108,20 +1115,32 @@ function checknumber() {
     ff = images.threshold(ime,110,255,"BINARY")
     
     var dd= findMultiColorss(ff,"#000000",_G_arr0,{region:{x:820,y:550,width:550,height:650}})
-    randomSwipe(300,1400,dd.x+85,1400)
+    if (dd) {
+        randomSwipe(300,1400,dd.x+85,1400)
+
+    }else{
+        刷新滑块()
+        return 
+    }
+    
     var err=text("请控制拼图块对齐缺口").findOne(3000)
     if (err) {
         
-        var dd = idContains("reload").depth(24).findOne(1000)
-        if (dd) {
-            log("刷新滑块验证")
-            dd.click()
-            sleep(time_delay)
-            _G_状态记录器.huakuaijishu = 0
-            
-        }
+        刷新滑块()
+        return 
     }
-    return 
+    
+}
+
+function 刷新滑块(params) {
+    var dd = idContains("reload").depth(24).findOne(1000)
+    if (dd) {
+        log("刷新滑块验证")
+        dd.click()
+        sleep(time_delay)
+        _G_状态记录器.huakuaijishu = 0
+        
+    }
 }
 
 function 读取地址(params) {
