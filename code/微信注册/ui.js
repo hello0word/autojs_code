@@ -29,23 +29,23 @@ ui.layout(
                     </radiogroup>
                     </linear>
                     <linear>
-                        <text w="130" gravity="center" color="#111111" size="16">菜鸟api账号</text>
+                        <text w="auto" gravity="center" color="#111111" size="16">菜鸟api账号</text>
                         <input id="菜鸟api账号" w="*" h="40"/>
                     </linear>
                     <linear>
-                        <text w="130" gravity="center" color="#111111" size="16">菜鸟api密码</text>
+                        <text w="auto" gravity="center" color="#111111" size="16">菜鸟api密码</text>
                         <input id="菜鸟api密码" w="*" h="40"/>
                     </linear>
                     <linear>
-                        <text w="130" gravity="center" color="#111111" size="16">国家码</text>
+                        <text w="80" gravity="center" color="#111111" size="16">国家码</text>
                         <input id="国家码" w="*" h="40"/>
                     </linear>
                     <linear>
-                        <text w="130" gravity="center" color="#111111" size="16">项目id</text>
+                        <text w="80" gravity="center" color="#111111" size="16">项目id</text>
                         <input id="项目id" w="*" h="40"/>
                     </linear>
                     <linear>
-                        <text w="130" gravity="center" color="#111111" size="16">好友微信号</text>
+                        <text w="80" gravity="center" color="#111111" size="16">好友微信号</text>
                         <input id="好友微信号" w="*" h="40"/>
                     </linear>
                     <linear gravity="center">
@@ -55,7 +55,7 @@ ui.layout(
                     </vertical>
                 </frame>
                 <frame>
-                    <text text="使用指南" textColor="red" textSize="16sp"/>
+                    <text text="使用指南:国家码填写  比如中国的,填写  86      尼泊尔的就填    977      " textColor="red" textSize="16sp"/>
                 </frame>
                 
             </viewpager>
@@ -67,8 +67,29 @@ ui.layout(
 
 //创建选项菜单(右上角)
 ui.emitter.on("create_options_menu", menu=>{
+    menu.add("关闭所有");
+    menu.add("日志");
     menu.add("设置");
     menu.add("关于");
+});
+ui.emitter.on("options_item_selected", (e, item)=>{
+    switch(item.getTitle()){
+        case "关闭所有":
+        engines.stopAllAndToast()
+        ui.finish();
+            //toast("还没有设置");
+            break;
+        case "日志":
+            app.startActivity("console");
+            break;
+        case "设置":
+            app.startActivity("settings");
+            break;
+        case "关于":
+            alert("关于", "vx自动 v1.0.0");
+            break;
+    }
+    e.consumed = true;
 });
 
 activity.setSupportActionBar(ui.toolbar);
@@ -92,8 +113,8 @@ function selectedIndex(rg){
 }
 var 时间标记=null
 var storage = storages.create("微信")
-ui.国家码.setText(String(storage.get("guojiama","")))
-// log(String(storage.get("guojiama","")))
+ui.国家码.setText(String(storage.get("国家号","")))
+
 ui.项目id.setText(String(storage.get("项目id","")))
 ui.菜鸟api账号.setText(String(storage.get("菜鸟api账号","")))
 ui.菜鸟api密码.setText(String(storage.get("菜鸟api密码","")))
@@ -117,7 +138,7 @@ ui.start.on("click",()=>{
         log("国家码:"+guojia)
         storage.put("网络切换方式",net_mode)
         storage.put("型号",xinhao)
-        storage.put("国家码",guojia)
+        storage.put("国家号",guojia)
         storage.put("菜鸟api账号",菜鸟api账号)
         storage.put("菜鸟api密码",菜鸟api密码)
         storage.put("好友微信号",好友微信号)

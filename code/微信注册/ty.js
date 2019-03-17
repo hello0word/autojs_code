@@ -239,7 +239,7 @@ function 启动微信() {
 
 function 全局检测循环() {
     var timeout = 20
-    _G_状态记录器.当前号码信息 = storage.get("当前号码信息")
+    // _G_状态记录器.当前号码信息 = storage.get("当前号码信息")
     while (true) {
 
         var tag_1 = text("请稍候...").className("android.widget.TextView").depth(5).findOne(timeout) //主页注册  背景为月亮那个 click
@@ -272,7 +272,7 @@ function 全局检测循环() {
         var tag_24 = text("确定").className(my_className_lsit.button).findOne(timeout)
         var tag_25 = textContains("加载中").findOne(timeout)
         try {
-            if (auto.root.contentDescription == "当前所在页面,微信隐私保护指引" && ! _G_状态记录器.协议点击记录器) {
+            if (auto.root.contentDescription.match(/当前所在页面/)  && ! _G_状态记录器.协议点击记录器) {
                 _G_状态记录器.协议点击记录器= xieyi()
                 log("协议记录器:"+_G_状态记录器.协议点击记录器)
             }
@@ -497,6 +497,7 @@ function xieyi() {//该函数确保只调用一遍
 
 function 修改网络(gn) {
     var 网络模式=_G_配置记录器.网络切换方式
+    log("网络切换方式为:"+网络模式+",本次标记为:"+gn)
     sleep(1000)
     if (网络模式=="1") {//vpn模式
         log("网络模式为:vpn模式")
@@ -511,7 +512,8 @@ function 修改网络(gn) {
 
 
 
-function 开关飞行(params) {
+function 开关飞行() {
+    log("将发送意图开启飞行模式")
     var intent=new Intent()
     intent.setAction("android.settings.NFC_SETTINGS")
     app.startActivity(intent);

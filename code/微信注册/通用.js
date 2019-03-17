@@ -66,12 +66,13 @@ function 初始化配置() {
     this.取号平台账号=storage.get("菜鸟api账号","")
     this.取号平台密码=storage.get("菜鸟api密码","")
     this.项目编号      =storage.get("项目id","")
-    this.型号= storage.get("型号",1)
-    this.国家码=storage.get("国家码",86)
-    this.网络切换方式 = storage.get("网络切换方式","1")//
+    this.型号= storage.get("型号")
+    this.国家码=storage.get("国家号")
+    log("配置读取:国家码:"+this.国家码)
+    this.网络切换方式 = storage.get("网络切换方式","")//
     this.发送至好友=storage.get("好友微信号","")
     this.注册完处理信息方式 = storage.get("","")
-    if (国家码=="40") {
+    if (this.国家码=="40") {
         // this.
     } else {
         
