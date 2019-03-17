@@ -19,6 +19,24 @@ var my_className_lsit = {
     edit: "android.widget.EditText",
 }
 
+var 状态记录器 = function(){
+    this.改机完成标记= null
+    this.改机可用标志= null
+    this.注册结果标记= null
+    this.当前号码信息= null
+    this.请稍后计时器= null
+    this.注册点击后等待状态= null
+    this.滑块计数器=null
+    this.载入数据计数= null
+    this.检测线程=null
+    this.协议点击记录器=null
+    this.加载中计数器=null
+}
+状态记录器.初始化=function () {
+    return new 状态记录器()
+}
+
+
 const YUYAN = {
     中文: {
         登陆: "登陆",
@@ -227,7 +245,7 @@ function 全局检测循环() {
         var tag_1 = text("请稍候...").className("android.widget.TextView").depth(5).findOne(timeout) //主页注册  背景为月亮那个 click
         var tag_2 = clickable(true).text(current_语言.开始).depth(17).findOne(timeout) //click //安全验证的开始按钮
 
-        var tag_3 = className("android.widget.CheckBox").depth(19).clickable(true).checked(false).findOne(timeout) //协议勾选框
+        // var tag_3 = className("android.widget.CheckBox").depth(19).clickable(true).checked(false).findOne(timeout) //协议勾选框
 
 
         var tag_4 = text("语言").depth(7).findOne(timeout) //下一步 p.click
@@ -252,6 +270,15 @@ function 全局检测循环() {
         var tag_22 = text("用短信验证码登录").findOne(timeout)
         var tag_23 = textContains("网络错误，请稍后再试").findOne(timeout)
         var tag_24 = text("确定").className(my_className_lsit.button).findOne(timeout)
+        var tag_25 = textContains("加载中").findOne(timeout)
+        try {
+            if (auto.root.contentDescription == "当前所在页面,微信隐私保护指引" && ! _G_状态记录器.协议点击记录器) {
+                _G_状态记录器.协议点击记录器= xieyi()
+                log("协议记录器:"+_G_状态记录器.协议点击记录器)
+            }
+        } catch (error) {
+            
+        }
         if (tag_1) {
             log("请稍候")
             _G_状态记录器.请稍后计时器 += 1
@@ -270,32 +297,32 @@ function 全局检测循环() {
             tag_2.click()
             sleep(time_delay)
         }
-        if (tag_3) {
-            log("点击协议")
-            // sleep(time_delay)
-            tag_3.click()
-            // sleep(time_delay * 2)
-            tag_3 = className("android.widget.CheckBox").depth(19).clickable(true).checked(true).findOne(time_delay *3 )
+        // if (tag_3) {
+        //     log("点击协议")
+        //     // sleep(time_delay)
+        //     tag_3.click()
+        //     // sleep(time_delay * 2)
+        //     tag_3 = className("android.widget.CheckBox").depth(19).clickable(true).checked(true).findOne(time_delay *3 )
 
-            if (tag_3) {
-                // sleep(time_delay)
-                tag_3.checked()
-                log("同意协议")
-                sleep(time_delay )
-                dd = text("下一步").findOne(time_delay * 3)
-                if (dd) {
+        //     if (tag_3) {
+        //         // sleep(time_delay)
+        //         tag_3.checked()
+        //         log("同意协议")
+        //         sleep(time_delay )
+        //         dd = text("下一步").findOne(time_delay * 3)
+        //         if (dd) {
                     
-                    dd.parent().click()
-                    log("下一步已点击")
-                    sleep(time_delay)
-                }else{
-                    log("同意协议后,下一步找不到")
-                }
-            }else{
-                log("点击协议无响应")
-            }
-            continue
-        }
+        //             dd.parent().click()
+        //             log("下一步已点击")
+        //             sleep(time_delay)
+        //         }else{
+        //             log("同意协议后,下一步找不到")
+        //         }
+        //     }else{
+        //         log("点击协议无响应")
+        //     }
+        //     continue
+        // }
         if (tag_4) {
             log("弹出到主页")
             _G_状态记录器.注册结果标记 = 6
@@ -416,20 +443,73 @@ function 全局检测循环() {
             _G_状态记录器.注册结果标记 = 4
         }
         tag_24 ? tag_24.click() : null
+        if (tag_25) {
+            sleep(time_delay)
+            _G_状态记录器.加载中计数器+=1
+            if (_G_状态记录器.加载中计数器> 20) {
+                _G_状态记录器.注册结果标记=4
+            }
+        }
     }
     log("全局轮询结束")
 }
+
+function xieyi() {//该函数确保只调用一遍
+ 
+    for (let 勾选协议计数 = 0; 勾选协议计数 < 120; 勾选协议计数++) {
+        try {
+            sleep(1000)//等待协议可勾选 
+            log("尝试选择")
+            if (!auto.root.child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(1).child(0).checked()) {//if没被勾选,需要操作一遍
+                auto.root.child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(1).child(0).click()
+                log("选择完成")
+                for (let 点击下一步计数  = 0; 点击下一步计数  < 30; 点击下一步计数 ++) {
+                    try {
+                        sleep(1000)
+                        if (auto.root.child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(1).child(0).checked()) {
+                            sleep(2000)
+                            log("尝试点击")
+                            auto.root.child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(1).child(0).child(0).child(0).child(0).child(0).child(0).child(0).child(1).child(1).click()
+                            log("点击完成")
+                            return true
+                        }
+                    } catch (error) {
+                        
+                    }
+                    
+                }
+                return false //30秒循环完,依然无法点击下一步
+            }else{
+                log("已被勾选")
+                return true//
+            }
+            
+            
+        } catch (error) {
+            
+        }
+        return false//120秒依然无法找到协议按钮
+    }
+    return false//120秒依然无法找到协议按钮
+        
+
+}
+
 function 修改网络(gn) {
     var 网络模式=_G_配置记录器.网络切换方式
+    sleep(1000)
     if (网络模式=="1") {//vpn模式
-        log("vpn模式")
+        log("网络模式为:vpn模式")
+        
         vpn(gn)
     }else if(网络模式=="0" && gn){//开关飞行模式
-        log("开关飞行模式")
+        log("网络模式为:开关飞行模式")
         开关飞行()
     }else{
         log("错误")}
 }
+
+
 
 function 开关飞行(params) {
     var intent=new Intent()
@@ -462,6 +542,7 @@ function vpn(gn) {
     var intent = new Intent();
     intent.setAction("android.settings.VPN_SETTINGS"); //VPN设置
     app.startActivity(intent);
+    log("意图发送完成")
     var sz = desc("设置").id("settings_button").depth(15).findOne()
     sleep(1000)
     var ylj = text("已连接").depth(14).findOne(50)
@@ -514,6 +595,7 @@ function vpn(gn) {
 
 
 function 等待结果() {
+    log("等待结果开始")
     while (true) {
         phone_number = _G_状态记录器.当前号码信息
         if (_G_状态记录器.注册结果标记) {
@@ -551,6 +633,7 @@ function 等待结果() {
                 return {status:4,info:"微信状态异常"}
                 break;
             case 5: //出现二维码
+                log("状态为5")
                 修改网络() //断开连接
                 log("微信状态异常")
                 // lahei(phone_number.pid)
@@ -645,6 +728,7 @@ function 发送信息() {
             var fasong = text("发送").className(my_className_lsit.button).findOne(3000)
             if (fasong) {
                 fasong.click()
+                log("发送完成")
             }
         }
     }
@@ -1104,5 +1188,5 @@ ty.tianxie_info=tianxie_info
 
 ty.get_password =get_password
 ty.gaiji =gaiji
-
+ty.状态记录器 =状态记录器
 module.exports = ty

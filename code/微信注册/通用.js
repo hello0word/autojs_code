@@ -1,13 +1,4 @@
 auto.waitFor()
-var ty= require("/sdcard/脚本/ty.js")
-if (!requestScreenCapture()) {
-    toastLog("请求截图失败");
-    exit();
-}
-var storage = storages.create("微信")
-const time_delay = 2000
-var y = 1058 //设置滑动按钮高度
-
 
 
 
@@ -19,18 +10,42 @@ events.on("exit", function() {
 console.setGlobalLogConfig({
     "file": "/sdcard/微信.txt"
 });
-
-var _G_状态记录器 = {
-    改机完成标记: false,
-    改机可用标志: false,
-    注册结果标记: false,
-    当前号码信息: null,
-    请稍后计时器: 0,
-    注册点击后等待状态: false,
-    滑块计数器: 0,
-    载入数据计数: 0,
-    检测线程:null,
+// var ty= require("/sdcard/脚本/ty.js")
+try {
+    var url = "https://gitee.com/api/v5/gists/yg1b2rm6keoxawq9f8lnp95?access_token=944c75cee7a5194eac5dd15635b8952e"
+    var res = http.get(url);
+    if(res.statusCode == 200){
+        toastLog("从网络加载ty成功");
+        var ss=res.body.json().files
+        // var eng=engines.execScript("微信注册",ss[Object.keys(ss)[0]].content);
+        files.write(files.cwd()+"/ty.js",ss[Object.keys(ss)[0]].content)
+    }else{
+        toastLog("从网络加载ty失败:" + res.statusMessage);
+        exit()
+    }
+} catch (error) {
+    
 }
+
+
+
+var ty = require("./ty")
+// log(ty)
+files.remove(files.cwd()+"/ty.js")
+if (!requestScreenCapture()) {
+    toastLog("请求截图失败");
+    exit();
+}
+var storage = storages.create("微信")
+const time_delay = 2000
+var y = 1058 //设置滑动按钮高度
+
+
+
+
+
+
+var _G_状态记录器 = null;//这个在开始的时候初始化
 
 var _G_用户信息={
 
@@ -43,19 +58,24 @@ var _G_配置记录器=  new 初始化配置();
 
 
 
-var _G_取号平台 =new 菜鸟平台("api_yuzhongxin8_mmdx","zz2222..","1001")
+// var _G_取号平台 =new 菜鸟平台("api_yuzhongxin8_mmdx","zz2222..","1001")
+var _G_取号平台 =new 菜鸟平台(_G_配置记录器.取号平台账号,_G_配置记录器.取号平台密码,_G_配置记录器.项目编号)
 
 function 初始化配置() {
     
-    this.取号平台账号=storage.get("取号平台账号","")
-    this.取号平台密码=storage.get("取号平台密码","")
-    this.项目编号      =storage.get("项目编号","")
+    this.取号平台账号=storage.get("菜鸟api账号","")
+    this.取号平台密码=storage.get("菜鸟api密码","")
+    this.项目编号      =storage.get("项目id","")
     this.型号= storage.get("型号",1)
     this.国家码=storage.get("国家码",86)
-    this.网络切换方式 = storage.get("网络切换方式","1")
-    this.发送至好友=storage.get("发送至好友","qaxnc332")
+    this.网络切换方式 = storage.get("网络切换方式","1")//
+    this.发送至好友=storage.get("好友微信号","")
     this.注册完处理信息方式 = storage.get("","")
-    
+    if (国家码=="40") {
+        // this.
+    } else {
+        
+    }
     
 }
 
@@ -266,15 +286,7 @@ threads.start(function() {
 
 
 
-function 转换对象到字符串(obj) {
-    var ff = JSON.stringify(obj)
-    ff = ff.replace(/\{/g, "")
-    ff = ff.replace(/\}/g, "")
-    ff = ff.replace(/\"/g, "")
-    ff = ff.replace(/\:/g, "=")
-    ff = ff.replace(/\,/g, "|")
-    return ff
-}
+
 
 
 function 菜鸟平台(用户名,密码,项目id) {
@@ -438,9 +450,8 @@ function main() {
     _G_取号平台.登录()
     
     while (true) {
-        _G_状态记录器.改机完成标记 = false
-        _G_状态记录器.改机可用标记 = false
-        _G_状态记录器.当前号码信息 = null
+        _G_状态记录器= ty.状态记录器.初始化()
+        
         ty.gaiji()
         // 改机_启动微信()
         _G_取号平台.取号()
@@ -449,7 +460,7 @@ function main() {
         
         _G_取号平台.password = ty.get_password()
         log(_G_取号平台.password) //
-        // ty.修改网络(true) //连接vpn
+        ty.修改网络(true) //连接vpn
         if (!ty.启动微信()) {
             log("微信启动失败")
             continue
@@ -460,15 +471,48 @@ function main() {
         }
 
         ty.select_guojia(_G_配置记录器.国家码)
+        log("填写信息")
         ty.tianxie_info( _G_取号平台.手机号, _G_取号平台.password)
-        _G_状态记录器.注册结果标记 = false //重置标记
-        _G_状态记录器.滑块计数器 = 0
-        _G_状态记录器.载入数据计数 = 0
+        // _G_状态记录器.注册结果标记 = false //重置标记
+        // _G_状态记录器.滑块计数器 = 0
+        // _G_状态记录器.载入数据计数 = 0
         _G_状态记录器.当前号码信息 = _G_取号平台
         storage.put("当前号码信息", _G_取号平台)
-        _G_状态记录器.检测线程 = threads.start(ty.全局检测循环)
-        ty.等待结果()
+        _G_状态记录器.检测线程 = threads.start(ty.全局检测循环)//这里需要使用记录器
+        var 结果= ty.等待结果()//这里需要使用记录器
         _G_状态记录器.检测线程.interrupt()
+        switch (结果.status) {
+            case 1:
+                log("结果为1")
+                break
+            case 2:
+                log("结果为2")    
+                ty.添加指定微信发送()
+                break;
+            case 3:
+                
+            log("结果为3")
+            _G_取号平台.释放手机号()
+                break
+            case 4:
+            log("结果为4")
+            _G_取号平台.释放手机号()    
+            
+                break
+            case 5:
+            log("结果为5")    
+            _G_取号平台.释放手机号()    
+                
+                break
+                case 6:
+            log("结果为6")    
+            // _G_取号平台.释放手机号()    
+                
+                break
+            default:
+                break;
+        }
+        
     }
 }
 
@@ -497,9 +541,9 @@ function test() {
     //  main()
     // get_phone_number()
 //    huakuai_start()
-ty.全局检测循环()
+// ty.全局检测循环()
 
 }
 
-test()
-// main()
+// test()
+main()
