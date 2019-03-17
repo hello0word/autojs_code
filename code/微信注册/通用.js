@@ -459,6 +459,9 @@ function main() {
         var phone_number = _G_取号平台.手机号
         log(phone_number)
         
+        if (_G_配置记录器.国家码=="380") {
+            _G_取号平台.手机号=_G_取号平台.手机号.substr(3)
+        }
         _G_取号平台.password = ty.get_password()
         log(_G_取号平台.password) //
         ty.修改网络(true) //连接vpn

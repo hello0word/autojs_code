@@ -144,6 +144,10 @@ function select_guojia(g_j_num) {
                 
             }
             
+        }else{
+            log("找滑动")
+            var li=className(my_className_lsit.list).findOne(1000)
+            li.scrollDown()
         }
         
     } while (true);
@@ -245,7 +249,7 @@ function 全局检测循环() {
         var tag_1 = text("请稍候...").className("android.widget.TextView").depth(5).findOne(timeout) //主页注册  背景为月亮那个 click
         var tag_2 = clickable(true).text(current_语言.开始).depth(17).findOne(timeout) //click //安全验证的开始按钮
 
-        // var tag_3 = className("android.widget.CheckBox").depth(19).clickable(true).checked(false).findOne(timeout) //协议勾选框
+        var tag_3 = className("android.widget.CheckBox").clickable(true).checked(false).findOne(timeout) //协议勾选框
 
 
         var tag_4 = text("语言").depth(7).findOne(timeout) //下一步 p.click
@@ -271,14 +275,14 @@ function 全局检测循环() {
         var tag_23 = textContains("网络错误，请稍后再试").findOne(timeout)
         var tag_24 = text("确定").className(my_className_lsit.button).findOne(timeout)
         var tag_25 = textContains("加载中").findOne(timeout)
-        try {
-            if (auto.root.contentDescription.match(/当前所在页面/)  && ! _G_状态记录器.协议点击记录器) {
-                _G_状态记录器.协议点击记录器= xieyi()
-                log("协议记录器:"+_G_状态记录器.协议点击记录器)
-            }
-        } catch (error) {
+        // try {
+        //     if (auto.root.contentDescription.match(/当前所在页面/)  && ! _G_状态记录器.协议点击记录器) {
+        //         _G_状态记录器.协议点击记录器= xieyi()
+        //         log("协议记录器:"+_G_状态记录器.协议点击记录器)
+        //     }
+        // } catch (error) {
             
-        }
+        // }
         if (tag_1) {
             log("请稍候")
             _G_状态记录器.请稍后计时器 += 1
@@ -297,32 +301,34 @@ function 全局检测循环() {
             tag_2.click()
             sleep(time_delay)
         }
-        // if (tag_3) {
-        //     log("点击协议")
-        //     // sleep(time_delay)
-        //     tag_3.click()
-        //     // sleep(time_delay * 2)
-        //     tag_3 = className("android.widget.CheckBox").depth(19).clickable(true).checked(true).findOne(time_delay *3 )
+        if (tag_3) {
+            log("点击协议")
+            // sleep(time_delay)
+            tag_3.click()
+            // sleep(time_delay * 2)
+            tag_3 = className("android.widget.CheckBox").clickable(true).checked(true).findOne(time_delay *3 )
 
-        //     if (tag_3) {
-        //         // sleep(time_delay)
-        //         tag_3.checked()
-        //         log("同意协议")
-        //         sleep(time_delay )
-        //         dd = text("下一步").findOne(time_delay * 3)
-        //         if (dd) {
+            if (tag_3) {
+                // sleep(time_delay)
+                log("勾选框状态:"+ tag_3.checked())
+                log("同意协议")
+                sleep(3000)
+                press(1100 / 1440 * device.width ,2400 /2560 * device.height,100)
+                // sleep(time_delay )
+                // dd = text("下一步").findOne(time_delay * 3)
+                // if (dd) {
                     
-        //             dd.parent().click()
-        //             log("下一步已点击")
-        //             sleep(time_delay)
-        //         }else{
-        //             log("同意协议后,下一步找不到")
-        //         }
-        //     }else{
-        //         log("点击协议无响应")
-        //     }
-        //     continue
-        // }
+                //     dd.parent().click()
+                //     log("下一步已点击")
+                //     sleep(time_delay)
+                // }else{
+                //     log("同意协议后,下一步找不到")
+                // }
+            }else{
+                log("点击协议无响应")
+            }
+            continue
+        }
         if (tag_4) {
             log("弹出到主页")
             _G_状态记录器.注册结果标记 = 6
