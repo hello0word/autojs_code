@@ -185,6 +185,10 @@ function 菜鸟平台(用户名,密码,项目id) {
     }
     this.取验证码=function () {
         try {
+            _G_状态记录器.取验证码计数 +=1
+            if (_G_状态记录器.取验证码计数 > 30) {
+                _G_状态记录器.注册结果标记=3
+            }
             var res= http.get(this.接口地址+"?Action=getPhoneMessage&token="+this.token+"&p_id="+this.P_ID)
             var data = res.body.string().split("|")
             log(data)
@@ -243,47 +247,47 @@ events.onKeyDown("volume_up", function(event){
     engines.stopAll()
 });
 
+log("toast 监听启动")
+events.observeToast();
+events.onToast(function(toast) {
+    var pkg = toast.getPackageName();
+    var text = toast.getText()
+    switch (pkg) {
+        case "com.igaiji.privacy":
+            switch (text) {
+                case "一键新机完成":
+                    _G_状态记录器.改机完成标记 = true
+                    setTimeout(function() {
+                        _G_状态记录器.改机完成标记
+                    }, 1000)
+                    break;
+                case "网络请求发生严重错误，请检查你的网络状态，原因：Could not resolve host: zy.igaiji.com":
+                    className(ty.my_className_lsit.button).text("登录").findOne().click()
+                    break;
+                case "该设备已经激活，继续使用改机服务":
+                    _G_状态记录器.改机可用标记 = true
+                    break;
+                default:
+                    break;
+            }
+            break;
 
+        case "com.tencent.mm":
+            var wangluocuowu = new RegExp(/无法连接到服务器/)
+            if (wangluocuowu.test(text)) {
+                _G_状态记录器.注册结果标记 = 4
+            }
 
-threads.start(function() {
-    log("toast 监听启动")
-    events.observeToast();
-    events.onToast(function(toast) {
-        var pkg = toast.getPackageName();
-        var text = toast.getText()
-        switch (pkg) {
-            case "com.igaiji.privacy":
-                switch (text) {
-                    case "一键新机完成":
-                        _G_状态记录器.改机完成标记 = true
-                        setTimeout(function() {
-                            _G_状态记录器.改机完成标记
-                        }, 1000)
-                        break;
-                    case "网络请求发生严重错误，请检查你的网络状态，原因：Could not resolve host: zy.igaiji.com":
-                        className(ty.my_className_lsit.button).text("登录").findOne().click()
-                        break;
-                    case "该设备已经激活，继续使用改机服务":
-                        _G_状态记录器.改机可用标记 = true
-                        break;
-                    default:
-                        break;
-                }
-                break;
-
-            case "com.tencent.mm":
-                var wangluocuowu = new RegExp(/无法连接到服务器/)
-                if (wangluocuowu.test(text)) {
-                    _G_状态记录器.注册结果标记 = 4
-                }
-
-        }
-        log("Toast内容: " + toast.getText() +
-            " 来自: " + getAppName(pkg) +
-            " 包名: " + pkg);
-    });
-
+    }
+    log("Toast内容: " + toast.getText() +
+        " 来自: " + getAppName(pkg) +
+        " 包名: " + pkg);
 });
+
+// threads.start(function() {
+    
+
+// });
 
 
 
@@ -353,7 +357,8 @@ function main() {
                 if (_G_取号平台.区号) {
                     _G_取号平台.手机号= _G_取号平台.区号+_G_取号平台.手机号
                 }
-                ty.添加指定微信发送()
+                ty.添加指定微信发送(_G_配置记录器.发送至好友)
+                ty.修改ig备份名()           
                 break;
             case 3:
                 
@@ -403,10 +408,8 @@ function 注册完处理信息() {
 
 function test() {
 
-    _G_取号平台.登录()
-    _G_取号平台.取号()
-    sleep(21000)
-    _G_取号平台.释放手机号()
+    // ty.修改ig备份名()
+    // ty.添加指定微信发送("server_10086")
 
 }
 

@@ -31,6 +31,7 @@ var 状态记录器 = function(){
     this.检测线程=null
     this.协议点击记录器=null
     this.加载中计数器=null
+    this.轮询计数 = null
 }
 状态记录器.初始化=function () {
     return new 状态记录器()
@@ -247,7 +248,7 @@ function 全局检测循环() {
     while (true) {
 
         var tag_1 = text("请稍候...").className("android.widget.TextView").depth(5).findOne(timeout) //主页注册  背景为月亮那个 click
-        var tag_2 = clickable(true).text(current_语言.开始).depth(17).findOne(timeout) //click //安全验证的开始按钮
+        var tag_2 = clickable(true).text(current_语言.开始).findOne(timeout) //click //安全验证的开始按钮
 
         var tag_3 = className("android.widget.CheckBox").clickable(true).checked(false).findOne(timeout) //协议勾选框
 
@@ -255,7 +256,7 @@ function 全局检测循环() {
         var tag_4 = text("语言").depth(7).findOne(timeout) //下一步 p.click
 
         var tag_5 = className("android.view.View").text("返回 ").findOne(timeout) // 
-        var tag_6 = text(current_语言.拖动下方滑块完成拼图).depth(23).findOne(timeout) //调用函数
+        var tag_6 = text(current_语言.拖动下方滑块完成拼图).findOne(timeout) //调用函数
         var tag_7 = textStartsWith("让用户用微信扫描下面的二维码").depth(17).findOne(timeout)
         var tag_8 = text(current_语言.注册).className("android.widget.Button").depth(12).findOne(timeout) //填写信息页注册按钮 click
         var tag_9 = textContains("不是我的").className(my_className_lsit.button).findOne(timeout) //click
@@ -293,14 +294,16 @@ function 全局检测循环() {
                 log("已经卡死，重新开始，计时器归零")
 
                 _G_状态记录器.注册结果标记 = 4
-                continue
+                
             }
+            continue
         }
         if (tag_2) {
             log("点击开始")
             sleep(time_delay)
             tag_2.click()
             sleep(time_delay)
+            continue
         }
         if (tag_3) {
             log("点击协议")
@@ -333,12 +336,14 @@ function 全局检测循环() {
         if (tag_4) {
             log("弹出到主页")
             _G_状态记录器.注册结果标记 = 6
+            continue
         }
         if (tag_5) {
             log("关闭页面")
             var fanhui=desc("返回").findOne(1000)
             fanhui ?  fanhui.parent().click() : null
             sleep(time_delay)
+            continue
         }
         
         if (tag_6) {//滑块
@@ -349,6 +354,7 @@ function 全局检测循环() {
             } else {
                 huakuai_start()
             }
+            continue
         }
         if (tag_7) {
             log("等待二维码")
@@ -375,60 +381,75 @@ function 全局检测循环() {
                 }
             }
             if (!_G_状态记录器.注册点击后等待状态) {
+                log("等待注册卡死")
                 _G_状态记录器.注册结果标记=4
+            }else{
+                log("等待注册完成")
             }
+            continue
         }
         if (tag_9) {
             log("不是我的")
             tag_9.click()
             sleep(time_delay)
+            continue
         }
         if (tag_10) {
             log("返回注册流程")
             sleep(time_delay)
             tag_10.click()
             sleep(time_delay)
+            continue
         }
 
         if (tag_11) {
             log("等待验证手机号")
             sleep(time_delay)
+            continue
         }
         tag_12 ? 填写验证码() : null
         tag_13 ? tag_13 : null
         if (tag_14) {
             log("环境异常:14")
             _G_状态记录器.注册结果标记 = 1
+            continue
         }
 
         if (tag_15) {
             log("环境异常:15")
             _G_状态记录器.注册结果标记 = 1
+            continue
         }
 
         if (tag_22) {
             log("需要重新登录")
             _G_状态记录器.注册结果标记 = 1
+            continue
         }
 
 
 
         if (tag_16) {
             log("通讯录 好")
+            强行停止APP("com.tencent.mm")
+            exit()
             sleep(time_delay)
             tag_16.click()
             sleep(time_delay)
+            continue
         }
         if (tag_17) {
             log("系统繁忙")
             var dd=desc("返回").findOne(1000)
             dd ? dd.parent().click() : null
             sleep(time_delay)
+            continue
         }
         tag_18 ? _G_状态记录器.注册结果标记 = 2 : null
         if (tag_19) {
             log("手机号一个月内已成功注册微信号")
             _G_状态记录器.注册结果标记=5
+            continue
         }
         if (tag_20) {
             _G_状态记录器.载入数据计数 += 1
@@ -437,6 +458,7 @@ function 全局检测循环() {
                 _G_状态记录器.注册结果标记 = 1
                 log("载入数据卡死")
             }
+            continue
         }
         if (tag_21) {
             log("网络错误")
@@ -444,26 +466,52 @@ function 全局检测循环() {
             dd ? dd.parent().click() :null
             sleep(time_delay)
             _G_状态记录器.注册结果标记 = 4
+            continue
         }
         if (tag_23) {
             log("网络错误")
             _G_状态记录器.注册结果标记 = 4
+            continue
         }
-        tag_24 ? tag_24.click() : null
+        // tag_24 ? tag_24.click() : null
+        // tag_24 ? tag_24.click() : null
+        if (tag_24) {
+            log("确定")
+            tag_24.click()
+            continue
+        }
         if (tag_25) {
+            log("加载中")
             sleep(time_delay)
             _G_状态记录器.加载中计数器+=1
             if (_G_状态记录器.加载中计数器> 20) {
                 _G_状态记录器.注册结果标记=4
             }
+            continue
         }
         if (tag_26) {
             log("操作太频繁")
             _G_状态记录器.注册结果标记 = 5
+            continue
+        }
+        log("轮询中")
+        _G_状态记录器.轮询计数+=1
+        if (_G_状态记录器.轮询计数 > 30) {
+            _G_状态记录器.注册结果标记=4
         }
     }
     log("全局轮询结束")
 }
+
+function 强行停止APP(包名) {
+	app.openAppSetting(包名)
+	text("强行停止").findOne().click()
+	text("确定").findOne().click()
+	sleep(500);
+	home();	
+}
+
+
 
 function xieyi() {//该函数确保只调用一遍
  
@@ -662,6 +710,7 @@ function 等待结果() {
             default:
                 break ;
         }
+        
         sleep(1000)
     }
 }
@@ -673,7 +722,7 @@ function 填写验证码() {
     // var yanzheng = textContains("请输入验证码").findOne(3000)
     var yanzheng = className(my_className_lsit.edit).findOne(3000)
     yanzheng ? yanzheng.setText(验证码) : log("没有验证码框")
-    var xiyibu = text("下一步").className(my_className_lsit.button).depth(12).findOne(1000)
+    var xiyibu = text("下一步").className(my_className_lsit.button).findOne(1000)
 
     if (xiyibu) {
         log("点了下一步")
@@ -684,26 +733,120 @@ function 填写验证码() {
     }
 }
 
-function 添加指定微信发送(params) {
+function 修改ig备份名(params) {
+    app.launchApp("IG刺猬精灵")
+    log("打开刺猬精灵")
+    for (let index = 0; index < 30; index++){
+
+        var 备份 = text("备份列表").depth(11).exists()
+        var denglu = text("登录").exists()
+        var 使用中 = text("使用中").findOne(100)
+        
+        var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
+        if (备份) {
+            log("发现备份")
+            sleep(time_delay)
+            var xinji=text("备份列表").findOne(1000)
+            xinji ? xinji.parent().click() : null    
+        }else if (请输入手机号) {
+                
+                log("将点击确定")
+                var quedin= text("确定").findOne(1000)
+                quedin ? quedin.click() :null
+                sleep(time_delay)
+                for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
+                    if (!_G_状态记录器.改机完成标记) {
+                        log("等待改机完成,"+(10-chaoshi)*2+"秒后重试")
+                        sleep(2000)
+                    } else {
+                        log("改机完成")
+                        home()
+                        log("退出改机软件")
+                        return
+                    }
+                    
+                } 
+                
+
+        }else if (denglu) {
+            log("发现登录按钮")
+            var ff = text("登录").findOne(1000)
+            ff ? ff.click() : null
+        }else if(使用中){
+            使用中.parent().parent().findOne(text("修改")).click()
+            sleep(1000)
+            var 输入框=className(my_className_lsit.edit).findOne(1000)
+            if (输入框) {
+                log("输入框发现")
+                log("设置文本为:"+_G_取号平台.手机号)
+                输入框.setText(_G_取号平台.手机号)
+                var qd=text("确定").findOne()
+                qd.click()
+                log("确定点击")
+                sleep(1000)
+                return 
+            }
+        }
+        sleep(1000)
+    }
+}
+
+function 鸭子(文本,timeout) {
+    var dd=text(文本).findOne(timeout)
+    if (dd) {
+        while(true){
+            if (dd.clickable()) {
+                dd.click()
+                return true
+            }else if(dd.depth() <=1){
+                return false
+            }else {
+                dd=dd.parent()
+            }
+            
+        }
+        
+    }
+}
+
+
+function 添加指定微信发送(好友id) {
     
     var dd=desc("更多功能按钮").findOne(6000)
     if (dd) {
         log("找到更多功能按钮")
         dd.click()
         sleep(2000)
-        var ff=text('添加朋友').findOne(2000)
+        var ff=鸭子('添加朋友',2000)
         if (ff) {
             log("找到添加朋友按钮")
-            ff.parent().parent().parent().click()
-            var coordinate= text("微信号/QQ号/手机号").findOne(2000)
+            // ff.parent().parent().parent().click()
+            var coordinate= text("微信号/QQ号/手机号").findOne(4000)
             if (coordinate) {
-                coordinate= coordinate.parent().parent().parent().parent().parent().bounds()
+                log("找到微信号/QQ号/手机号")
+                coordinate= coordinate.bounds()
                 click(coordinate.centerX(),coordinate.centerY())
                 sleep(1000)
-                editable(true).depth(12).findOne().setText(_G_配置记录器.发送至好友)
+                log("点击完成")
+                var shurukuang= className(my_className_lsit.edit).findOne(3000)
+                if (shurukuang) {
+                    log("找到输入框")
+                    shurukuang.setText(好友id)
+                }else{
+                    log("没找到输入框")
+                }
+                
                 sleep(500)
-                textStartsWith("搜索:").findOne().parent().parent().click()//点击搜索
+                var sousuo=textStartsWith("搜索:").findOne(3000)
+                if (sousuo) {
+                    log("找到搜索框")
+                    sousuo.parent().parent().click()//点击搜索
+                    log("点击搜索")
+                } else {
+                    log("没找到搜索框")
+                } 
                 //这里可能用户不存在 可能已经是好友
+                
                 sleep(2000)
                 if(text("该用户不存在").exists()){
                     log("该用户不存在")
@@ -713,6 +856,7 @@ function 添加指定微信发送(params) {
                 }else if(text("添加到通讯录").exists()){
                     text("添加到通讯录").findOne().parent().parent().click()
                     //判断是否需要验证
+                    log("将发送验证")
                     var fs=text("发送").findOne(3000)
                     fs ? fs.click() : null
                     发送信息()
@@ -722,17 +866,21 @@ function 添加指定微信发送(params) {
                 }else if(text("发消息").depth(13).exists() && text("音视频通话").depth(13).exists()){
                     //已经是好友了
                     // phone_number 
-                    log(phone_number+ "已经是好友了")
+                    log(好友id+ "已经是好友了")
+                    发送信息()
                 }else{
                     toastLog("未知错误")
                     return 
                 }
+            }else{
+                log("没有找到:微信号/QQ号/手机号")
             }
         }
     }
 
 }
 function 发送信息() {
+    log("发送消息")
     var dd=text("发消息").findOne(3000)
     if (dd) {
         dd.parent().parent().click()
@@ -1216,4 +1364,5 @@ ty.tianxie_info=tianxie_info
 ty.get_password =get_password
 ty.gaiji =gaiji
 ty.状态记录器 =状态记录器
+ty.修改ig备份名 =修改ig备份名
 module.exports = ty
