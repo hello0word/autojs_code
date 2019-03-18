@@ -431,8 +431,7 @@ function 全局检测循环() {
 
         if (tag_16) {
             log("通讯录 好")
-            强行停止APP("com.tencent.mm")
-            exit()
+            
             sleep(time_delay)
             tag_16.click()
             sleep(time_delay)
@@ -500,11 +499,11 @@ function 全局检测循环() {
             _G_状态记录器.注册结果标记=4
         }
     }
-    log("全局轮询结束")
 }
 
 function 强行停止APP(包名) {
-	app.openAppSetting(包名)
+    log("强行停止")
+    app.openAppSetting(包名)
 	text("强行停止").findOne().click()
 	text("确定").findOne().click()
 	sleep(500);
@@ -576,7 +575,7 @@ function 开关飞行() {
     var intent=new Intent()
     intent.setAction("android.settings.NFC_SETTINGS")
     app.startActivity(intent);
-    log(id("android:id/switch_widget").findOne())
+    id("android:id/switch_widget").findOne()
     log("查找飞行模式按钮")
     var 飞行模式=text("飞行模式").findOne()
     log("查找状态按钮")
@@ -973,6 +972,38 @@ function get_a16_67() {
 
 }
 
+function GET_A16() {   //据说运行之前要先杀死微信
+	强行停止APP("com.tencent.mm")
+	var arr = files.listDir("/data/data/com.tencent.mm/files/kvcomm/");
+	//log(arr);
+	if(arr.length >= 1){  //返回数组元素小于1说明没权限)
+		for (var i in arr){
+			var s
+			var str = files.read("/data/data/com.tencent.mm/files/kvcomm/"+arr[i]);
+			var reg = /A(.*?)(?=[\_])/g;//匹配A开头_结尾的字符串
+			try {
+				var b = str.match(reg);
+				//log(b);
+				for(var c in b){
+					var d = b[c]
+					if(d.length == 16){//匹配到的字符串长度==16就是要找的东西了
+						s = true;
+						log("我是某16>>>>>"+d);
+						break;		//不知道为什么这里不能退出函数 可能是两层for循环 的问题
+					}	
+				}
+				if(s == true){
+					return d;	//所以只好在这里返回退出
+				}
+				sleep(50);
+			} catch (error) {
+			}
+		}
+		}else{
+		//log("获取文件目录失败~~没有权限)");		
+		return false;	
+	}	
+}
 
 /** 
  * 识别滑块位置
@@ -1365,4 +1396,5 @@ ty.get_password =get_password
 ty.gaiji =gaiji
 ty.状态记录器 =状态记录器
 ty.修改ig备份名 =修改ig备份名
+ty.GET_A16=GET_A16
 module.exports = ty

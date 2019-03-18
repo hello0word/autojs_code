@@ -675,9 +675,48 @@ function vpn(gn) {
 }
 
 
+function 强行停止APP(包名) {
+	app.openAppSetting(包名)
+	text("强行停止").findOne().click()
+	text("确定").findOne().click()
+	sleep(100);
+	home();	
+}
 
 
-
+function GET_A16() {   //据说运行之前要先杀死微信
+	强行停止APP("com.tencent.mm")
+	var arr = files.listDir("/data/data/com.tencent.mm/files/kvcomm/");
+	//log(arr);
+	if(arr.length >= 1){  //返回数组元素小于1说明没权限)
+		for (var i in arr){
+			var s
+			var str = files.read("/data/data/com.tencent.mm/files/kvcomm/"+arr[i]);
+			var reg = /A(.*?)(?=[\_])/g;//匹配A开头_结尾的字符串
+			try {
+				var b = str.match(reg);
+				//log(b);
+				for(var c in b){
+					var d = b[c]
+					if(d.length == 16){//匹配到的字符串长度==16就是要找的东西了
+						s = true;
+						log("A16>>>>>"+d);
+						break;		//不知道为什么这里不能退出函数 可能是两层for循环 的问题
+					}	
+				}
+				if(s == true){
+                    
+                    return d;	//所以只好在这里返回退出
+				}
+				sleep(50);
+			} catch (error) {
+			}
+		}
+		}else{
+		log("获取文件目录失败~~没有权限)");		
+		return false;	
+	}	
+}
 
 function 等待结果() {
     while (true) {
@@ -688,16 +727,19 @@ function 等待结果() {
         switch (_G_状态记录器.注册结果标记) {
 
             case 1: //环境异常  // 重新开始 /0是死的
+                var A16=GET_A16()    
                 修改网络() //断开连接	
-                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "0"
+                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "0"+"----"+A16
                 log(info)
                 上传信息(info)
                 log("上传完成")
                 log("异常")
                 return
             case 2: //通过 /上传信息  /1为活的
+                
+                var A16=GET_A16()
                 修改网络() //断开连接
-                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "1"
+                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "1"+"----"+A16
                 log(info)
                 上传信息(info)
                 log("上传完成")
@@ -893,9 +935,9 @@ function 全局检测循环() {
 
         if (tag_16) {
             log("通讯录 好")
-            sleep(time_delay)
+            // sleep(time_delay)
             tag_16.click()
-            sleep(time_delay)
+            // sleep(time_delay)
         }
         if (tag_17) {
             log("系统繁忙")

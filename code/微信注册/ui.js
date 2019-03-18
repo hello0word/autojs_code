@@ -16,6 +16,9 @@ ui.layout(
                     {/* <text text="注册码:" textColor="black" textSize="16sp"/>
                     <input  id="注册码" width="550" textSize="16sp"  ></input> */}
                     </linear>
+                    <horizontal>
+
+                    
                     <linear >
                     <radiogroup id="xinhao">
                         <radio text="小米-4c" checked="true" />
@@ -28,28 +31,33 @@ ui.layout(
                         <radio text="vpn模式" checked="true"/>
                     </radiogroup>
                     </linear>
+                    </horizontal>
                     <linear>
-                        <text w="auto" gravity="center" color="#111111" size="16">菜鸟api账号</text>
-                        <input id="菜鸟api账号" w="*" h="40"/>
+                        <text w="80" gravity="left" color="#111111" size="12">菜鸟api账号</text>
+                        <input id="菜鸟api账号" w="*" h="auto" size="12"/>
                     </linear>
                     <linear>
-                        <text w="auto" gravity="center" color="#111111" size="16">菜鸟api密码</text>
-                        <input id="菜鸟api密码" w="*" h="40"/>
+                        <text w="80" gravity="left" color="#111111" size="12">菜鸟api密码</text>
+                        <input id="菜鸟api密码" w="*" h="auto" size="12"/>
                     </linear>
                     <linear>
-                        <text w="80" gravity="center" color="#111111" size="16">国家码</text>
-                        <input id="国家码" w="*" h="40"/>
+                        <text w="80" gravity="left" color="#111111" size="12">国家码</text>
+                        <input id="国家码" w="*" h="auto" size="12"/>
                     </linear>
                     <linear>
-                        <text w="80" gravity="center" color="#111111" size="16">项目id</text>
-                        <input id="项目id" w="*" h="40"/>
+                        <text w="80" gravity="left" color="#111111" size="12">项目id</text>
+                        <input id="项目id" w="*" h="auto" size="12"/>
                     </linear>
                     <linear>
-                        <text w="80" gravity="center" color="#111111" size="16">好友微信号</text>
-                        <input id="好友微信号" w="*" h="40"/>
+                        <text w="80" gravity="left" color="#111111" size="12">好友微信号</text>
+                        <input id="好友微信号" w="*" h="auto" size="12"/>
+                    </linear>
+                    <linear>
+                        <text w="80" gravity="left" color="#111111" size="12">邮件地址</text>
+                        <input id="邮件地址" w="*" h="auto" size="12"/>
                     </linear>
                     <linear gravity="center">
-                        <button id="start" text="开始"/>
+                        <button id="start" text="开始" w="*"/>
                         
                     </linear>
                     </vertical>
@@ -119,6 +127,7 @@ ui.项目id.setText(String(storage.get("项目id","")))
 ui.菜鸟api账号.setText(String(storage.get("菜鸟api账号","")))
 ui.菜鸟api密码.setText(String(storage.get("菜鸟api密码","")))
 ui.好友微信号.setText(String(storage.get("好友微信号","")))
+ui.邮件地址.setText(String(storage.get("邮件地址","")))
 ui.start.on("click",()=>{
     
     if (Date.now()-时间标记 < 10000) {
@@ -133,6 +142,7 @@ ui.start.on("click",()=>{
         var 菜鸟api账号 = ui.菜鸟api账号.text()
         var 菜鸟api密码 = ui.菜鸟api密码.text()
         var 好友微信号 = ui.好友微信号.text()
+        var 邮件地址 = ui.邮件地址.text()
         log("型号:"+xinhao)
         log("网络模式:"+net_mode)
         log("国家码:"+guojia)
@@ -143,6 +153,7 @@ ui.start.on("click",()=>{
         storage.put("菜鸟api密码",菜鸟api密码)
         storage.put("好友微信号",好友微信号)
         storage.put("项目id",项目id)
+        storage.put("邮件地址",邮件地址)
         var thread= threads.start(function name(params) {
             var url = "https://gitee.com/api/v5/gists/k0ltxp6hbrcqf7vs3y1o297?access_token=944c75cee7a5194eac5dd15635b8952e"
             var res = http.get(url);

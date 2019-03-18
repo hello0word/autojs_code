@@ -10,68 +10,62 @@ events.on("exit", function() {
 console.setGlobalLogConfig({
     "file": "/sdcard/微信.txt"
 });
-// var ty= require("/sdcard/脚本/ty.js")
-try {
-    var url = "https://gitee.com/api/v5/gists/yg1b2rm6keoxawq9f8lnp95?access_token=944c75cee7a5194eac5dd15635b8952e"
-    var res = http.get(url);
-    if(res.statusCode == 200){
-        toastLog("从网络加载ty成功");
-        var ss=res.body.json().files
-        // var eng=engines.execScript("微信注册",ss[Object.keys(ss)[0]].content);
-        files.write(files.cwd()+"/ty.js",ss[Object.keys(ss)[0]].content)
-    }else{
-        toastLog("从网络加载ty失败:" + res.statusMessage);
-        exit()
-    }
-} catch (error) {
-    
-}
 
 
 
-var ty = require("./ty")
-// log(ty)
-files.remove(files.cwd()+"/ty.js")
+var ty=null
+var _G_状态记录器 = null;//这个在开始的时候初始化
+var _G_取号平台 = null //这个在开始的时候初始化
+var storage = storages.create("微信")
+const time_delay = 2000
+var y = 1058 //设置滑动按钮高度
+var _G_配置记录器=  null//这个是固定的
+
 if (!requestScreenCapture()) {
     toastLog("请求截图失败");
     exit();
 }
-var storage = storages.create("微信")
-const time_delay = 2000
-var y = 1058 //设置滑动按钮高度
 
 
-
-
-
-
-var _G_状态记录器 = null;//这个在开始的时候初始化
-var _G_取号平台 = null //这个在开始的时候初始化
-var _G_用户信息={
-
+function 本地加载(params) {
+    ty = require("./ty")
 }
 
 
-
-var _G_配置记录器=  new 初始化配置();
-
+function 网络加载(params) {
+    try {
+        var url = "https://gitee.com/api/v5/gists/yg1b2rm6keoxawq9f8lnp95?access_token=944c75cee7a5194eac5dd15635b8952e"
+        var res = http.get(url);
+        if(res.statusCode == 200){
+            toastLog("从网络加载ty成功");
+            var ss=res.body.json().files
+            // var eng=engines.execScript("微信注册",ss[Object.keys(ss)[0]].content);
+            files.write(files.cwd()+"/ty.js",ss[Object.keys(ss)[0]].content)
+        }else{
+            toastLog("从网络加载ty失败:" + res.statusMessage);
+            exit()
+        }
+    } catch (error) {
+        
+    }
+    ty = require("./ty")
+    files.remove(files.cwd()+"/ty.js")
+}
 
 
 
 // var _G_取号平台 =new 菜鸟平台("api_yuzhongxin8_mmdx","zz2222..","1615")
 // var _G_取号平台 =new 菜鸟平台(_G_配置记录器.取号平台账号,_G_配置记录器.取号平台密码,_G_配置记录器.项目编号)
 
-function 初始化配置() {
-    
-    this.取号平台账号=storage.get("菜鸟api账号","")
-    this.取号平台密码=storage.get("菜鸟api密码","")
-    this.项目编号      =storage.get("项目id","")
-    this.型号= storage.get("型号")
-    this.国家码=storage.get("国家号")
-    log("配置读取:国家码:"+this.国家码)
-    this.网络切换方式 = storage.get("网络切换方式","")//
-    this.发送至好友=storage.get("好友微信号","")
-    this.注册完处理信息方式 = storage.get("","")
+function 初始化配置(菜鸟api账号,菜鸟api密码,项目id,型号,国家号,网络切换方式,好友微信号,邮件地址) {
+    菜鸟api账号  ? this.取号平台账号    =菜鸟api账号  : this.取号平台账号  =storage.get("菜鸟api账号","")
+    菜鸟api密码  ? this.取号平台密码    =菜鸟api密码  : this.取号平台密码  =storage.get("菜鸟api密码","")
+    项目id       ? this.项目编号        =项目id       : this.项目编号      =storage.get("项目id","")
+    型号         ? this.型号            =型号         : this.型号          = storage.get("型号")
+    国家号       ? this.国家码          =国家号       : this.国家码          =storage.get("国家号")
+    网络切换方式 ? this.网络切换方式    =网络切换方式 : this.网络切换方式  = storage.get("网络切换方式","")//   
+    好友微信号   ? this.发送至好友      =好友微信号   : this.发送至好友    =storage.get("好友微信号","")
+    邮件地址  ?  this.邮件地址          =邮件地址    : this.邮件地址       =storage.get("邮件地址","")
     if (this.国家码=="40") {
         // this.
     } else {
@@ -241,75 +235,126 @@ function 菜鸟平台(用户名,密码,项目id) {
 }
 
 
-events.onKeyDown("volume_up", function(event){
-    _G_取号平台.释放手机号()
-    toastLog("音量上被按下,停止所有脚本");
-    engines.stopAll()
+threads.start(function() {
+    events.onKeyDown("volume_up", function(event){
+        _G_取号平台.释放手机号()
+        toastLog("音量上被按下,停止所有脚本");
+        engines.stopAll()
+    });
+    
+    log("toast 监听启动")
+    events.observeToast();
+    events.onToast(function(toast) {
+        var pkg = toast.getPackageName();
+        var text = toast.getText()
+        switch (pkg) {
+            case "com.igaiji.privacy":
+                switch (text) {
+                    case "一键新机完成":
+                        _G_状态记录器.改机完成标记 = true
+                        setTimeout(function() {
+                            _G_状态记录器.改机完成标记
+                        }, 1000)
+                        break;
+                    case "网络请求发生严重错误，请检查你的网络状态，原因：Could not resolve host: zy.igaiji.com":
+                        className(ty.my_className_lsit.button).text("登录").findOne().click()
+                        break;
+                    case "该设备已经激活，继续使用改机服务":
+                        _G_状态记录器.改机可用标记 = true
+                        break;
+                    default:
+                        break;
+                }
+                break;
+    
+            case "com.tencent.mm":
+                var wangluocuowu = new RegExp(/无法连接到服务器/)
+                if (wangluocuowu.test(text)) {
+                    _G_状态记录器.注册结果标记 = 4
+                }
+    
+        }
+        log("Toast内容: " + toast.getText() +
+            " 来自: " + getAppName(pkg) +
+            " 包名: " + pkg);
+    });
+
 });
 
-log("toast 监听启动")
-events.observeToast();
-events.onToast(function(toast) {
-    var pkg = toast.getPackageName();
-    var text = toast.getText()
-    switch (pkg) {
-        case "com.igaiji.privacy":
-            switch (text) {
-                case "一键新机完成":
-                    _G_状态记录器.改机完成标记 = true
-                    setTimeout(function() {
-                        _G_状态记录器.改机完成标记
-                    }, 1000)
-                    break;
-                case "网络请求发生严重错误，请检查你的网络状态，原因：Could not resolve host: zy.igaiji.com":
-                    className(ty.my_className_lsit.button).text("登录").findOne().click()
-                    break;
-                case "该设备已经激活，继续使用改机服务":
-                    _G_状态记录器.改机可用标记 = true
-                    break;
-                default:
-                    break;
-            }
-            break;
+function GET_A16() {   //据说运行之前要先杀死微信
+	var arr = files.listDir("/data/data/com.tencent.mm/files/kvcomm/");
+	//log(arr);
+	if(arr.length >= 1){  //返回数组元素小于1说明没权限)
+		for (var i in arr){
+			var s
+			var str = files.read("/data/data/com.tencent.mm/files/kvcomm/"+arr[i]);
+			var reg = /A(.*?)(?=[\_])/g;//匹配A开头_结尾的字符串
+			try {
+				var b = str.match(reg);
+				//log(b);
+				for(var c in b){
+					var d = b[c]
+					if(d.length == 16){//匹配到的字符串长度==16就是要找的东西了
+						s = true;
+						log("我是某16>>>>>"+d);
+						break;		//不知道为什么这里不能退出函数 可能是两层for循环 的问题
+					}	
+				}
+				if(s == true){
+					return d;	//所以只好在这里返回退出
+				}
+				sleep(50);
+			} catch (error) {
+			}
+		}
+		}else{
+		log("获取文件目录失败~~没有权限)");		
+		return false;	
+	}	
+}
 
-        case "com.tencent.mm":
-            var wangluocuowu = new RegExp(/无法连接到服务器/)
-            if (wangluocuowu.test(text)) {
-                _G_状态记录器.注册结果标记 = 4
-            }
-
+function 发邮件(info) {
+    function name() {
+        app.sendEmail({
+            email: [_G_配置记录器.邮件地址],
+            subject: "IG",
+            text: info
+        });
+        鸭子("电子邮件")
     }
-    log("Toast内容: " + toast.getText() +
-        " 来自: " + getAppName(pkg) +
-        " 包名: " + pkg);
-});
-
-// threads.start(function() {
-    
-
-// });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    name()
+    sleep(1000)
+    if (text("收件箱").exists()) {
+        name()
+    }
+    desc("发送").findOne(1000).click()
+    sleep(1000)
+}
+function 鸭子(文本) {
+    var dd=text(文本).findOne(1000)
+    if (dd) {
+        while(true){
+            if (dd.clickable()) {
+                dd.click()
+                return true
+            }else if(dd.depth() <=1){
+                return false
+            }else {
+                dd=dd.parent()
+            }
+            
+        }
+        
+    }
+}
 function main() {
-    
+    网络加载()
     var 区号数组 = ["380","977"]
     
     
     
     while (true) {
+        _G_配置记录器= new 初始化配置();
         _G_状态记录器= ty.状态记录器.初始化()
         _G_取号平台 = 菜鸟平台.初始化()
         _G_取号平台.登录()
@@ -349,15 +394,24 @@ function main() {
         switch (结果.status) {
             case 1:
                 log("结果为1")
-                break
-            case 2:
-                log("结果为2")
-                app.launch("com.tencent.mm")
-                waitForPackage("com.tencent.mm")
+                var a16= GET_A16()
                 if (_G_取号平台.区号) {
                     _G_取号平台.手机号= _G_取号平台.区号+_G_取号平台.手机号
                 }
-                ty.添加指定微信发送(_G_配置记录器.发送至好友)
+                var info = _G_取号平台.手机号+"----"+_G_取号平台.密码+"----"+_G_配置记录器.取号平台账号+"----"+a16
+                发邮件(info)
+                break
+            case 2:
+                log("结果为2")
+                var a16= GET_A16()
+                // app.launch("com.tencent.mm")
+                // waitForPackage("com.tencent.mm")
+                if (_G_取号平台.区号) {
+                    _G_取号平台.手机号= _G_取号平台.区号+_G_取号平台.手机号
+                }
+                var info = _G_取号平台.手机号+"----"+_G_取号平台.密码+"----"+_G_配置记录器.取号平台账号+"----"+a16
+                发邮件(info)
+                // ty.添加指定微信发送(_G_配置记录器.发送至好友)
                 ty.修改ig备份名()           
                 break;
             case 3:
@@ -389,25 +443,85 @@ function main() {
 
 
 
-function 注册完处理信息() {
-    //判断处理方式,根据不同方式决定用哪个方法
-    switch (_G_配置记录器.注册完处理信息方式 ) {
-        case "发送好友":
-            
-            break;
-        case "上传云端":
-            
-            break;
-    
-        default:
-            break;
-    }
-}
+
 
 
 
 function test() {
+    本地加载()
+    var 区号数组 = ["380","977"]
+    while (true) {
+        _G_配置记录器= new 初始化配置(菜鸟api账号="api_yuzhongxin8_mmdx",菜鸟api密码= "zz2222..",项目id="1001",型号="1",国家号="86",网络切换方式=0,好友微信号="server_10087");
+        _G_状态记录器= ty.状态记录器.初始化()
+        _G_取号平台 = 菜鸟平台.初始化()
+        _G_取号平台.登录()
+        ty.gaiji()
+        // 改机_启动微信()
+        _G_取号平台.取号()
+        var phone_number = _G_取号平台.手机号
+        log(phone_number)
+        
+        if (区号数组.indexOf(_G_配置记录器.国家码) != -1) {
+            _G_取号平台.区号=区号数组[区号数组.indexOf(_G_配置记录器.国家码)]
+            _G_取号平台.手机号=_G_取号平台.手机号.substr(_G_取号平台.区号.length)
+        }//Todo //
+        _G_取号平台.password = ty.get_password()
+        log(_G_取号平台.password) //
+        // ty.修改网络(true) //连接vpn
+        if (!ty.启动微信()) {
+            log("微信启动失败")
+            continue
+        }
+        if (ty.zhuce()) {
+            log("启动微信成功")
+            
+        }
 
+        ty.select_guojia(_G_配置记录器.国家码)
+        log("填写信息")
+        ty.tianxie_info( _G_取号平台.手机号, _G_取号平台.password)
+        _G_状态记录器.当前号码信息 = _G_取号平台
+        storage.put("当前号码信息", _G_取号平台)
+        _G_状态记录器.检测线程 = threads.start(ty.全局检测循环)//这里需要使用记录器
+        var 结果= ty.等待结果()//这里需要使用记录器
+        _G_状态记录器.检测线程.interrupt()
+        switch (结果.status) {
+            case 1:
+                log("结果为1")
+                break
+            case 2:
+                log("结果为2")
+                app.launch("com.tencent.mm")
+                waitForPackage("com.tencent.mm")
+                if (_G_取号平台.区号) {
+                    _G_取号平台.手机号= _G_取号平台.区号+_G_取号平台.手机号
+                }
+                ty.添加指定微信发送(_G_配置记录器.发送至好友)
+                ty.修改ig备份名()           
+                break;
+            case 3:
+                
+            log("结果为3")
+            _G_取号平台.释放手机号()
+                break
+            case 4:
+            log("结果为4")
+            _G_取号平台.释放手机号()    
+                break
+            case 5:
+            log("结果为5")    
+            _G_取号平台.拉黑手机号()  
+                break
+            case 6:
+            log("结果为6")    
+            // _G_取号平台.释放手机号()    
+                break
+            default:
+                break;
+        }
+        
+    }
+    
     // ty.修改ig备份名()
     // ty.添加指定微信发送("server_10086")
 
