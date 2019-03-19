@@ -6,6 +6,7 @@ if (!requestScreenCapture()) {
 var storage = storages.create("微信")
 const time_delay = 3000
 var y = 1058 //设置滑动按钮高度
+var 特殊标记= Array()//作用为保留号码信息进行注册
 // var huangsha = images.load("https://gitee.com/jixiangxia/autojs/raw/master/resource/wecha/%E9%BB%84%E6%B2%99.jpg")
 
 console.setGlobalLogConfig({
@@ -19,18 +20,24 @@ events.on("exit", function() {
 });
 
 
-var _G_状态记录器 = {
-    改机完成标记: false,
-    改机可用标志: false,
-    注册结果标记: false,
-    当前号码信息: null,
-    请稍后计时器: 0,
-    注册点击后等待状态: false,
-    huakuaijishu: 0,
-    载入数据计数: 0,
-    检测线程:null,
+var 状态记录器 = function(){
+    this.改机完成标记= null
+    this.改机可用标志= null
+    this.注册结果标记= null
+    this.当前号码信息= null
+    this.请稍后计时器= null
+    this.注册点击后等待状态= null
+    this.滑块计数器=null
+    this.载入数据计数= null
+    this.检测线程=null
+    this.协议点击记录器=null
+    this.加载中计数器=null
+    this.轮询计数 = null
 }
-
+状态记录器.初始化=function () {
+    return new 状态记录器()
+}
+_G_状态记录器=状态记录器.初始化()
 var 取号账户,取号密码,取号api,上传账户,上传密码,国家代码,项目id,_G_token,xinhao,guojiama
 
 var  _G_arr0 = Array()
@@ -38,7 +45,7 @@ var  _G_arr0 = Array()
             _G_arr0.push([x,0+x,"#000000"])
             _G_arr0.push([x,160-x,"#000000"])
     }
-function 初始化数据() {
+function 初始化配置数据() {
     
 
     xinhao= storage.get("xinhao",0)
@@ -109,13 +116,14 @@ function 获取token() {
 }
 
 
-events.onKeyDown("volume_up", function(event){
-    
-    toastLog("音量上被按下,停止所有脚本");
-    engines.stopAll()
-});
+
 
 threads.start(function() {
+    events.onKeyDown("volume_up", function(event){
+    
+        toastLog("音量上被按下,停止所有脚本");
+        engines.stopAll()
+    });
     log("toast 监听启动")
     events.observeToast();
     events.onToast(function(toast) {
@@ -146,7 +154,10 @@ threads.start(function() {
             case "com.tencent.mm":
                 var wangluocuowu = new RegExp(/无法连接到服务器/)
                 if (wangluocuowu.test(text)) {
-                    _G_状态记录器.注册结果标记 = 4
+                    _G_状态记录器.无法连接到服务器 +=1
+                    if (_G_状态记录器.无法连接到服务器>=6) {
+                        _G_状态记录器.注册结果标记=6
+                    } 
                 }
 
         }
@@ -196,7 +207,8 @@ function test() {
     //  main()
     // get_phone_number()
 //    huakuai_start()
-    全局检测循环()
+    // 全局检测循环()
+    gaiji()
 
 }
 
@@ -349,9 +361,9 @@ function select_guojia(g_j_num) {
 
 
 function tianxie_info(guojia_number, phone_n, password) {
-    var guojia_diqu = text(current_语言.国家).className("android.widget.TextView").findOne(3000)
-    guojia_diqu ? guojia_diqu.parent().click() : null//点击国家地区选择国家
-    sleep(time_delay)
+    // var guojia_diqu = text(current_语言.国家).className("android.widget.TextView").findOne(3000)
+    // guojia_diqu ? guojia_diqu.parent().click() : null//点击国家地区选择国家
+    // sleep(time_delay)
     if (guojiama==0) {
         log("当前选择了马来西亚")
         guojia_number=60
@@ -437,9 +449,26 @@ function get_password() {
 
 
 function gaiji() {
-    app.launchApp("IG刺猬精灵")
-    log("打开刺猬精灵")
-    for (let index = 0; index < 30; index++){
+    
+    
+    for (let 刺猬计数 = 0; 刺猬计数 < 5; 刺猬计数++) {
+        app.launchApp("IG刺猬精灵")
+        log("等待打开刺猬精灵")
+        sleep(4000)
+        if (text("IG刺猬精灵").findOne(16000)) {
+            log("IG刺猬精灵打开成功")
+            break;
+        } else {
+            强行停止APP("com.igaiji.privacy")
+            log("再次打开IG中")
+            sleep(3000)
+        }
+        if (刺猬计数==4) {
+            log("无法打开IG,系统退出")
+            exit()
+        }
+    }
+    for (let index = 0; index < 50; index++){
 
         var yijian = text("一键新机").depth(11).exists()
         var denglu = text("登录").exists()
@@ -501,6 +530,7 @@ function get_yanzhengma(pid) {
     log("本次pid：" + pid)
     for (let index = 0; index < 3; index++) {
         for (let index2 = 0; index2 < 10; index2++) {
+            log("第%d次尝试获取验证码,%d次后将重新点击获取验证码",index2,10-index2)
             try {
                 var res = http.get("http://47.74.144.186/yhapi.ashx?act=getPhoneCode&token=" + token + "&pid=" + pid)
                 res_tostr = res.body.string()
@@ -514,7 +544,8 @@ function get_yanzhengma(pid) {
                             log("号码释放")
                             _G_状态记录器.注册结果标记 = 3 //直接通知结果  重来
                             break;
-
+                        case "-3":
+                            log("等待验证码")
                         default:
                             break;
                     }
@@ -522,13 +553,13 @@ function get_yanzhengma(pid) {
             } catch (error) {
                 log(error)
             }
-            sleep(15000)
+            sleep(10000)
         }
         textContains("收不到验证码").findOne().click()
         textContains("重新获取验证码").findOne().parent().parent().click()
 
     }
-    log("三次都无法获取，脚本停止")
+    log("三次都无法获取，换号")
     log("号码释放")
     _G_状态记录器.注册结果标记 = 3 //直接通知结果  重来
 }
@@ -566,16 +597,16 @@ function 启动微信() {
 }
 
 function main() {
-    初始化数据()
+    device.keepScreenOn()
+    初始化配置数据()
     获取token()
     while (true) {
-        _G_状态记录器.改机完成标记 = false
-        _G_状态记录器.改机可用标记 = false
-        _G_状态记录器.当前号码信息 = null
+        var _G_状态记录器=状态记录器.初始化()
         gaiji()
         // 改机_启动微信()
-
-        var phone_number = get_phone_number()
+        //这里使用一个特殊标记//使用后
+        var phone_number=特殊标记.pop()
+        phone_number ? null : phone_number = get_phone_number()
         log(phone_number)
         var password_ss = get_password()
         phone_number.password = password_ss
@@ -593,9 +624,7 @@ function main() {
 
 
         tianxie_info(phone_number.国家代码, phone_number.手机号, password_ss)
-        _G_状态记录器.注册结果标记 = false //重置标记
-        _G_状态记录器.huakuaijishu = 0
-        _G_状态记录器.载入数据计数 = 0
+        
         _G_状态记录器.当前号码信息 = phone_number
         storage.put("当前号码信息", phone_number)
         _G_状态记录器.检测线程 = threads.start(全局检测循环)
@@ -749,7 +778,12 @@ function 等待结果() {
     while (true) {
         phone_number = _G_状态记录器.当前号码信息
         if (_G_状态记录器.注册结果标记) {
-            _G_状态记录器.检测线程.interrupt()
+            try {
+                _G_状态记录器.检测线程.interrupt()
+            } catch (error) {
+                
+            }
+            
         }
         switch (_G_状态记录器.注册结果标记) {
 
@@ -760,9 +794,9 @@ function 等待结果() {
                 log(info)
                 上传信息(info)
                 log("上传完成")
-                log("异常")
+                log("环境异常")
                 return
-            case 2: //通过 /上传信息  /1为活的
+            case 2: //通过   /1为活的
                 
                 var A16=GET_A16()
                 修改网络() //断开连接
@@ -790,10 +824,10 @@ function 等待结果() {
                 lahei(phone_number.pid)
                 return
                 break;
-            case 6: //出现二维码
+            case 6: //不释放手机号继续搞
                 修改网络() //断开连接
                 log("不释放号码,继续注册")
-                
+                特殊标记.push(phone_number)
                 return
                 break;
 
@@ -817,7 +851,7 @@ function 全局检测循环() {
 
         var tag_4 = text("语言").depth(7).findOne(timeout) //下一步 p.click
 
-        var tag_5 = className("android.view.View").text("返回 ").findOne(timeout) // 
+        // var tag_5 = className("android.view.View").text("返回 ").findOne(timeout) // 
         var tag_6 = text(current_语言.拖动下方滑块完成拼图).depth(23).findOne(timeout) //调用函数
         var tag_7 = textStartsWith("让用户用微信扫描下面的二维码").depth(17).findOne(timeout)
         var tag_8 = text(current_语言.注册).className("android.widget.Button").depth(12).findOne(timeout) //填写信息页注册按钮 click
@@ -837,6 +871,9 @@ function 全局检测循环() {
         var tag_22 = text("用短信验证码登录").findOne(timeout)
         var tag_23 = textContains("网络错误，请稍后再试").findOne(timeout)
         var tag_24 = text("确定").className(my_className_lsit.button).findOne(timeout)
+        var tag_25 = textContains("加载中").findOne(timeout)
+        var tag_26 = textContains("操作太频繁").findOne(timeout)
+        var tag_27 = textContains("当前手机号当天已成功注册微信号").findOne(timeout)
         if (tag_1) {
             log("请稍候")
             _G_状态记录器.请稍后计时器 += 1
@@ -846,16 +883,18 @@ function 全局检测循环() {
                 log("已经卡死，重新开始，计时器归零")
 
                 _G_状态记录器.注册结果标记 = 4
-                continue
+                
             }
+            continue
         }
         if (tag_2) {
             log("点击开始")
             sleep(time_delay)
             tag_2.click()
             sleep(time_delay)
+            continue
         }
-        if (tag_3) {
+        if (tag_3) {//这里暂时就先这样
             log("点击协议")
             sleep(time_delay)
             tag_3.click()
@@ -880,13 +919,15 @@ function 全局检测循环() {
         if (tag_4) {
             log("弹出到主页")
             _G_状态记录器.注册结果标记 = 6
+            continue
         }
-        if (tag_5) {
-            log("关闭页面")
-            var fanhui=desc("返回").findOne(1000)
-            fanhui ?  fanhui.parent().click() : null
-            sleep(time_delay)
-        }
+        // if (tag_5) {
+        //     log("关闭页面")
+        //     var fanhui=desc("返回").findOne(1000)
+        //     fanhui ?  fanhui.parent().click() : null
+        //     sleep(time_delay)
+        //     continue
+        // }
         
         if (tag_6) {//滑块
             if (xinhao == 1) {
@@ -896,6 +937,7 @@ function 全局检测循环() {
             } else {
                 huakuai_start()
             }
+            continue
         }
         if (tag_7) {
             log("等待二维码")
@@ -922,40 +964,50 @@ function 全局检测循环() {
                 }
             }
             if (!_G_状态记录器.注册点击后等待状态) {
+                log("等待注册卡死")
                 _G_状态记录器.注册结果标记=4
+            }else{
+                log("等待注册完成")
             }
+            continue
         }
         if (tag_9) {
             log("不是我的")
             tag_9.click()
             sleep(time_delay)
+            continue
         }
         if (tag_10) {
             log("返回注册流程")
             sleep(time_delay)
             tag_10.click()
             sleep(time_delay)
+            continue
         }
 
         if (tag_11) {
             log("等待验证手机号")
             sleep(time_delay)
+            continue
         }
         tag_12 ? 填写验证码() : null
         tag_13 ? tag_13 : null
         if (tag_14) {
             log("环境异常:14")
             _G_状态记录器.注册结果标记 = 1
+            continue
         }
 
         if (tag_15) {
             log("环境异常:15")
             _G_状态记录器.注册结果标记 = 1
+            continue
         }
 
         if (tag_22) {
             log("需要重新登录")
             _G_状态记录器.注册结果标记 = 1
+            continue
         }
 
 
@@ -965,17 +1017,26 @@ function 全局检测循环() {
             // sleep(time_delay)
             tag_16.click()
             // sleep(time_delay)
+            continue
         }
         if (tag_17) {
-            log("系统繁忙")
+            _G_状态记录器.系统繁忙计数+=1
+            log("系统繁忙次数:"+_G_状态记录器.系统繁忙计数)
             var dd=desc("返回").findOne(1000)
             dd ? dd.parent().click() : null
+
+            if (_G_状态记录器.系统繁忙计数>=6) {
+                log("系统繁忙次数为6,不释放改机")
+                _G_状态记录器.注册结果标记 = 6
+            }
             sleep(time_delay)
+            continue
         }
         tag_18 ? _G_状态记录器.注册结果标记 = 2 : null
         if (tag_19) {
             log("手机号一个月内已成功注册微信号")
             _G_状态记录器.注册结果标记=5
+            continue
         }
         if (tag_20) {
             _G_状态记录器.载入数据计数 += 1
@@ -984,21 +1045,64 @@ function 全局检测循环() {
                 _G_状态记录器.注册结果标记 = 1
                 log("载入数据卡死")
             }
+            continue
         }
         if (tag_21) {
-            log("网络错误")
+            
             let dd=desc("返回").findOne(1000)
             dd ? dd.parent().click() :null
+            _G_状态记录器.网页无法打开+=1
+            log("网页无法打开计数:"+_G_状态记录器.网页无法打开)
+            if (_G_状态记录器.网页无法打开 >=6) {
+                log("网页无法打开计数5次,重来")
+                _G_状态记录器.注册结果标记 = 6
+            }
             sleep(time_delay)
             _G_状态记录器.注册结果标记 = 4
+            continue
         }
         if (tag_23) {
-            log("网络错误")
-            _G_状态记录器.注册结果标记 = 4
+            _G_状态记录器.网络错误+=1
+            log("网络错误次数:"+_G_状态记录器.网络错误)
+            if (_G_状态记录器.网络错误 >=6) {
+                log("网络错误5次,重来")
+                _G_状态记录器.注册结果标记 = 6
+            }
+            
+            continue
         }
-        tag_24 ? tag_24.click() : null
+        // tag_24 ? tag_24.click() : null
+        // tag_24 ? tag_24.click() : null
+        if (tag_24) {
+            log("确定")
+            tag_24.click()
+            continue
+        }
+        if (tag_25) {
+            log("加载中")
+            sleep(time_delay)
+            _G_状态记录器.加载中计数器+=1
+            if (_G_状态记录器.加载中计数器> 20) {
+                _G_状态记录器.注册结果标记=6
+            }
+            continue
+        }
+        if (tag_26) {
+            log("操作太频繁")
+            _G_状态记录器.注册结果标记 = 5
+            continue
+        }
+        if (tag_27) {
+            log("当前手机号当天已注册")
+            _G_状态记录器.注册结果标记= 5
+            continue
+        }
+        log("轮询中")
+        _G_状态记录器.轮询计数+=1
+        if (_G_状态记录器.轮询计数 > 30) {
+            _G_状态记录器.注册结果标记=4
+        }
     }
-    log("全局轮询结束")
 }
 
 
@@ -1399,16 +1503,32 @@ function findMultiColorss(img,first,arr,option){
 }
 
 function checknumber() {
+    function 刷新滑块() {
+        let ff = idContains("reload").depth(24).findOne(1000)
+        if (ff) {
+            log("刷新滑块验证")
+            ff.click()
+            sleep(time_delay)
+            _G_状态记录器.huakuaijishu = 0
+            
+        }
+    }
+    sleep(4000)
     var  ime = captureScreen();
     ime=images.cvtColor(ime,"BGR2GRAY",3)
     ff = images.threshold(ime,110,255,"BINARY")
-    
-    var dd= findMultiColorss(ff,"#000000",_G_arr0,{region:{x:820,y:550,width:550,height:650}})
-    randomSwipe(300,1400,dd.x+85,1400)
+    let dd= findMultiColorss(ff,"#000000",_G_arr0,{region:{x:820,y:550,width:550,height:650}})
+    if (dd) {
+        randomSwipe(300,1400,dd.x+85,1400)
+
+    }else{
+        刷新滑块()
+        return 
+    }
     var err=text("请控制拼图块对齐缺口").findOne(3000)
     if (err) {
         
-        var dd = idContains("reload").depth(24).findOne(1000)
+        let dd = idContains("reload").depth(24).findOne(1000)
         if (dd) {
             log("刷新滑块验证")
             dd.click()

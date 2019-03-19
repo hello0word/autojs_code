@@ -367,9 +367,17 @@ function 全局检测循环() {
         }
         
         if (tag_6) {//滑块
+            toastLog("发现滑块")
+            if (! _G_状态记录器.滑块返回标记) {
+                sleep(8000)
+                back()
+                sleep(1000)
+                back()
+                sleep(1000)
+                _G_状态记录器.滑块返回标记=true
+            } 
+            
             if (_G_配置记录器.型号 == 1) {
-                toastLog("发现滑块")
-                sleep(3000)
                 checknumber()
             } else {
                 huakuai_start()

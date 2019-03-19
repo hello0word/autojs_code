@@ -21,8 +21,8 @@ ui.layout(
                     
                     <linear >
                     <radiogroup id="xinhao">
-                        <radio text="小米-4c" checked="true" />
-                         <radio text="格力手机" />
+                        <radio text="小米-4c/联想z2" checked="true" />
+                         <radio text="格力手机(2k)" />
                     </radiogroup>
                     </linear>
                     <linear>
