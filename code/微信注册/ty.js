@@ -109,30 +109,41 @@ function getName() {
 
 function select_guojia(g_j_num) {
     g_j_num = String(g_j_num)
-    var timeout = 70
+    var timeout = 5000
     log("国家代码:"+ g_j_num)
     var guojia_diqu = text(current_语言.国家).className("android.widget.TextView").findOne(3000)
-    guojia_diqu ? guojia_diqu.parent().click() : null//点击国家地区选择国家
+    if (guojia_diqu) {
+        log("主页找到选择国家按扭")
+        guojia_diqu.parent().click()
+    } else {
+        log("主页找不到选择国家按钮")
+        return false
+    }
     sleep(time_delay)
-    do {
-        var sousuo = className("android.widget.TextView").clickable(true).depth(9).findOne(timeout)
-        if (sousuo) {
-            sousuo.click()
-            log("点击搜索按钮")
-            sleep(time_delay)
-        }
-        var shuru = className("android.widget.EditText").clickable(true).findOne(timeout)
-        if (shuru) {
-            shuru.setText(g_j_num)
-            log("填写国家代码完成")
-            sleep(1000)
-        }
-        
+   
+    var sousuo = className("android.widget.TextView").clickable(true).depth(9).findOne(timeout)
+    if (sousuo) {
+        sousuo.click()
+        log("找到搜索按钮")
+        sleep(time_delay)
+    }else{
+        log("找不到搜索按钮,退出")
+        return fasle
+    }
+    var shuru = className("android.widget.EditText").clickable(true).findOne(timeout)
+    if (shuru) {
+        shuru.setText(g_j_num)
+        log("填写国家代码完成")
+        sleep(1000)
+    }else{
+        log("找不到输入框,退出")
+        return false
+    }
+    var 可滑动标记=true
+    do {    
         var dd = text(g_j_num).className("android.widget.TextView").depth(13).exists()
         if (dd) {
-            
             ee = text(g_j_num).className("android.widget.TextView").depth(13).findOne(timeout)
-            
             if (ee) {
                 ee.parent().parent().click()
                 log("选国家完成")
@@ -146,12 +157,20 @@ function select_guojia(g_j_num) {
             }
             
         }else{
-            log("找滑动")
+            log("本页面没找到,找滑动")
             var li=className(my_className_lsit.list).findOne(1000)
-            li.scrollDown()
+            if (li) {
+                
+                可滑动标记=li.scrollDown()
+                log('滑动标记:'+可滑动标记)
+            } else {
+                log("没找到可滑动的控件,异常")
+                return false
+            }
+            
         }
         
-    } while (true);
+    } while (可滑动标记);
 
 
 }
@@ -1397,4 +1416,5 @@ ty.gaiji =gaiji
 ty.状态记录器 =状态记录器
 ty.修改ig备份名 =修改ig备份名
 ty.GET_A16=GET_A16
+ty.强行停止APP =强行停止APP
 module.exports = ty

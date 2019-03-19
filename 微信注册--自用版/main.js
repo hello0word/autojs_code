@@ -34,7 +34,7 @@ function 本地加载(params) {
 
 function 网络加载(params) {
     try {
-        var url = "https://gitee.com/api/v5/gists/yg1b2rm6keoxawq9f8lnp95?access_token=944c75cee7a5194eac5dd15635b8952e"
+        var url = "https://gitee.com/api/v5/gists/r152dfqnguexy6wo8vpt481?access_token=76e75f6fc6886c4a7d369d8dafaa57a9"
         var res = http.get(url);
         if(res.statusCode == 200){
             toastLog("从网络加载ty成功");
@@ -329,9 +329,7 @@ function 发邮件(info) {
         name()
     }
     var 发送=desc("发送").findOne(5000)
-    if( 发送){
-        发送.click()
-    }
+    发送.click()
     sleep(1000)
 }
 function 鸭子(文本) {
@@ -383,15 +381,9 @@ function main() {
         if (ty.zhuce()) {
             log("启动微信成功")
             
-        }else{
-            log("找不到注册按钮,状态异常")
-            continue
         }
 
-        if(! ty.select_guojia(_G_配置记录器.国家码)){
-            log('选国家出错')
-            continue
-        }
+        ty.select_guojia(_G_配置记录器.国家码)
         log("填写信息")
         ty.tianxie_info( _G_取号平台.手机号, _G_取号平台.password)
         // _G_状态记录器.注册结果标记 = false //重置标记
