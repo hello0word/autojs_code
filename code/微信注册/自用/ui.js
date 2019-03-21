@@ -12,10 +12,6 @@ ui.layout(
             <viewpager id="viewpager">
                 <frame>
                 <vertical h="auto" align="top" margin="50 50">
-                    <linear>
-                    {/* <text text="注册码:" textColor="black" textSize="16sp"/>
-                    <input  id="注册码" width="550" textSize="16sp"  ></input> */}
-                    </linear>
                     <horizontal>
 
                     
@@ -32,6 +28,9 @@ ui.layout(
                     </radiogroup>
                     </linear>
                     </horizontal>
+                    <linear>
+                        <text size="12">号码请放在:/sdcard/微信注册用号码.txt</text>
+                    </linear>
                     <linear>
                         <text w="80" gravity="left" color="#111111" size="12">菜鸟api账号</text>
                         <input id="菜鸟api账号" w="*" h="auto" size="12"/>

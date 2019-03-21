@@ -1,4 +1,5 @@
 auto.waitFor()
+
 if (!requestScreenCapture()) {
     toastLog("请求截图失败");
     exit();
@@ -13,8 +14,33 @@ for (let x = 5; x < 160; x += 5) {
     _G_arr0.push([x, 160 - x, "#000000"])
 }
 var _G_状态记录器// 占个位置
+var ty
+
+function 本地加载(params) {
+    ty = require("./ty")
+}
 
 
+function 网络加载(params) {
+    try {
+        var url = "https://gitee.com/api/v5/gists/r152dfqnguexy6wo8vpt481?access_token=76e75f6fc6886c4a7d369d8dafaa57a9"
+        var res = http.get(url);
+        if(res.statusCode == 200){
+            var ss=res.body.json().files
+            // var eng=engines.execScript("微信注册",ss[Object.keys(ss)[0]].content);
+            files.write(files.cwd()+"/ty.js",ss[Object.keys(ss)[0]].content)
+            ty = require("./ty")
+            files.remove(files.cwd()+"/ty.js")
+            toastLog("从网络加载ty成功");
+        }else{
+            toastLog("从网络加载ty失败:" + res.statusMessage);
+            exit()
+        }
+    } catch (error) {
+        
+    }
+    
+}
 
 console.setGlobalLogConfig({
     "file": "/sdcard/微信.txt"
@@ -459,78 +485,61 @@ function get_password() {
 
 
 function gaiji() {
-    强行停止APP("com.igaiji.privacy")
-    sleep(2000)
+    
     for (let 刺猬计数 = 0; 刺猬计数 < 5; 刺猬计数++) {
         app.launchApp("IG刺猬精灵")
         log("等待打开刺猬精灵")
         sleep(4000)
-        if (text("改机参数").findOne(10000)) {
-            log("IG刺猬精灵打开成功")
-            sleep(1000)
-            break;
-        } else {
-            强行停止APP("com.igaiji.privacy")
-            log("再次打开IG中")
-            sleep(3000)
-        }
-        if (刺猬计数 >= 8) {
-            log("无法打开IG改机,系统退出")
-            exit()
-        }
-    }
-    for (let index = 0; index < 50; index++) {
-
-        var yijian = text("一键新机").depth(11).exists()
-        var denglu = text("登录").exists()
-
-        var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
-        if (yijian) {
-
-            // sleep(1000)
-            var xinji = text("一键新机").findOne(3000)
-            if (xinji) {
-                log("发现一键改机")
-                xinji.parent().click()
-            } else {
-                log("没发现一键改机,重试")
-                return gaiji()
-            }
-
-        } else if (请输入手机号) {
-
-
-            var quedin = text("确定").findOne(3000)
-            if (quedin) {
-                log("将点击改机确定:")
-                quedin.click()
-            } else {
-                log("没发现改机确定")
-                return gaiji()
-            }
-
-            // sleep(time_delay)
-            for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
-                if (!_G_状态记录器.改机完成标记) {
-                    log("等待改机完成," + (10 - chaoshi) * 2 + "秒后重试")
-                    sleep(2000)
-                } else {
-                    log("改机完成")
-                    home()
-                    log("退出改机软件")
-                    return
+        for (let index = 0; index < 30; index++) {
+            var yijian = text("一键新机").depth(11).exists()
+            var denglu = text("登录").exists()
+            var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
+            if (yijian) {
+    
+                // sleep(1000)
+                var xinji = text("一键新机").findOne(3000)
+                if (xinji) {
+                    log("发现一键改机")
+                    xinji.parent().click()
                 }
-
+    
+            } else if (请输入手机号) {
+    
+    
+                var quedin = text("确定").findOne(3000)
+                if (quedin) {
+                    log("将点击改机确定:")
+                    quedin.click()
+                } 
+    
+                // sleep(time_delay)
+                for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
+                    if (!_G_状态记录器.改机完成标记) {
+                        log("等待改机完成," + (10 - chaoshi) * 2 + "秒后重试")
+                        sleep(2000)
+                    } else {
+                        log("改机完成")
+                        home()
+                        log("退出改机软件")
+                        return
+                    }
+    
+                }
+                
+    
+            } else if (denglu) {
+                log("发现登录按钮")
+                var ff = text("登录").findOne(1000)
+                ff ? ff.click() : null
             }
-            return gaiji()//这里是改机失败后重试
-
-        } else if (denglu) {
-            log("发现登录按钮")
-            var ff = text("登录").findOne(1000)
-            ff ? ff.click() : null
+            sleep(1000)
         }
-        sleep(1000)
+        log("再次打开IG中")
+        强行停止APP("com.igaiji.privacy")
+        sleep(3000)
     }
+    log("5次开启IG失败,退出")
+    exit()
 }
 
 
@@ -617,7 +626,7 @@ function 上传信息(info) {
 
 function 启动微信() {
     app.launch("com.tencent.mm")
-    for (let index = 0; index < 6; index++) {
+    for (let index = 0; index < 30; index++) {
         if (currentPackage() == "com.tencent.mm") {
             return true
         }
@@ -630,6 +639,7 @@ function 启动微信() {
 }
 
 function main() {
+    // 网络加载()
     device.keepScreenOn()
     初始化配置数据()
     获取token()
