@@ -15,7 +15,7 @@ for (let x = 5; x < 160; x += 5) {
 }
 var _G_状态记录器// 占个位置
 var ty
-
+var ip可用标记=true
 function 本地加载(params) {
     ty = require("./ty")
 }
@@ -658,8 +658,12 @@ function main() {
             log("本次使用新号码信息")
             phone_number = get_phone_number()
         }
-
-        修改网络(true) //连接vpn
+        if(!ip可用标记){
+            log("当前IP不可用,将切换网络")
+            修改网络(true) //连接vpn
+            ip可用标记 =true
+        }
+        
         log(phone_number)
         var password_ss = get_password()
         phone_number.password = password_ss
@@ -1034,7 +1038,8 @@ function 全局检测循环() {
             continue
         }
         if (tag_7) {
-            log("等待二维码")
+            log("出现二维码")
+            ip可用标记 =false
             // var img = captureScreen();
             // images.save(img, "/sdcard/temp.jpg", "jpg", 100);
             // log("文件保存完成")
