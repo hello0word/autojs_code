@@ -1,6 +1,6 @@
 
 var ty = {}
-
+var time_delay=3000
 //1531
 var _G_arr0 = Array()
 for (let x = 5; x < 160; x += 5) {
@@ -20,7 +20,7 @@ var my_className_lsit = {
 }
 
 var 状态记录器 = function () {
-    this.改机完成标记 = null
+   this.改机完成标记 = null
     this.改机可用标志 = null
     this.注册结果标记 = null
     this.当前号码信息 = null
@@ -145,11 +145,11 @@ function select_guojia(g_j_num) {
     }
     var 可滑动标记 = true
     do {
-        var dd = text(g_j_num).className("android.widget.TextView").depth(13).exists()
+        var dd = text(g_j_num).className("android.widget.TextView").exists()
         if (dd) {
-            ee = text(g_j_num).className("android.widget.TextView").depth(13).findOne(timeout)
+            ee = text(g_j_num).className("android.widget.TextView").findOne(timeout)
             if (ee) {
-                ee.parent().parent().click()
+                ee.parent().parent().parent().click()
                 log("选国家完成")
                 sleep(time_delay)
                 var gg = text(current_语言.国家).className("android.widget.TextView").findOne(3000)
@@ -269,7 +269,24 @@ function gaiji() {
 
 function 启动微信() {
     app.launch("com.tencent.mm")
-    for (let index = 0; index < 12; index++) {
+    
+    for (let index = 0; index < 30; index++) {
+        if (currentPackage() == "com.tencent.mm") {
+            return true
+        }
+        log("等待微信加载")
+        sleep(3000)
+
+
+    }
+    log("将尝试模拟点击")
+    home()
+    sleep(1000)
+    let a=text("微信").findOne().bounds()
+    // log(a)
+    sleep(500)
+    press(a.centerX(),a.centerY(),200)
+    for (let index = 0; index < 30; index++) {
         if (currentPackage() == "com.tencent.mm") {
             return true
         }
@@ -329,13 +346,17 @@ function 全局检测循环() {
         // }
         if (tag_1) {
             log("请稍候,%d次后将重来", 50 - _G_状态记录器.请稍后计时器)
+            if (_G_状态记录器.滑块返回标记) {
+                back()
+                _G_状态记录器.滑块返回标记=false
+            }
             _G_状态记录器.请稍后计时器 += 1
             sleep(2000)
             if (_G_状态记录器.请稍后计时器 > 50) {
                 _G_状态记录器.请稍后计时器 = 0
                 log("已经卡死，重新开始，计时器归零")
 
-                _G_状态记录器.注册结果标记 = 4
+                _G_状态记录器.注册结果标记 = 6
 
             }
             _G_状态记录器.轮询计数 = 0
@@ -405,9 +426,9 @@ function 全局检测循环() {
             if (!_G_状态记录器.滑块返回标记) {
                 sleep(8000)
                 back()
-                sleep(1000)
+                sleep(50)
                 back()
-                sleep(1000)
+                sleep(4000)
 
                 _G_状态记录器.滑块返回标记 = true
             }
@@ -422,6 +443,12 @@ function 全局检测循环() {
         }
         if (tag_7) {
             log("等待二维码")
+            var 网络模式 = storage.get("net_mode", 0)
+            if (网络模式=="2") {
+                toastLog('wifi模式出现二维码,脚本退出');
+                
+                exit()
+            }
             // var img = captureScreen();
             // images.save(img, "/sdcard/temp.jpg", "jpg", 100);
             // log("文件保存完成")
@@ -447,7 +474,7 @@ function 全局检测循环() {
             }
             if (!_G_状态记录器.注册点击后等待状态) {
                 log("等待注册卡死")
-                _G_状态记录器.注册结果标记 = 4
+                _G_状态记录器.注册结果标记 = 6
             } else {
                 log("等待注册完成")
             }
@@ -550,7 +577,7 @@ function 全局检测循环() {
                 _G_状态记录器.注册结果标记 = 6
             }
             sleep(time_delay)
-            _G_状态记录器.注册结果标记 = 4
+            
             _G_状态记录器.轮询计数 = 0
             continue
         }
@@ -579,7 +606,7 @@ function 全局检测循环() {
             sleep(time_delay)
             _G_状态记录器.加载中计数器 += 1
             if (_G_状态记录器.加载中计数器 > 20) {
-                _G_状态记录器.注册结果标记 = 4
+                _G_状态记录器.注册结果标记 = 6
             }
             _G_状态记录器.轮询计数 = 0
             continue
@@ -608,7 +635,7 @@ function 全局检测循环() {
         log("轮询中,剩余次数%d", 60 - _G_状态记录器.轮询计数)
         _G_状态记录器.轮询计数 += 1
         if (_G_状态记录器.轮询计数 > 60) {
-            _G_状态记录器.注册结果标记 = 4
+            _G_状态记录器.注册结果标记 = 6
         }
     }
 }
@@ -692,6 +719,8 @@ function 修改网络(gn) {
     var 网络模式 = _G_配置记录器.网络切换方式
     log("网络切换方式为:" + 网络模式 + ",本次标记为:" + gn)
     sleep(1000)
+    强行停止APP("com.android.settings")
+    sleep(500)
     if (网络模式 == "1") {//vpn模式
         log("网络模式为:vpn模式")
 
@@ -699,7 +728,9 @@ function 修改网络(gn) {
     } else if (网络模式 == "0" && gn) {//开关飞行模式
         log("网络模式为:开关飞行模式")
         开关飞行()
-    } else {
+    } else if(网络模式 == "2"){
+        log("wifi模式")
+    }else{
         log("错误")
     }
 }
@@ -813,19 +844,12 @@ function 等待结果() {
 
             case 1: //环境异常  // 重新开始 /0是死的
                 修改网络() //断开连接	
-                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "0"
-                log(info)
-                // 上传信息(info)
-                log("上传完成")
+                
                 log("异常")
                 return { status: 1, info: "环境异常" }
             case 2: //通过 /上传信息  /1为活的
                 修改网络() //断开连接
-                var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "1"
-                log(info)
-
-                // 上传信息(info)
-                log("上传完成")
+                
                 return { status: 2, info: info }
 
             case 3: //   
@@ -863,9 +887,10 @@ function 等待结果() {
 }
 
 function 填写验证码() {
-    var 验证码 = _G_取号平台.取验证码()
+    _G_取号平台.取验证码()
+    var 验证码 = _G_取号平台.验证码数字
 
-    log("输入验证码")
+    log("输入验证码:"+_G_取号平台.验证码数字)
     // var yanzheng = textContains("请输入验证码").findOne(3000)
     var yanzheng = className(my_className_lsit.edit).findOne(3000)
     yanzheng ? yanzheng.setText(验证码) : log("没有验证码框")

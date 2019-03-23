@@ -4,7 +4,7 @@ auto.waitFor()
 
 console.show()
 console.setPosition(0, device.height / 2 + 200)
-events.on("exit", function() {
+events.on("exit", function () {
     log("结束运行");
 });
 console.setGlobalLogConfig({
@@ -13,13 +13,13 @@ console.setGlobalLogConfig({
 
 
 
-var ty=null
+var ty = null
 var _G_状态记录器 = null;//这个在开始的时候初始化
 var _G_取号平台 = null //这个在开始的时候初始化
 var storage = storages.create("微信")
-const time_delay = 2000
+var time_delay = 2000
 var y = 1058 //设置滑动按钮高度
-var _G_配置记录器=  null//这个是固定的
+var _G_配置记录器 = null//这个是固定的
 var 特殊标记 = Array()//作用为保留号码信息进行注册
 
 
@@ -42,21 +42,21 @@ function 网络加载(params) {
     try {
         var url = "https://gitee.com/api/v5/gists/r152dfqnguexy6wo8vpt481?access_token=76e75f6fc6886c4a7d369d8dafaa57a9"
         var res = http.get(url);
-        if(res.statusCode == 200){
-            var ss=res.body.json().files
+        if (res.statusCode == 200) {
+            var ss = res.body.json().files
             // var eng=engines.execScript("微信注册",ss[Object.keys(ss)[0]].content);
-            files.write(files.cwd()+"/ty.js",ss[Object.keys(ss)[0]].content)
+            files.write(files.cwd() + "/ty.js", ss[Object.keys(ss)[0]].content)
             ty = require("./ty")
-            files.remove(files.cwd()+"/ty.js")
+            files.remove(files.cwd() + "/ty.js")
             toastLog("从网络加载ty成功");
-        }else{
+        } else {
             toastLog("从网络加载ty失败:" + res.statusMessage);
             exit()
         }
     } catch (error) {
-        
+        log(error)
     }
-    
+
 }
 
 
@@ -64,53 +64,53 @@ function 网络加载(params) {
 // var _G_取号平台 =new 菜鸟平台("api_yuzhongxin8_mmdx","zz2222..","1615")
 // var _G_取号平台 =new 菜鸟平台(_G_配置记录器.取号平台账号,_G_配置记录器.取号平台密码,_G_配置记录器.项目编号)
 
-function 初始化配置(菜鸟api账号,菜鸟api密码,项目id,型号,国家号,网络切换方式,好友微信号,邮件地址) {
-    菜鸟api账号  ? this.取号平台账号    =菜鸟api账号  : this.取号平台账号  =storage.get("菜鸟api账号","")
-    菜鸟api密码  ? this.取号平台密码    =菜鸟api密码  : this.取号平台密码  =storage.get("菜鸟api密码","")
-    项目id       ? this.项目编号        =项目id       : this.项目编号      =storage.get("项目id","")
-    型号         ? this.型号            =型号         : this.型号          = storage.get("型号")
-    国家号       ? this.国家码          =国家号       : this.国家码          =storage.get("国家号")
-    网络切换方式 ? this.网络切换方式    =网络切换方式 : this.网络切换方式  = storage.get("网络切换方式","")//   
-    好友微信号   ? this.发送至好友      =好友微信号   : this.发送至好友    =storage.get("好友微信号","")
-    邮件地址  ?  this.邮件地址          =邮件地址    : this.邮件地址       =storage.get("邮件地址","")
-    if (this.国家码=="40") {
+function 初始化配置(菜鸟api账号, 菜鸟api密码, 项目id, 型号, 国家号, 网络切换方式, 好友微信号, 邮件地址) {
+    菜鸟api账号 ? this.取号平台账号 = 菜鸟api账号 : this.取号平台账号 = storage.get("菜鸟api账号", "")
+    菜鸟api密码 ? this.取号平台密码 = 菜鸟api密码 : this.取号平台密码 = storage.get("菜鸟api密码", "")
+    项目id ? this.项目编号 = 项目id : this.项目编号 = storage.get("项目id", "")
+    型号 ? this.型号 = 型号 : this.型号 = storage.get("型号")
+    国家号 ? this.国家码 = 国家号 : this.国家码 = storage.get("国家号")
+    网络切换方式 ? this.网络切换方式 = 网络切换方式 : this.网络切换方式 = storage.get("网络切换方式", "")//   
+    好友微信号 ? this.发送至好友 = 好友微信号 : this.发送至好友 = storage.get("好友微信号", "")
+    邮件地址 ? this.邮件地址 = 邮件地址 : this.邮件地址 = storage.get("邮件地址", "")
+    if (this.国家码 == "40") {
         // this.
     } else {
-        
+
     }
-    
+
 }
 
-function 菜鸟平台(用户名,密码,项目id) {
+function 菜鸟平台(用户名, 密码, 项目id) {
     this.用户名 = 用户名
     this.密码 = 密码
     this.项目id = 项目id
     ///登录相关
-     
-    this.接口地址="http://api.jydpt.com/yhapi.ashx"
-     this.token=null
-     this.用户余额=null
-     this.级别=null
-     this.最大获取数=null
-     this.积分=null
+
+    this.接口地址 = "http://api.jydpt.com/yhapi.ashx"
+    this.token = null
+    this.用户余额 = null
+    this.级别 = null
+    this.最大获取数 = null
+    this.积分 = null
     ////取号相关
-    this.P_ID                    = null
-    this.获取时间                 =null
-    this.串口号                   =null 
-    this.手机号                   =null
-    this.发送短信项目的接收号码     =null
-    this.国家名称或区号            =null
+    this.P_ID = null
+    this.获取时间 = null
+    this.串口号 = null
+    this.手机号 = null
+    this.发送短信项目的接收号码 = null
+    this.国家名称或区号 = null
     /////验证码相关
     this.验证码数字 = null
     this.完整短信内容 = null
     ////释放手机号
     ////拉黑手机号
-    this.登录=function () {
+    this.登录 = function () {
         try {
-            var res= http.get(this.接口地址+"?Action=userLogin&userName="+this.用户名+"&userPassword="+this.密码)
+            var res = http.get(this.接口地址 + "?Action=userLogin&userName=" + this.用户名 + "&userPassword=" + this.密码)
             var data = res.body.string().split("|")
             log(data)
-            if (data[0]=="OK") {
+            if (data[0] == "OK") {
                 this.token = data[1]
                 this.用户余额 = data[2]
                 this.级别 = data[3]
@@ -123,7 +123,7 @@ function 菜鸟平台(用户名,密码,项目id) {
                         toastLog('频繁失败,2分钟后重试');
                         exit()
                         break;
-                    case "["+this.用户名+"]不存在":
+                    case "[" + this.用户名 + "]不存在":
                         toastLog("用户名不存在")
                         exit()
                         break;
@@ -132,8 +132,8 @@ function 菜鸟平台(用户名,密码,项目id) {
 
                         exit()
                         break;
-                    case "["+this.用户名+"]已禁用":
-                        toastLog("["+this.用户名+"]已禁用");
+                    case "[" + this.用户名 + "]已禁用":
+                        toastLog("[" + this.用户名 + "]已禁用");
                         exit()
                         break;
                 }
@@ -142,18 +142,18 @@ function 菜鸟平台(用户名,密码,项目id) {
             log(error)
         }
     }
-    this.取号= function() {
+    this.取号 = function () {
         try {
-            var res = http.get(this.接口地址+"?Action=getPhone&token="+this.token+"&i_id="+this.项目id+"&d_id")
-            var data= res.body.string().split("|")
+            var res = http.get(this.接口地址 + "?Action=getPhone&token=" + this.token + "&i_id=" + this.项目id + "&d_id")
+            var data = res.body.string().split("|")
             log(data)
-            if (data[0]=="OK") {
-                    this.P_ID                    =data[1]
-                    this.获取时间                =data[2]
-                    this.串口号                   =data[3]
-                    this.手机号                  =data[4]
-                    this.发送短信项目的接收号码   =data[5]
-                    this.国家名称或区号           =data[6]
+            if (data[0] == "OK") {
+                this.P_ID = data[1]
+                this.获取时间 = data[2]
+                this.串口号 = data[3]
+                this.手机号 = data[4]
+                this.发送短信项目的接收号码 = data[5]
+                this.国家名称或区号 = data[6]
                 return true
             } else {
                 switch (data[1]) {
@@ -174,7 +174,7 @@ function 菜鸟平台(用户名,密码,项目id) {
                         sleep(10000)
                         return false
                         break;
-                
+
                     default:
                         break;
                 }
@@ -184,18 +184,18 @@ function 菜鸟平台(用户名,密码,项目id) {
         }
 
     }
-    this.取验证码=function () {
+    this.取验证码 = function () {
         try {
-            _G_状态记录器.取验证码计数 +=1
+            _G_状态记录器.取验证码计数 += 1
             if (_G_状态记录器.取验证码计数 > 30) {
-                _G_状态记录器.注册结果标记=3
+                _G_状态记录器.注册结果标记 = 3
             }
-            var res= http.get(this.接口地址+"?Action=getPhoneMessage&token="+this.token+"&p_id="+this.P_ID)
+            var res = http.get(this.接口地址 + "?Action=getPhoneMessage&token=" + this.token + "&p_id=" + this.P_ID)
             var data = res.body.string().split("|")
             log(data)
-            if (data[0]=="OK") {
+            if (data[0] == "OK") {
                 this.验证码数字 = data[1]
-                this.完整短信内容=data[2]
+                this.完整短信内容 = data[2]
                 return this.验证码数字
             } else {
                 switch (data[1]) {
@@ -218,19 +218,19 @@ function 菜鸟平台(用户名,密码,项目id) {
     this.释放手机号 = function () {
         try {
             log("释放手机号")
-            var res = http.get(this.接口地址+"?Action=phoneRelease&token="+this.token+"&p_id="+this.P_ID)
-            var data =res.body.string()
+            var res = http.get(this.接口地址 + "?Action=phoneRelease&token=" + this.token + "&p_id=" + this.P_ID)
+            var data = res.body.string()
             log(data)
             log("释放手机号完成")
         } catch (error) {
             log(error)
         }
     }
-    this.拉黑手机号=function (拉黑原因) {
-        拉黑原因 ? null : 拉黑原因="userd"
+    this.拉黑手机号 = function (拉黑原因) {
+        拉黑原因 ? null : 拉黑原因 = "userd"
         try {
-            var res = http.get(this.接口地址+"?Action=phoneToBlack&token="+this.token+"&p_id="+this.P_ID+"&i_id="+this.项目id+"&mobile="+this.手机号 +"&reason="+拉黑原因)
-            var data=res.body.string()
+            var res = http.get(this.接口地址 + "?Action=phoneToBlack&token=" + this.token + "&p_id=" + this.P_ID + "&i_id=" + this.项目id + "&mobile=" + this.手机号 + "&reason=" + 拉黑原因)
+            var data = res.body.string()
             log(data)
         } catch (error) {
             log(error)
@@ -238,20 +238,20 @@ function 菜鸟平台(用户名,密码,项目id) {
     }
 }
 菜鸟平台.初始化 = function () {
-    return new 菜鸟平台(_G_配置记录器.取号平台账号,_G_配置记录器.取号平台密码,_G_配置记录器.项目编号)
+    return new 菜鸟平台(_G_配置记录器.取号平台账号, _G_配置记录器.取号平台密码, _G_配置记录器.项目编号)
 }
 
 
-threads.start(function() {
-    events.onKeyDown("volume_up", function(event){
+threads.start(function () {
+    events.onKeyDown("volume_up", function (event) {
         _G_取号平台.释放手机号()
         toastLog("音量上被按下,停止所有脚本");
         engines.stopAll()
     });
-    
+
     log("toast 监听启动")
     events.observeToast();
-    events.onToast(function(toast) {
+    events.onToast(function (toast) {
         var pkg = toast.getPackageName();
         var text = toast.getText()
         switch (pkg) {
@@ -259,7 +259,7 @@ threads.start(function() {
                 switch (text) {
                     case "一键新机完成":
                         _G_状态记录器.改机完成标记 = true
-                        setTimeout(function() {
+                        setTimeout(function () {
                             _G_状态记录器.改机完成标记
                         }, 1000)
                         break;
@@ -273,13 +273,13 @@ threads.start(function() {
                         break;
                 }
                 break;
-    
+
             case "com.tencent.mm":
                 var wangluocuowu = new RegExp(/无法连接到服务器/)
                 if (wangluocuowu.test(text)) {
                     _G_状态记录器.注册结果标记 = 4
                 }
-    
+
         }
         log("Toast内容: " + toast.getText() +
             " 来自: " + getAppName(pkg) +
@@ -289,39 +289,44 @@ threads.start(function() {
 });
 
 function GET_A16() {   //据说运行之前要先杀死微信
-    ty.强行停止APP("com.toncent.mm")
-    var arr = files.listDir("/data/data/com.tencent.mm/files/kvcomm/");
-	//log(arr);
-	if(arr.length >= 1){  //返回数组元素小于1说明没权限)
-		for (var i in arr){
-			var s
-			var str = files.read("/data/data/com.tencent.mm/files/kvcomm/"+arr[i]);
-			var reg = /A(.*?)(?=[\_])/g;//匹配A开头_结尾的字符串
-			try {
-				var b = str.match(reg);
-				//log(b);
-				for(var c in b){
-					var d = b[c]
-					if(d.length == 16){//匹配到的字符串长度==16就是要找的东西了
-						s = true;
-						log("我是某16>>>>>"+d);
-						break;		//不知道为什么这里不能退出函数 可能是两层for循环 的问题
-					}	
-				}
-				if(s == true){
-					return d;	//所以只好在这里返回退出
-				}
-				sleep(50);
-			} catch (error) {
-			}
-		}
-		}else{
-		log("获取文件目录失败~~没有权限)");		
-		return false;	
-	}	
+    ty.强行停止APP("com.tencent.mm")
+    try {
+        var arr = files.listDir("/data/data/com.tencent.mm/files/kvcomm/");
+        //log(arr);
+        if (arr.length >= 1) {  //返回数组元素小于1说明没权限)
+            for (var i in arr) {
+                var s
+                var str = files.read("/data/data/com.tencent.mm/files/kvcomm/" + arr[i]);
+                var reg = /A(.*?)(?=[\_])/g;//匹配A开头_结尾的字符串
+
+                var b = str.match(reg);
+                //log(b);
+                for (var c in b) {
+                    var d = b[c]
+                    if (d.length == 16) {//匹配到的字符串长度==16就是要找的东西了
+                        s = true;
+                        log("A16>>>>>" + d);
+                        break;		//不知道为什么这里不能退出函数 可能是两层for循环 的问题
+                    }
+                }
+                if (s == true) {
+
+                    return d;	//所以只好在这里返回退出
+                }
+                sleep(50);
+
+            }
+        } else {
+            log("获取文件目录失败~~没有权限)");
+            return false;
+        }
+    } catch (error) {
+        log(error)
+        return false
+    }
 }
 
-function 发邮件(info) {
+function 发邮件(params) {
     function send() {
         app.sendEmail({
             email: [_G_配置记录器.邮件地址],
@@ -335,25 +340,29 @@ function 发邮件(info) {
     if (text("收件箱").exists()) {
         send()
     }
-    var 发送=desc("发送").findOne(5000)
+    var 发送 = desc("发送").findOne(5000)
     发送.click()
     sleep(1000)
 }
+function 传递信息(info) {
+    log("本次数据:"+info)
+    _G_取号平台.存储数据(info)
+}
 function 鸭子(文本) {
-    var dd=text(文本).findOne(1000)
+    var dd = text(文本).findOne(1000)
     if (dd) {
-        while(true){
+        while (true) {
             if (dd.clickable()) {
                 dd.click()
                 return true
-            }else if(dd.depth() <=1){
+            } else if (dd.depth() <= 1) {
                 return false
-            }else {
-                dd=dd.parent()
+            } else {
+                dd = dd.parent()
             }
-            
+
         }
-        
+
     }
 }
 
@@ -362,114 +371,149 @@ function 账号管理器() {
     this.密码 = null
     this.项目id = null
     ///登录相关
-     
-    this.接口地址="http://api.jydpt.com/yhapi.ashx"
-     this.token=null
-     this.用户余额=null
-     this.级别=null
-     this.最大获取数=null
-     this.积分=null
+
+    this.接口地址 = "http://api.jydpt.com/yhapi.ashx"
+    this.token = null
+    this.用户余额 = null
+    this.级别 = null
+    this.最大获取数 = null
+    this.积分 = null
     ////取号相关
-    this.P_ID                    = null
-    this.获取时间                 =null
-    this.串口号                   =null 
-    this.手机号                   =null///要有
-    this.发送短信项目的接收号码     =null
-    this.国家名称或区号            =null
+    this.P_ID = null
+    this.获取时间 = null
+    this.串口号 = null
+    this.手机号 = null///要有
+    this.发送短信项目的接收号码 = null
+    this.国家名称或区号 = null
     /////验证码相关
     this.验证码数字 = null
     this.完整短信内容 = null
-    this.password    =null/////////////////
-    this.国家代码    =null////////////////
-    let path="/sdcard/微信注册用号码.txt"
+    this.password = null/////////////////
+    this.国家代码 = null////////////////
+    let path = "/sdcard/微信注册用号码.txt"
     function get验证码(token) {
         try {
-            let res = http.get("http://103.71.237.201/api/getmessagebytoken?token="+token)
-            let data= res.body.json()
-            if (data.code==0) {
+            let res = http.get("http://103.71.237.201/api/getmessagebytoken?token=" + token)
+            let data = res.body.json()
+            if (data.code == 0) {
                 log("获取验证码成功")
-                this.验证码数字= data.message.match(/[0-9]{4}/g)[0]
-                return true
-            }else{
+                let 验证码数字 = data.message.match(/[0-9]{4}/g)[0]
+                log("验证码为:"+验证码数字)
+                return 验证码数字
+            } else {
                 return false
             }
         } catch (error) {
             log(error)
         }
     }
-    this.登录=function (params) {
+    function 记录(号码, 密码, 状态) {
+        let file = files.open(path, "r", "utf-8")
+        let allinfo = file.readlines()
+        file.close()
+        var temp_array = []
+        allinfo.forEach(element => {
+            let info = element.split("|")
+            if (info[0] == 号码) {
+                info[2] = 密码
+                info[3] = 状态
+
+            }
+            temp_array.push(info.join("|"))
+
+        })
+        file = files.open(path, "w", "utf-8")
+        file.writelines(temp_array)
+        file.close()
+    }
+    this.登录 = function (params) {
         return true
     }
     this.取号 = function (params) {
-        if(files.exists(path)){
-            file = open(path,"r","utf-8")
-            hines=file.readlines()
-            hines.forEach(element=>{
-                let 完整内容= element.split("|")
-                if (完整内容.length==2) {
-                    this.手机号=完整内容[0]
-                    file.close()
-                    return 
-                    
+        log('取号')
+        if (files.exists(path)) {
+            file = open(path, "r", "utf-8")
+            hines = file.readlines()
+            hines.forEach(element => {
+                let 完整内容 = element.split("|")
+                
+                if (完整内容.length == 2) {
+                   
+                    this.手机号 = 完整内容[0]
+                    this.token = 完整内容[1]
+
                 }
             })
             file.close()
-            toastLog('没有可用号码');
-            exit()
-        }else{
+            if (this.手机号) {
+                return true
+            }else{
+                toastLog('没有可用号码');
+                exit()
+            }
+            
+        } else {
             toastLog('账号文件不存在');
             exit()
         }
     }
-    this.取验证码 =function () {
-        file = open(path,"r","utf-8")
-            hines=file.readlines()
-            hines.forEach(element=>{
-                let 完整内容= element.split("|")
-                if (完整内容[0]==this.手机号) {
-                    let token=完整内容[1]
-                    for (let 获取验证码计数 = 0; 获取验证码计数 < 12; 获取验证码计数++) {
-                        if(get验证码(token)){
-                            return true
-                        }else{
-                            log("本次获取失败")
-                            sleep(5000)
-                        }
-                        
-                    }
-                    return fasle
-                } 
-            })
-    }
-    this.释放手机号=function (params) {
+    this.取验证码 = function () {
         
+        for (let 获取验证码计数 = 0; 获取验证码计数 < 12; 获取验证码计数++) {
+            log("取验证码")
+            let yanzhengma=get验证码(this.token)
+            log("获取到的验证码为"+yanzhengma)
+            if (yanzhengma) {
+                this.验证码数字 = yanzhengma
+                return true
+            } else {
+                log("本次获取失败")
+                sleep(5000)
+            }
+
+        }
+        _G_状态记录器.注册结果标记 = 5
+        sleep(2000)
+        log("无法获取验证码")
     }
-    this.拉黑手机号=function (params) {
-        
+    this.释放手机号 = function () {
+        记录(this.手机号, " ", "释放")
+        log("释放手机号")
+    }
+    this.拉黑手机号 = function () {
+        记录(this.手机号, " ", "拉黑")
+        log("拉黑手机号")
+    }
+    this.存储数据 = function (params) {
+        log("存储数据")
+        记录(this.手机号, "附加数据:" + params)
     }
 
 }
+账号管理器.初始化 = function () {
+    return new 账号管理器()
+}
 
-
-function 本地_main(){
+function 本地_main() {
     网络加载()
-    var 区号数组 = ["380","977"]
-    _G_配置记录器= new 初始化配置();
+    // 本地加载()
+    var 区号数组 = ["380", "977"]
+    _G_配置记录器 = new 初始化配置();
     while (true) {
-        
-        _G_状态记录器= ty.状态记录器.初始化()
-        _G_取号平台 = 菜鸟平台.初始化()
-        _G_取号平台.登录()
-        
+        log(ty.状态记录器)
+        _G_状态记录器 = ty.状态记录器.初始化()
+        _G_取号平台 = 账号管理器.初始化()
+        // _G_取号平台.登录()
+
         ty.修改网络(true) //连接vpn
         // 改机_启动微信()
         _G_取号平台.取号()
         var phone_number = _G_取号平台.手机号
         log(phone_number)
-        
+
         if (区号数组.indexOf(_G_配置记录器.国家码) != -1) {
-            _G_取号平台.区号=区号数组[区号数组.indexOf(_G_配置记录器.国家码)]
-            _G_取号平台.手机号=_G_取号平台.手机号.substr(_G_取号平台.区号.length)
+            _G_取号平台.区号 = 区号数组[区号数组.indexOf(_G_配置记录器.国家码)]
+            _G_取号平台.手机号 = _G_取号平台.手机号.substr(_G_取号平台.区号.length)
         }//Todo //
         _G_取号平台.password = ty.get_password()
         log(_G_取号平台.password) //
@@ -480,90 +524,90 @@ function 本地_main(){
         }
         if (ty.zhuce()) {
             log("启动微信成功")
-            
+
         }
 
         ty.select_guojia(_G_配置记录器.国家码)
         log("填写信息")
-        ty.tianxie_info( _G_取号平台.手机号, _G_取号平台.password)
+        ty.tianxie_info(_G_取号平台.手机号, _G_取号平台.password)
         // _G_状态记录器.注册结果标记 = false //重置标记
         // _G_状态记录器.滑块计数器 = 0
         // _G_状态记录器.载入数据计数 = 0
         _G_状态记录器.当前号码信息 = _G_取号平台
         storage.put("当前号码信息", _G_取号平台)
         _G_状态记录器.检测线程 = threads.start(ty.全局检测循环)//这里需要使用记录器
-        var 结果= ty.等待结果()//这里需要使用记录器
+        var 结果 = ty.等待结果()//这里需要使用记录器
         _G_状态记录器.检测线程.interrupt()
         switch (结果.status) {
             case 1:
                 log("结果为1")
-                var a16= GET_A16()
+                var a16 = GET_A16()
                 if (_G_取号平台.区号) {
-                    _G_取号平台.手机号= _G_取号平台.区号+_G_取号平台.手机号
+                    _G_取号平台.手机号 = _G_取号平台.区号 + _G_取号平台.手机号
                 }
-                var info = _G_取号平台.手机号+"----"+_G_取号平台.password+"----"+_G_配置记录器.国家码+"----"+a16
-                发邮件(info)
+                var info = _G_取号平台.手机号 + "----" + _G_取号平台.password + "----" + _G_配置记录器.国家码 + "----"+"1"+"----" + a16
+                传递信息(info)
                 break
             case 2:
                 log("结果为2")
-                var a16= GET_A16()
+                var a16 = GET_A16()
                 // app.launch("com.tencent.mm")
                 // waitForPackage("com.tencent.mm")
                 if (_G_取号平台.区号) {
-                    _G_取号平台.手机号= _G_取号平台.区号+_G_取号平台.手机号
+                    _G_取号平台.手机号 = _G_取号平台.区号 + _G_取号平台.手机号
                 }
-                var info = _G_取号平台.手机号+"----"+_G_取号平台.password+"----"+_G_配置记录器.国家码+"----"+a16
-                发邮件(info)
+                var info = _G_取号平台.手机号 + "----" + _G_取号平台.password + "----" + _G_配置记录器.国家码 + "----" +"2"+"----"+ a16
+                传递信息(info)
                 // ty.添加指定微信发送(_G_配置记录器.发送至好友)
                 ty.修改ig备份名()
                 break;
             case 3:
-                
-            log("结果为3")
+
+                log("结果为3")
                 _G_取号平台.释放手机号()
                 break
             case 4:
-            log("结果为4")
-                _G_取号平台.释放手机号()    
-            
+                log("结果为4")
+                _G_取号平台.释放手机号()
+
                 break
             case 5:
-            log("结果为5")    
+                log("结果为5")
                 _G_取号平台.拉黑手机号()
-                
+
                 break
             case 6:
-            log("结果为6")    
-            // _G_取号平台.释放手机号()    
-                
+                log("结果为6")
+                // _G_取号平台.释放手机号()    
+
                 break
             default:
                 break;
         }
-        ty.强行停止APP("com.igaiji.privacy")
+        // ty.强行停止APP("com.igaiji.privacy")
     }
 }
 function main() {
     网络加载()
-    var 区号数组 = ["380","977"]
-    
-    
-    
+    var 区号数组 = ["380", "977"]
+
+
+
     while (true) {
-        _G_配置记录器= new 初始化配置();
-        _G_状态记录器= ty.状态记录器.初始化()
+        _G_配置记录器 = new 初始化配置();
+        _G_状态记录器 = ty.状态记录器.初始化()
         _G_取号平台 = 菜鸟平台.初始化()
         _G_取号平台.登录()
-        
+
         ty.修改网络(true) //连接vpn
         // 改机_启动微信()
         _G_取号平台.取号()
         var phone_number = _G_取号平台.手机号
         log(phone_number)
-        
+
         if (区号数组.indexOf(_G_配置记录器.国家码) != -1) {
-            _G_取号平台.区号=区号数组[区号数组.indexOf(_G_配置记录器.国家码)]
-            _G_取号平台.手机号=_G_取号平台.手机号.substr(_G_取号平台.区号.length)
+            _G_取号平台.区号 = 区号数组[区号数组.indexOf(_G_配置记录器.国家码)]
+            _G_取号平台.手机号 = _G_取号平台.手机号.substr(_G_取号平台.区号.length)
         }//Todo //
         _G_取号平台.password = ty.get_password()
         log(_G_取号平台.password) //
@@ -574,62 +618,62 @@ function main() {
         }
         if (ty.zhuce()) {
             log("启动微信成功")
-            
+
         }
 
         ty.select_guojia(_G_配置记录器.国家码)
         log("填写信息")
-        ty.tianxie_info( _G_取号平台.手机号, _G_取号平台.password)
+        ty.tianxie_info(_G_取号平台.手机号, _G_取号平台.password)
         // _G_状态记录器.注册结果标记 = false //重置标记
         // _G_状态记录器.滑块计数器 = 0
         // _G_状态记录器.载入数据计数 = 0
         _G_状态记录器.当前号码信息 = _G_取号平台
         storage.put("当前号码信息", _G_取号平台)
         _G_状态记录器.检测线程 = threads.start(ty.全局检测循环)//这里需要使用记录器
-        var 结果= ty.等待结果()//这里需要使用记录器
+        var 结果 = ty.等待结果()//这里需要使用记录器
         _G_状态记录器.检测线程.interrupt()
         switch (结果.status) {
             case 1:
                 log("结果为1")
-                var a16= GET_A16()
+                var a16 = GET_A16()
                 if (_G_取号平台.区号) {
-                    _G_取号平台.手机号= _G_取号平台.区号+_G_取号平台.手机号
+                    _G_取号平台.手机号 = _G_取号平台.区号 + _G_取号平台.手机号
                 }
-                var info = _G_取号平台.手机号+"----"+_G_取号平台.password+"----"+_G_配置记录器.国家码+"----"+a16
-                发邮件(info)
+                var info = _G_取号平台.手机号 + "----" + _G_取号平台.password + "----" + _G_配置记录器.国家码 + "----" + a16
+                传递信息(info)
                 break
             case 2:
                 log("结果为2")
-                var a16= GET_A16()
+                var a16 = GET_A16()
                 // app.launch("com.tencent.mm")
                 // waitForPackage("com.tencent.mm")
                 if (_G_取号平台.区号) {
-                    _G_取号平台.手机号= _G_取号平台.区号+_G_取号平台.手机号
+                    _G_取号平台.手机号 = _G_取号平台.区号 + _G_取号平台.手机号
                 }
-                var info = _G_取号平台.手机号+"----"+_G_取号平台.password+"----"+_G_配置记录器.国家码+"----"+a16
-                发邮件(info)
+                var info = _G_取号平台.手机号 + "----" + _G_取号平台.password + "----" + _G_配置记录器.国家码 + "----" + a16
+                传递信息(info)
                 // ty.添加指定微信发送(_G_配置记录器.发送至好友)
                 ty.修改ig备份名()
                 break;
             case 3:
-                
-            log("结果为3")
+
+                log("结果为3")
                 _G_取号平台.释放手机号()
                 break
             case 4:
-            log("结果为4")
-                _G_取号平台.释放手机号()    
-            
+                log("结果为4")
+                _G_取号平台.释放手机号()
+
                 break
             case 5:
-            log("结果为5")    
+                log("结果为5")
                 _G_取号平台.拉黑手机号()
-                
+
                 break
             case 6:
-            log("结果为6")    
-            // _G_取号平台.释放手机号()    
-                
+                log("结果为6")
+                // _G_取号平台.释放手机号()    
+
                 break
             default:
                 break;
@@ -637,11 +681,6 @@ function main() {
         ty.强行停止APP("com.igaiji.privacy")
     }
 }
-
-
-
-
-
 
 
 function test() {
@@ -661,7 +700,7 @@ function test() {
     //     _G_取号平台.取号()
     //     var phone_number = _G_取号平台.手机号
     //     log(phone_number)
-        
+
     //     if (区号数组.indexOf(_G_配置记录器.国家码) != -1) {
     //         _G_取号平台.区号=区号数组[区号数组.indexOf(_G_配置记录器.国家码)]
     //         _G_取号平台.手机号=_G_取号平台.手机号.substr(_G_取号平台.区号.length)
@@ -675,7 +714,7 @@ function test() {
     //     }
     //     if (ty.zhuce()) {
     //         log("启动微信成功")
-            
+
     //     }
 
     //     ty.select_guojia(_G_配置记录器.国家码)
@@ -701,7 +740,7 @@ function test() {
     //             ty.修改ig备份名()           
     //             break;
     //         case 3:
-                
+
     //         log("结果为3")
     //         _G_取号平台.释放手机号()
     //             break
@@ -720,13 +759,14 @@ function test() {
     //         default:
     //             break;
     //     }
-        
+
     // }
-    
+
     // ty.修改ig备份名()
     // ty.添加指定微信发送("server_10086")
 
 }
 
-test()
+// test()
 // main()
+本地_main()

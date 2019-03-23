@@ -17,14 +17,15 @@ ui.layout(
                     
                     <linear >
                     <radiogroup id="xinhao">
-                        <radio text="小米-4c/联想z2" checked="true" />
-                         <radio text="格力手机(2k)" />
+                        <radio id="p_1080" text="小米-4c/联想z2" checked="true" />
+                         <radio id="p_2k" text="格力手机(2k)" />
                     </radiogroup>
                     </linear>
                     <linear>
                     <radiogroup id="net_mode">
-                        <radio text="开关飞行模式" />
-                        <radio text="vpn模式" checked="true"/>
+                        <radio id="feixing_mode" text="开关飞行模式" />
+                        <radio id="vpn_mode" text="vpn模式" checked="true"/>
+                        <radio id="wifi_mode" text="WIFI模式" />
                     </radiogroup>
                     </linear>
                     </horizontal>
@@ -41,7 +42,7 @@ ui.layout(
                     </linear>
                     <linear>
                         <text w="80" gravity="left" color="#111111" size="12">国家码</text>
-                        <input id="国家码" w="*" h="auto" size="12"/>
+                        <input id="国家码" w="*" h="auto" size="12" text="美国"/>
                     </linear>
                     <linear>
                         <text w="80" gravity="left" color="#111111" size="12">项目id</text>
@@ -58,6 +59,8 @@ ui.layout(
                     <linear gravity="center">
                         <button id="start" text="开始" w="*"/>
                         
+
+                       
                     </linear>
                     </vertical>
                 </frame>
@@ -106,9 +109,6 @@ ui.viewpager.setTitles(["功能", "使用指南",]);
 //让滑动页面和标签栏联动
 ui.tabs.setupWithViewPager(ui.viewpager);
 
-
-var storage = storages.create("微信")
-
 function selectedIndex(rg){
        let id = rg.getCheckedRadioButtonId();
        for(let i = 0; i < rg.getChildCount(); i++){
@@ -120,6 +120,26 @@ function selectedIndex(rg){
 }
 var 时间标记=null
 var storage = storages.create("微信")
+switch (storage.get("型号",0)) {
+    case 0:
+        ui.p_1080.performClick()
+        break;
+    case 1:
+        ui.p_2k.performClick()
+        break;
+    
+}
+switch (storage.get("网络切换方式")){
+    case 0:
+        ui.feixing_mode.performClick()
+        break;
+    case 1:
+        ui.vpn_mode.performClick()
+        break;
+    case 2:
+        ui.wifi_mode.performClick()
+        break;
+}
 ui.国家码.setText(String(storage.get("国家号","")))
 
 ui.项目id.setText(String(storage.get("项目id","")))

@@ -625,7 +625,23 @@ function 上传信息(info) {
 }
 
 function 启动微信() {
-    app.launch("com.tencent.mm")
+    app.launch("com.tencent.mm")    
+    for (let index = 0; index < 30; index++) {
+        if (currentPackage() == "com.tencent.mm") {
+            return true
+        }
+        log("等待微信加载")
+        sleep(3000)
+
+
+    }
+    log("将尝试模拟点击")
+    home()
+    sleep(1000)
+    let a=text("微信").findOne().bounds()
+    // log(a)
+    sleep(500)
+    press(a.centerX(),a.centerY(),200)
     for (let index = 0; index < 30; index++) {
         if (currentPackage() == "com.tencent.mm") {
             return true
@@ -700,13 +716,17 @@ function main() {
 function 修改网络(gn) {
     var 网络模式 = storage.get("net_mode", 0)
     // var 网络模式 = "0"
+    强行停止APP("com.android.settings")
+    sleep(500)
     if (网络模式 == "1") {//vpn模式
         log("vpn模式")
         vpn(gn)
     } else if (网络模式 == "0" && gn) {//开关飞行模式
         log("开关飞行模式")
         开关飞行()
-    } else {
+    } else if(网络模式=="2"){
+        log("wifi模式")
+    }else{
         log("错误")
     }
 }
@@ -962,6 +982,7 @@ function 全局检测循环() {
         var tag_26 = textContains("操作太频繁").findOne(timeout)
         var tag_27 = textContains("当前手机号当天已成功注册微信号").findOne(timeout)
         var tag_28 = textContains("超时").findOne(timeout)
+        var tag_29 = textContains("加载联系人失败").findOne(timeout)
 
         if (tag_1) {
             log("请稍候,%d次后将重来", 50 - _G_状态记录器.请稍后计时器)
@@ -1040,6 +1061,12 @@ function 全局检测循环() {
         if (tag_7) {
             log("出现二维码")
             ip可用标记 =false
+            var 网络模式 = storage.get("net_mode", 0)
+            if (网络模式=="2") {
+                toastLog('wifi模式出现二维码,脚本退出');
+                
+                exit()
+            }
             // var img = captureScreen();
             // images.save(img, "/sdcard/temp.jpg", "jpg", 100);
             // log("文件保存完成")
@@ -1185,14 +1212,13 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        // tag_24 ? tag_24.click() : null
-        // tag_24 ? tag_24.click() : null
-        if (tag_24) {
-            log("确定")
-            tag_24.click()
+        if (tag_27) {//将这个提示提前
+            log("当前手机号当天已注册")
+            _G_状态记录器.注册结果标记 = 5
             _G_状态记录器.轮询计数 = 0
             continue
         }
+        
         if (tag_25) {
             log("加载中")
             sleep(time_delay)
@@ -1209,16 +1235,23 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        if (tag_27) {
-            log("当前手机号当天已注册")
-            _G_状态记录器.注册结果标记 = 5
-            _G_状态记录器.轮询计数 = 0
-            continue
-        }
+        
         if (tag_28) {
             log("超时,将返回")
             let dd = desc("返回").findOne(1000)
             dd ? dd.parent().click() : null
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_29) {
+            log("加载联系人失败")
+            _G_状态记录器.注册结果标记 = 2
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_24) {//这个未知确定的位置,放在最后
+            log("确定")
+            tag_24.click()
             _G_状态记录器.轮询计数 = 0
             continue
         }
