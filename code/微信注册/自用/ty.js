@@ -850,7 +850,7 @@ function 等待结果() {
             case 2: //通过 /上传信息  /1为活的
                 修改网络() //断开连接
                 
-                return { status: 2, info: info }
+                return { status: 2, info: "ok" }
 
             case 3: //   
                 修改网络() //断开连接

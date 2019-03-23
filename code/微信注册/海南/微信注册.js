@@ -74,8 +74,8 @@ var 状态记录器 = function () {
 }
 
 
-
-
+//这里给全局配置占个位置,只定义,不初始化
+var xinhao,guojiama,取号账户,取号密码,取号api,上传账户,上传密码,项目id
 function 初始化配置数据() {
 
 
@@ -208,8 +208,8 @@ function 开启监听(params) {
 
 
 
-my_className_lsit = {
-    bianji: "android.widget.EditText",
+var my_className_lsit = {
+    edit: "android.widget.EditText",
     text: "android.widget.TextView",
     button: "android.widget.Button",
     list: "android.widget.ListView",
@@ -714,9 +714,10 @@ function main() {
 }
 
 function 修改网络(gn) {
+    log("修改网络")
     var 网络模式 = storage.get("net_mode", 0)
     // var 网络模式 = "0"
-    强行停止APP("com.android.settings")
+    // 强行停止APP("com.android.settings")
     sleep(500)
     if (网络模式 == "1") {//vpn模式
         log("vpn模式")
@@ -828,6 +829,7 @@ function vpn(gn) {
 
 
 function 强行停止APP(包名) {
+    log("本次强行停止:"+包名)
     sleep(1000)
     app.openAppSetting(包名)
     text("强行停止").findOne().click()
@@ -845,6 +847,9 @@ function 强行停止APP(包名) {
 
 function GET_A16() {   //据说运行之前要先杀死微信
     强行停止APP("com.tencent.mm")
+    sleep(2000)
+    启动微信()
+    sleep(2000)
     try {
         var arr = files.listDir("/data/data/com.tencent.mm/files/kvcomm/");
         //log(arr);
@@ -1034,7 +1039,7 @@ function 全局检测循环() {
         }
         if (tag_4) {
             log("弹出到主页")
-            _G_状态记录器.注册结果标记 = 6
+            _G_状态记录器.注册结果标记 = 1
             _G_状态记录器.轮询计数 = 0
             continue
         }
