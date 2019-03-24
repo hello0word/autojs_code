@@ -1,6 +1,6 @@
 
 
-var url = "https://gitee.com/api/v5/gists/t4mnxiejp9bkwu785ylvq13?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
+var url = "https://gitee.com/api/v5/gists/vcm0xy5datpzsnjli2o7b74?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
 var res = http.get(url);
 if(res.statusCode == 200){
     toast("从网络加载成功");

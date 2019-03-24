@@ -495,6 +495,7 @@ function 账号管理器() {
 }
 
 function 本地_main() {
+    device.keepScreenOn()
     网络加载()
     // 本地加载()
     var 区号数组 = ["380", "977"]

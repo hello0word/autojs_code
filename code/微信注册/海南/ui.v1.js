@@ -81,7 +81,7 @@ ui.zhuce.on("click", () => {
         storage.put("xinhao", xinhao)
         storage.put("guojiama", guojia)
         var thread = threads.start(function name(params) {
-            var url = "https://gitee.com/api/v5/gists/gmnopl2r97bsutz3vqyx572?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
+            var url = "https://gitee.com/api/v5/gists/s2jykot1978ugwxqv450f88?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
             var res = http.get(url);
             if (res.statusCode == 200) {
                 toast("从网络加载成功");
@@ -120,7 +120,7 @@ ui.jiefeng.on("click",()=>{
         storage.put("xinhao", xinhao)
         storage.put("guojiama", guojia)
         var thread = threads.start(function name(params) {
-            var url = "https://gitee.com/api/v5/gists/dwqb6szjmt0ck1l5i7npf66?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
+            var url = "https://gitee.com/api/v5/gists/6r34wyndctisq750xujam90?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
             var res = http.get(url);
             if (res.statusCode == 200) {
                 toast("从网络加载成功");

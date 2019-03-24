@@ -1,6 +1,6 @@
 
 var ty = {}
-var time_delay=3000
+var time_delay = 3000
 //1531
 var _G_arr0 = Array()
 for (let x = 5; x < 160; x += 5) {
@@ -20,7 +20,7 @@ var my_className_lsit = {
 }
 
 var 状态记录器 = function () {
-   this.改机完成标记 = null
+    this.改机完成标记 = null
     this.改机可用标志 = null
     this.注册结果标记 = null
     this.当前号码信息 = null
@@ -210,7 +210,7 @@ function get_password() {
 
 
 function gaiji() {
-    
+
     for (let 刺猬计数 = 0; 刺猬计数 < 5; 刺猬计数++) {
         app.launchApp("IG刺猬精灵")
         log("等待打开刺猬精灵")
@@ -220,23 +220,23 @@ function gaiji() {
             var denglu = text("登录").exists()
             var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
             if (yijian) {
-    
+
                 // sleep(1000)
                 var xinji = text("一键新机").findOne(3000)
                 if (xinji) {
                     log("发现一键改机")
                     xinji.parent().click()
                 }
-    
+
             } else if (请输入手机号) {
-    
-    
+
+
                 var quedin = text("确定").findOne(3000)
                 if (quedin) {
                     log("将点击改机确定:")
                     quedin.click()
-                } 
-    
+                }
+
                 // sleep(time_delay)
                 for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
                     if (!_G_状态记录器.改机完成标记) {
@@ -248,10 +248,10 @@ function gaiji() {
                         log("退出改机软件")
                         return
                     }
-    
+
                 }
-                
-    
+
+
             } else if (denglu) {
                 log("发现登录按钮")
                 var ff = text("登录").findOne(1000)
@@ -269,7 +269,7 @@ function gaiji() {
 
 function 启动微信() {
     app.launch("com.tencent.mm")
-    
+
     for (let index = 0; index < 30; index++) {
         if (currentPackage() == "com.tencent.mm") {
             return true
@@ -282,10 +282,10 @@ function 启动微信() {
     log("将尝试模拟点击")
     home()
     sleep(1000)
-    let a=text("微信").findOne().bounds()
+    let a = text("微信").findOne().bounds()
     // log(a)
     sleep(500)
-    press(a.centerX(),a.centerY(),200)
+    press(a.centerX(), a.centerY(), 200)
     for (let index = 0; index < 30; index++) {
         if (currentPackage() == "com.tencent.mm") {
             return true
@@ -348,7 +348,7 @@ function 全局检测循环() {
             log("请稍候,%d次后将重来", 50 - _G_状态记录器.请稍后计时器)
             if (_G_状态记录器.滑块返回标记) {
                 back()
-                _G_状态记录器.滑块返回标记=false
+                _G_状态记录器.滑块返回标记 = false
             }
             _G_状态记录器.请稍后计时器 += 1
             sleep(2000)
@@ -444,9 +444,9 @@ function 全局检测循环() {
         if (tag_7) {
             log("等待二维码")
             var 网络模式 = storage.get("net_mode", 0)
-            if (网络模式=="2") {
+            if (网络模式 == "2") {
                 toastLog('wifi模式出现二维码,脚本退出');
-                
+
                 exit()
             }
             // var img = captureScreen();
@@ -577,7 +577,7 @@ function 全局检测循环() {
                 _G_状态记录器.注册结果标记 = 6
             }
             sleep(time_delay)
-            
+
             _G_状态记录器.轮询计数 = 0
             continue
         }
@@ -595,12 +595,7 @@ function 全局检测循环() {
         }
         // tag_24 ? tag_24.click() : null
         // tag_24 ? tag_24.click() : null
-        if (tag_24) {
-            log("确定")
-            tag_24.click()
-            _G_状态记录器.轮询计数 = 0
-            continue
-        }
+
         if (tag_25) {
             log("加载中")
             sleep(time_delay)
@@ -614,6 +609,11 @@ function 全局检测循环() {
         if (tag_26) {
             log("操作太频繁")
             _G_状态记录器.注册结果标记 = 5
+            _G_状态记录器.轮询计数 = 0
+            continue
+        } else if (tag_24) {
+            log("确定")
+            tag_24.click()
             _G_状态记录器.轮询计数 = 0
             continue
         }
@@ -661,11 +661,11 @@ function 强行停止APP(包名) {
     app.openAppSetting(包名)
     text("强行停止").findOne().click()
     log("打开设置页成功")
-    let qd=text("确定").findOne(2500)
+    let qd = text("确定").findOne(2500)
     if (qd) {
         log("关闭成功")
         qd.click()
-    }else{
+    } else {
         log("已被关闭")
     }
     sleep(1000);
@@ -728,9 +728,9 @@ function 修改网络(gn) {
     } else if (网络模式 == "0" && gn) {//开关飞行模式
         log("网络模式为:开关飞行模式")
         开关飞行()
-    } else if(网络模式 == "2"){
+    } else if (网络模式 == "2") {
         log("wifi模式")
-    }else{
+    } else {
         log("错误")
     }
 }
@@ -844,12 +844,12 @@ function 等待结果() {
 
             case 1: //环境异常  // 重新开始 /0是死的
                 修改网络() //断开连接	
-                
+
                 log("异常")
                 return { status: 1, info: "环境异常" }
             case 2: //通过 /上传信息  /1为活的
                 修改网络() //断开连接
-                
+
                 return { status: 2, info: "ok" }
 
             case 3: //   
@@ -890,7 +890,7 @@ function 填写验证码() {
     _G_取号平台.取验证码()
     var 验证码 = _G_取号平台.验证码数字
 
-    log("输入验证码:"+_G_取号平台.验证码数字)
+    log("输入验证码:" + _G_取号平台.验证码数字)
     // var yanzheng = textContains("请输入验证码").findOne(3000)
     var yanzheng = className(my_className_lsit.edit).findOne(3000)
     yanzheng ? yanzheng.setText(验证码) : log("没有验证码框")
