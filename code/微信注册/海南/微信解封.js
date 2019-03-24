@@ -170,7 +170,8 @@ var 状态记录器 = function () {
     this.系统繁忙计数 = null
     this.点击开始计数器 = null
     this.网络错误计数器 = null
-    this.重获验证码=null
+    this.返回计数器=null
+    this.验证码缓存=null
 }
 状态记录器.初始化 = function () {
     return new 状态记录器()
@@ -310,7 +311,7 @@ function get_yanzhengma(pid) {
                 // log(res_tostr)
                 var res_to_arr = res_tostr.split("|")
                 if (res_to_arr[0] == 1) {
-                    return res_to_arr[1]
+                        return res_to_arr[1]
                 } else if (res_to_arr[0] == "0") {
                     switch (res_to_arr[1]) {
                         case "-4":
@@ -1025,9 +1026,35 @@ function tianxie_info(guojia_number, phone_n) {
 
 }
 
+function 释放号码() {
+    try {
+        pid = _G_状态记录器.当前号码信息.pid
+        var token = get_token()
+        for (let index = 0; index < 3; index++) {
+            toastLog("即将释放号码")
+            // device.vibrate(2000);
+            // sleep(2000)
+        }
+        try {
+            var res = http.get("http://47.74.144.186/yhapi.ashx?act=setRel&token=" + token + "&pid=" + pid, {}, function (res, err) {
+                if (err) {
+                    console.error(err)
+                    return
+                }
+                log(res.body.string())
+            })
+        } catch (error) {
+            log(error)
+        }
+    } catch (error) {
+
+    }
+
+
+}
 
 function select_region(region) {
-    sleep(4000)
+    sleep(2000)
     let 国家码 = storage.get("guojiama")
     var 国家名
     if (国家码 == "0") {//马来西亚
@@ -1037,11 +1064,12 @@ function select_region(region) {
     }
 
     do {
-        let ff = textContains(国家名).findOne(1000)
+        let ff = textContains(国家名).findOne(2000)
         // log(ff.bounds())
         // log(ff.bounds().bottom)
         if (ff) {
             ff.click()
+            sleep(2000)
             log('点击地区成功')
             let next = text("Next ").className(my_className_lsit.view).findOne(5000)
             if (next) {
@@ -1050,10 +1078,13 @@ function select_region(region) {
                 if (input) {
                     log("查找输入框成功")
                     input.setText(_G_状态记录器.当前号码信息.手机号)
+                    sleep(2000)
                     next = text("Next ").className(my_className_lsit.view).findOne(5000)
+                    
                     if (next) {
                         log('查找下一步成功')
                         next.click()
+                        sleep(2000)
                         return true
                     } else {
                         log("没找到下一步")
@@ -1195,7 +1226,17 @@ function 等待结果() {
                 // log("不释放号码,继续注册")
                 // 特殊标记.push(phone_number)
                 上传信息(_G_状态记录器.提取的信息, 6)
+                lahei(_G_状态记录器.当前号码信息.pid)
                 log("上传完成")
+                return
+                break;
+            case 7: //不释放手机号继续搞//不需要解封
+                // 修改网络() //断开连接
+                // log("不释放号码,继续注册")
+                // 特殊标记.push(phone_number)
+                // 上传信息(_G_状态记录器.提取的信息, 6)
+                释放号码()
+                log("释放完成")
                 return
                 break;
 
@@ -1223,7 +1264,8 @@ function 全局检测循环() {
         let tag_13 = textContains("This WeChat account has been confirmed of suspicious registration in batch or using plugins and is blocked.").findOne(timeout)//插件注册提示
         let tag_14 = textContains("Your account may have been compromised. In order to verify your identity, you will need to find a WeChat user to help assist in verifying your identity").findOne(timeout)
         let tag_15 = textContains("WeChat account has been activated").findOne(timeout)
-        let tag_16=textContains("Start to verify").findOne(timeout)
+        let tag_16=textContains("Start to verify").findOne(timeout)//不需要解封
+        let tag_17=textContains("ncorrect SMS verification code").findOne(timeout)//验证码输入错误
 
         if (tag_1) {
             log(current_语言.下一步)
@@ -1287,6 +1329,7 @@ function 全局检测循环() {
             log("选择地区页面")
             let bounds_select = tag_8.bounds()
             press(bounds_select.centerX(), bounds_select.centerY(), 100)
+            sleep(2000)
             if (select_region()) {
                 log("选择地区,填写信息流程成功")
             } else {
@@ -1303,15 +1346,15 @@ function 全局检测循环() {
         } else if (tag_10) {
             let 验证码 = get_yanzhengma(_G_状态记录器.当前号码信息.pid)
             if (!验证码) {
-                _G_状态记录器.重获验证码 += 1
-                log("获取验证码失败,剩余重试次数:%d", 5 - _G_状态记录器.重获验证码)
-                if (_G_状态记录器.重获验证码>=5) {
+                _G_状态记录器.返回计数器  += 1
+                log("获取验证码失败,剩余重试次数:%d", 5 - _G_状态记录器.返回计数器)
+                if (_G_状态记录器.返回计数器>=5) {
                     _G_状态记录器.注册结果标记=5
                 }
-                let back= desc(current_语言.返回).findOne(1000)
-                if (back) {
+                let backs= desc(current_语言.返回).findOne(1000)
+                if (backs) {
                     log("返回")
-                    back.parent().click()
+                    backs.parent().click()
                 }else{
                     log("返回按钮找不到")
                 }
@@ -1320,7 +1363,10 @@ function 全局检测循环() {
                 let input = className(my_className_lsit.edit).findOne(4000)
                 if (input) {
                     log("验证码为:" + 验证码)
-                    input.setText(验证码)
+                    sleep(3000)
+                    let biaoji= input.setText(验证码)
+                    log(biaoji)
+                    sleep(2000)
                     let next = className(my_className_lsit.view).text("Next ").findOne(4500)
                     if (next) {
                         next.click()
@@ -1337,10 +1383,12 @@ function 全局检测循环() {
         } else if (tag_11) {
             log("账号或密码错误,换下一个")
             _G_状态记录器.注册结果标记 = 4
+            sleep(2000)
             _G_状态记录器.轮询计数 = 0
         } else if (tag_12) {
             log("系统繁忙,请稍候再试,改机重来")
             _G_状态记录器.注册结果标记 = 1
+            sleep(2000)
             _G_状态记录器.轮询计数 = 0
         } else if (tag_13) {
             log("插件注册提示")
@@ -1358,12 +1406,30 @@ function 全局检测循环() {
         } else if (tag_15) {
             log("解封成功")
             _G_状态记录器.注册结果标记 = 2
+            sleep(2000)
             _G_状态记录器.轮询计数 = 0
         } else if (tag_16) {
             _G_状态记录器.注册结果标记 = 6
             sleep(2000)
+            
             _G_状态记录器.轮询计数 = 0
-        } else if (false) {
+        } else if (tag_17) {
+            log("验证码输入错误")
+            _G_状态记录器.轮询计数 = 0
+            _G_状态记录器.注册结果标记=7
+            sleep(2000)
+            // _G_状态记录器.返回计数器+=1
+            // if (_G_状态记录器.返回计数器>=5) {
+            //     _G_状态记录器.注册结果标记=5
+            // }
+            // let back= desc(current_语言.返回).findOne(1000)
+            // if (back) {
+            //     log("返回")
+            //     back.parent().click()
+            // }else{
+            //     log("返回按钮找不到")
+            // }
+
         } else if (false) {
         } else if (false) {
         } else if (false) {
