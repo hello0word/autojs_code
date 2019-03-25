@@ -1,3 +1,26 @@
+/* eslint-disable no-tabs */
+/* eslint-disable valid-jsdoc */
+/* eslint-disable padded-blocks */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable prefer-const */
+/* eslint-disable comma-spacing */
+/* eslint-disable space-before-function-paren */
+/* eslint-disable no-throw-literal */
+/* eslint-disable require-jsdoc */
+/* eslint-disable camelcase */
+/* eslint-disable key-spacing */
+/* eslint-disable linebreak-style */
+/* eslint-disable max-len */
+/* eslint-disable one-var */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-array-constructor */
+/* eslint-disable no-var */
+/* eslint-disable spaced-comment */
+/* eslint-disable indent */
+/* eslint-disable semi */
+/* eslint-disable quotes */
+/* eslint-disable comma-dangle */
+/* eslint-disable linebreak-style */
 auto.waitFor()
 console.setGlobalLogConfig({
     "file": "/sdcard/微信.txt"
@@ -589,8 +612,6 @@ function 鸭子(文本, timeout) {
 }
 
 
-
-
 function discernSlidingblock(img, ratio) {
     //创建识别变量
     var temp, temp2, x, y, num, color, p, temp3, arr1;
@@ -604,8 +625,7 @@ function discernSlidingblock(img, ratio) {
     } else if (ratio == 1440) {
         var tb = [463, 387, 912, 831, 125]
         log("您的设备分辨率为：2k");
-    }
-    else {
+    } else {
         log("当前设备分辨率不符合规范")
         return -2
     }
@@ -857,7 +877,7 @@ function findMultiColorss(img, first, arr, option) {
                         }
                     }
                     if (flag) {
-                        return { x: img_width + option.region.x, y: img_height + option.region.y }
+                        return {x: img_width + option.region.x, y: img_height + option.region.y}
                     }
                 }
             }
@@ -888,7 +908,7 @@ function checknumber() {
         var ime = captureScreen();
         ime = images.cvtColor(ime, "BGR2GRAY", 3)
         let ff = images.threshold(ime, 110, 255, "BINARY")
-        let dd = findMultiColorss(ff, "#000000", _G_arr0, { region: { x: 820, y: 550, width: 550, height: 650 } })
+        let dd = findMultiColorss(ff, "#000000", _G_arr0, {region: {x: 820, y: 550, width: 550, height: 650}})
         if (dd) {
             log('准备滑动')
             randomSwipe(300, 1400, dd.x + 85, 1400)
@@ -1035,7 +1055,6 @@ function tianxie_info(guojia_number, phone_n) {
     }
     select_guojia(guojia_number) //选择国家
 
-
     
     var edit_phone = text(current_语言.手机号).className("android.widget.EditText").clickable(true).depth(13).findOne()
     log("填写电话号:"+phone_n)
@@ -1172,7 +1191,7 @@ function gaiji() {
                 log("发现登录按钮")
                 var ff = text("登录").findOne(1000)
                 ff ? ff.click() : null
-            }else if(wangluoyichang){
+            } else if (wangluoyichang) {
                 var quedin = text("确定").findOne(3000)
                 if (quedin) {
                     log("将点击确定")
@@ -1365,7 +1384,7 @@ function 全局检测循环() {
         } else if (tag_10) {
             let 验证码 = get_yanzhengma(_G_状态记录器.当前号码信息.pid)
             if (!验证码) {
-                _G_状态记录器.返回计数器  += 1
+                _G_状态记录器.返回计数器 += 1
                 log("获取验证码失败,剩余重试次数:%d", 5 - _G_状态记录器.返回计数器)
                 if (_G_状态记录器.返回计数器>=5) {
                     _G_状态记录器.注册结果标记=5
@@ -1374,7 +1393,7 @@ function 全局检测循环() {
                 if (backs) {
                     log("返回")
                     backs.parent().click()
-                }else{
+                } else {
                     log("返回按钮找不到")
                 }
             } else {
@@ -1492,7 +1511,6 @@ function 全局检测循环() {
 }
 
 
-
 function main() {
     device.keepScreenOn()
     初始化配置数据()
@@ -1518,7 +1536,7 @@ function main() {
         if (activity_mode=="0") {//原卡解封
             log('使用同卡解封模式')
             _G_状态记录器.提取的信息 = 模糊搜索数据(获取密码_账户, 获取密码_密码, _G_状态记录器.当前号码信息.手机号)
-        }else if(activity_mode =="1"){//异卡解封
+        } else if (activity_mode =="1") {//异卡解封
             log('使用异卡解封模式')
             _G_状态记录器.提取的信息 = 直接读取数据(获取密码_账户, 获取密码_密码)
         }
@@ -1581,7 +1599,7 @@ function test() {
                 if (back) {
                     log("返回")
                     back.parent().click()
-                }else{
+                } else {
                     log("返回按钮找不到")
                 }
     console.hide()

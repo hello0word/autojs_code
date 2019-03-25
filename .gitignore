@@ -4,3 +4,5 @@ git指令.txt
 test.js
 *.zip
 *.apk
+node_modules
+*.json
