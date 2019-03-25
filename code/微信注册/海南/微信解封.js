@@ -17,7 +17,7 @@ var 特殊标记 = Array()//作用为保留号码信息进行注册
 var _G_状态记录器// 占个位置
 var ty//通用模块
 // var ip可用标记 = true
-var xinhao, guojiama, 取号账户, 取号密码, 取号api, 上传账户, 上传密码, 项目id, _G_token, 获取密码_账户, 获取密码_密码
+var xinhao, guojiama, 取号账户, 取号密码, 取号api, 上传账户, 上传密码, 项目id, _G_token, 获取密码_账户, 获取密码_密码,activity_mode
 const YUYAN = {
     中文: {
         登陆: "登陆",
@@ -103,17 +103,18 @@ function 网络加载(params) {
 
 function 初始化配置数据() {
     guojiama = storage.get("guojiama")
+    activity_mode =storage.get("activity_mode")
     // guojiama = "1"
     if (guojiama == "0") {
         log("选择了马来")
-        取号账户 = "01malai"
+        取号账户 = "01ml"
         取号密码 = "qq2018qq"
-        取号api = "api_01malai_uso"
-        上传账户 = "mlxy"
-        上传密码 = "QFWEAP"
-        项目id = "1000"
-        获取密码_账户 = ""
-        获取密码_密码 = ""
+        取号api = "api_01ml_yej"
+        上传账户 = "mm"
+        上传密码 = "WKEWEC"
+        项目id = "1002"
+        获取密码_账户 = "mm"
+        获取密码_密码 = "WKEWEC"
     } else if (guojiama == "1") {
         log("选择了印尼")
         取号账户 = "01j"
@@ -157,7 +158,7 @@ var 状态记录器 = function () {
     this.改机完成标记 = null
     this.改机可用标志 = null
     this.注册结果标记 = null
-    this.当前号码信息 = null
+    this.当前号码信息 = {}
     this.请稍后计时器 = null
     this.注册点击后等待状态 = null
     this.滑块计数器 = null
@@ -172,10 +173,14 @@ var 状态记录器 = function () {
     this.网络错误计数器 = null
     this.返回计数器=null
     this.验证码缓存=null
+    this.网页无法打开=null
+    this.提取信息对象={
+        手机号:null,password:null,
+        国家代码:null,A16:null,
+        注册状态:null
+                }
 }
-状态记录器.初始化 = function () {
-    return new 状态记录器()
-}
+
 function 开启监听(params) {
     threads.start(function () {
         events.on("exit", function () {
@@ -345,8 +350,6 @@ function get_yanzhengma(pid) {
 
     }
     log("本次获取验证码失败")
-    // log("号码释放")
-    // _G_状态记录器.注册结果标记 = 5 //直接通知结果  重来
     return false
 }
 
@@ -881,10 +884,10 @@ function checknumber() {
         _G_arr0.push([x, 160 - x, "#000000"])
     }
     sleep(4000)
-    var ime = captureScreen();
     try {
+        var ime = captureScreen();
         ime = images.cvtColor(ime, "BGR2GRAY", 3)
-        ff = images.threshold(ime, 110, 255, "BINARY")
+        let ff = images.threshold(ime, 110, 255, "BINARY")
         let dd = findMultiColorss(ff, "#000000", _G_arr0, { region: { x: 820, y: 550, width: 550, height: 650 } })
         if (dd) {
             log('准备滑动')
@@ -931,7 +934,28 @@ function 模糊搜索数据(username, password, valueex) {
         }
         sleep(2000)
     }
-    log("多次尝试模糊搜索都失败")
+    log("尝试模糊搜索失败")
+}
+
+function 直接读取数据(username, password) {
+    for (let index = 0; index < 1; index++) {
+        try {
+            let res = http.get("http://47.74.248.9/readdata?username=" + username + "&password=" + password + "&type=" + "1" )
+            let data = res.body.json()
+            log("直接读取数据结果:" + data.status)
+            if (data.status == 'true') {
+                log("数据信息:" + data.data)
+                return data.data
+            } else {
+                log("错误内容:" + data.cnres)
+                return false
+            }
+        } catch (error) {
+            log(error)
+        }
+        sleep(2000)
+    }
+    log("尝试直接读取数据失败")
 }
 function select_guojia(g_j_num) {
     g_j_num = String(g_j_num)
@@ -958,8 +982,8 @@ function select_guojia(g_j_num) {
     }
     var shuru = className("android.widget.EditText").clickable(true).findOne(timeout)
     if (shuru) {
+        log("填写国家代码:"+g_j_num)
         shuru.setText(g_j_num)
-        log("填写国家代码完成")
         sleep(1000)
     } else {
         log("找不到输入框,退出")
@@ -1001,9 +1025,7 @@ function select_guojia(g_j_num) {
 
 }
 function tianxie_info(guojia_number, phone_n) {
-    // var guojia_diqu = text(current_语言.国家).className("android.widget.TextView").findOne(3000)
-    // guojia_diqu ? guojia_diqu.parent().click() : null//点击国家地区选择国家
-    // sleep(time_delay)
+    
     if (guojiama == 0) {
         log("当前选择了马来西亚")
         guojia_number = 60
@@ -1014,16 +1036,11 @@ function tianxie_info(guojia_number, phone_n) {
     select_guojia(guojia_number) //选择国家
 
 
-    // var nicheng = text(current_语言.昵称).className("android.widget.EditText").findOne()
-    // nicheng.setText(getName()) //设置用户名
-    // log("填写用户名")
+    
     var edit_phone = text(current_语言.手机号).className("android.widget.EditText").clickable(true).depth(13).findOne()
+    log("填写电话号:"+phone_n)
     edit_phone.setText(phone_n)
-    log("填写电话号")
-    // var password_edit = text(current_语言.密码).className("android.widget.TextView").clickable(false).depth(13).findOne()
-    // password_edit.parent().child(1).setText(password)
-    // log("填写密码")
-
+    
 }
 
 function 释放号码() {
@@ -1076,7 +1093,7 @@ function select_region(region) {
                 log("成功返回,选择地区成功")
                 let input = className(my_className_lsit.edit).depth(20).findOne(5000)
                 if (input) {
-                    log("查找输入框成功")
+                    log("查找输入框成功,输入:"+_G_状态记录器.当前号码信息.手机号)
                     input.setText(_G_状态记录器.当前号码信息.手机号)
                     sleep(2000)
                     next = text("Next ").className(my_className_lsit.view).findOne(5000)
@@ -1118,6 +1135,7 @@ function gaiji() {
             var yijian = text("一键新机").depth(11).exists()
             var denglu = text("登录").exists()
             var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
+            var wangluoyichang=textContains("网络请求异常").exists()
             if (yijian) {
 
                 // sleep(1000)
@@ -1136,7 +1154,6 @@ function gaiji() {
                     quedin.click()
                 }
 
-                // sleep(time_delay)
                 for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
                     if (!_G_状态记录器.改机完成标记) {
                         log("等待改机完成," + (10 - chaoshi) * 2 + "秒后重试")
@@ -1155,6 +1172,12 @@ function gaiji() {
                 log("发现登录按钮")
                 var ff = text("登录").findOne(1000)
                 ff ? ff.click() : null
+            }else if(wangluoyichang){
+                var quedin = text("确定").findOne(3000)
+                if (quedin) {
+                    log("将点击确定")
+                    quedin.click()
+                }
             }
             sleep(1000)
         }
@@ -1167,7 +1190,7 @@ function gaiji() {
 }
 function 等待结果() {
     while (true) {
-        phone_number = _G_状态记录器.当前号码信息
+        
         if (_G_状态记录器.注册结果标记) {
             try {
                 _G_状态记录器.检测线程.interrupt()
@@ -1178,65 +1201,58 @@ function 等待结果() {
         }
         switch (_G_状态记录器.注册结果标记) {
 
-            case 1: //环境异常  // 重新开始 /0是死的
+            case 1: //这里用于处理因网络,设备原因卡死的
                 log("系统错误")
-                特殊标记.push(phone_number)
+                特殊标记.push(_G_状态记录器.当前号码信息)
 
                 修改网络() //断开连接	
-                // var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "0" + "----" + A16
-                // log(info)
-                // 
-                // log("上传完成")
-                // log("环境异常")
+               
                 return
-            case 2: //通过   /1为活的  成功
+            case 2: //  解封成功
 
-                // var A16 = GET_A16()
-                // 修改网络() //断开连接
-                // var info = phone_number.手机号 + "----" + phone_number.password + "----" + phone_number.国家代码 + "----" + "1" + "----" + A16
-                // log(info)
+               
                 上传信息(_G_状态记录器.提取的信息, 2)
                 log("上传完成")
                 return
 
-            case 3: //   失败
+            case 3: //   解封失败
                 // 修改网络() //断开连接
                 上传信息(_G_状态记录器.提取的信息, 3)
                 log("上传完成")
-                // log("号码异常")
-                // 释放号码()
+                
                 return
                 break;
             case 4://密码错误
-                // 修改网络() //断开连接
-                // log("微信状态异常")
+                
                 上传信息(_G_状态记录器.提取的信息, 4)
                 log("上传完成")
-                // 释放号码()
+                
                 return
                 break;
-            case 5: //出现二维码//拉黑
+            case 5: //拉黑//无效数据
                 // 修改网络() //断开连接
                 log("号码状态异常,拉黑")
                 lahei(_G_状态记录器.当前号码信息.pid)
                 return
                 break;
             case 6: //不释放手机号继续搞//不需要解封
-                // 修改网络() //断开连接
-                // log("不释放号码,继续注册")
-                // 特殊标记.push(phone_number)
+                
                 上传信息(_G_状态记录器.提取的信息, 6)
                 lahei(_G_状态记录器.当前号码信息.pid)
                 log("上传完成")
                 return
                 break;
-            case 7: //不释放手机号继续搞//不需要解封
-                // 修改网络() //断开连接
-                // log("不释放号码,继续注册")
-                // 特殊标记.push(phone_number)
-                // 上传信息(_G_状态记录器.提取的信息, 6)
+            case 7: ////不需要解封
+                
                 释放号码()
                 log("释放完成")
+                return
+                break;
+            case 8: //不释放手机号继续搞保存结果
+               
+                特殊标记.push(_G_状态记录器.当前号码信息)
+               
+                log('不释放手机号继续搞')
                 return
                 break;
 
@@ -1266,6 +1282,9 @@ function 全局检测循环() {
         let tag_15 = textContains("WeChat account has been activated").findOne(timeout)
         let tag_16=textContains("Start to verify").findOne(timeout)//不需要解封
         let tag_17=textContains("ncorrect SMS verification code").findOne(timeout)//验证码输入错误
+        var tag_21 = textContains("Webpage not available").findOne(timeout)
+        var tag_23 = textContains("网络错误，请稍后再试").findOne(timeout)
+        var tag_24 = textContains("Account or password error").findOne(timeout)
 
         if (tag_1) {
             log(current_语言.下一步)
@@ -1280,9 +1299,9 @@ function 全局检测循环() {
             log("初步发现密码输入框")
             let 密码输入框 = className(my_className_lsit.edit).enabled(true).findOne(1000)
             if (密码输入框) {
-                log("找到密码输入框,输入密码:" + _G_状态记录器.password)
+                log("找到密码输入框,输入密码:" + _G_状态记录器.提取信息对象.password)
 
-                密码输入框.setText(_G_状态记录器.password)
+                密码输入框.setText(_G_状态记录器.提取信息对象.password)
                 sleep(500)
                 let login = text(current_语言.登陆).findOne(1000)
                 if (login) {
@@ -1418,21 +1437,33 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             _G_状态记录器.注册结果标记=7
             sleep(2000)
-            // _G_状态记录器.返回计数器+=1
-            // if (_G_状态记录器.返回计数器>=5) {
-            //     _G_状态记录器.注册结果标记=5
-            // }
-            // let back= desc(current_语言.返回).findOne(1000)
-            // if (back) {
-            //     log("返回")
-            //     back.parent().click()
-            // }else{
-            //     log("返回按钮找不到")
-            // }
 
-        } else if (false) {
-        } else if (false) {
-        } else if (false) {
+        } else if (tag_23) {
+            _G_状态记录器.网络错误计数器 += 1
+            log("网络错误次数:%d", _G_状态记录器.网络错误计数器)
+            鸭子("Done", 3000)
+            if (_G_状态记录器.网络错误计数器 > 5) {
+                log("网络错误5次,重来")
+                _G_状态记录器.注册结果标记 = 8
+            }
+
+            _G_状态记录器.轮询计数 = 0
+        } else if (tag_21) {
+            let dd = desc("Back").findOne(1000)
+            dd ? dd.parent().click() : null
+            _G_状态记录器.网页无法打开 += 1
+            log("网页无法打开计数:" + _G_状态记录器.网页无法打开)
+            if (_G_状态记录器.网页无法打开 >= 6) {
+                log("网页无法打开计数5次,重来")
+                _G_状态记录器.注册结果标记 = 8
+            }
+            sleep(3000)
+            
+            _G_状态记录器.轮询计数 = 0
+        } else if (tag_24) {
+            log("密码错误")
+            _G_状态记录器.轮询计数 = 0
+            _G_状态记录器.注册结果标记=4
         } else if (false) {
         } else if (false) {
         } else if (false) {
@@ -1466,10 +1497,10 @@ function main() {
     device.keepScreenOn()
     初始化配置数据()
     获取token()
-    _G_状态记录器 = 状态记录器.初始化()
+    _G_状态记录器 = new 状态记录器()
     开启监听()
     while (true) {
-        _G_状态记录器 = 状态记录器.初始化()
+        _G_状态记录器 = new 状态记录器()
         //这里使用一个特殊标记//使用后
         _G_状态记录器.当前号码信息 = 特殊标记.pop()
         if (_G_状态记录器.当前号码信息) {
@@ -1484,15 +1515,26 @@ function main() {
             // ip可用标记 = true
         }
         log(_G_状态记录器.当前号码信息)
-        _G_状态记录器.提取的信息 = 模糊搜索数据(获取密码_账户, 获取密码_密码, _G_状态记录器.当前号码信息.手机号)
+        if (activity_mode=="0") {//原卡解封
+            log('使用同卡解封模式')
+            _G_状态记录器.提取的信息 = 模糊搜索数据(获取密码_账户, 获取密码_密码, _G_状态记录器.当前号码信息.手机号)
+        }else if(activity_mode =="1"){//异卡解封
+            log('使用异卡解封模式')
+            _G_状态记录器.提取的信息 = 直接读取数据(获取密码_账户, 获取密码_密码)
+        }
+        
         if (_G_状态记录器.提取的信息) {
             log(_G_状态记录器.提取的信息)
         } else {
-            log('搜索不到密码,拉黑本号,重来')
+            log('获取不到密码信息,拉黑本号,重来')
             lahei(_G_状态记录器.当前号码信息.pid)
             continue
         }
-        _G_状态记录器.password = _G_状态记录器.提取的信息.split("----")[1]//密码
+        _G_状态记录器.提取信息对象.手机号 = _G_状态记录器.提取的信息.split("----")[0]//手机号
+        _G_状态记录器.提取信息对象.password = _G_状态记录器.提取的信息.split("----")[1]//密码
+        _G_状态记录器.提取信息对象.国家代码 = _G_状态记录器.提取的信息.split("----")[2]//密码
+        _G_状态记录器.提取信息对象.注册状态 = _G_状态记录器.提取的信息.split("----")[3]//密码
+        _G_状态记录器.提取信息对象.A16 = _G_状态记录器.提取的信息.split("----")[4]//密码
         gaiji()
         if (!启动微信()) {
             log("微信启动失败")
@@ -1511,7 +1553,7 @@ function main() {
             log("当前选择了印度尼西亚")
             guojia_number = 62
         }
-        tianxie_info(_G_状态记录器.当前号码信息.国家代码, _G_状态记录器.当前号码信息.手机号)
+        tianxie_info(_G_状态记录器.提取信息对象.国家代码, _G_状态记录器.提取信息对象.手机号)
 
         _G_状态记录器.检测线程 = threads.start(全局检测循环)
         等待结果()
