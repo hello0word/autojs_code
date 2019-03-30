@@ -31,7 +31,347 @@ if (!requestScreenCapture()) {
 
 
 
+function 全局检测循环() {
+    var timeout = 20
+    // _G_状态记录器.当前号码信息 = storage.get("当前号码信息")
+    while (true) {
 
+        var tag_1 = text("请稍候...").className("android.widget.TextView").depth(5).findOne(timeout) //主页注册  背景为月亮那个 click
+        var tag_2 = clickable(true).text(current_语言.开始).findOne(timeout) //click //安全验证的开始按钮
+
+        var tag_3 = className("android.widget.CheckBox").clickable(true).checked(false).findOne(timeout) //协议勾选框
+
+
+        var tag_4 = text("语言").depth(7).findOne(timeout) //下一步 p.click
+
+        var tag_5 = text("获取验证信息系统错误 ").findOne(timeout) // 
+        var tag_6 = text(current_语言.拖动下方滑块完成拼图).findOne(timeout) //调用函数
+        var tag_7 = textStartsWith("让用户用微信扫描下面的二维码").depth(17).findOne(timeout)
+        var tag_8 = text(current_语言.注册).className("android.widget.Button").depth(12).findOne(timeout) //填写信息页注册按钮 click
+        var tag_9 = textContains("不是我的").className(my_className_lsit.button).findOne(timeout) //click
+        var tag_10 = textContains("返回注册流程").findOne(timeout) //click
+        var tag_11 = textContains("验证手机号").findOne(timeout) // 
+        var tag_12 = text("填写验证码").depth(10).findOne(timeout)
+        var tag_13 = text("下一步").className(my_className_lsit.button).depth(12).findOne(timeout) //验证码页面的下一步 //click
+        var tag_14 = textStartsWith("你当前注册环境异常").className("android.widget.TextView").depth(9).findOne(timeout) //这里直接结束
+        var tag_15 = textContains("账号状态异常").findOne(timeout) //账号状态异常
+        var tag_16 = text("好").findOne(timeout) //获取通讯录
+        var tag_17 = textContains("系统繁忙").findOne(timeout)
+        var tag_18 = text("通讯录").findOne(timeout)
+        var tag_19 = textContains("当前手机号一个月内已成功注册微信号").findOne(timeout) //找   隐私保护  
+        var tag_20 = text("正在载入数据...").findOne(timeout)
+        var tag_21 = text("网页无法打开").findOne(timeout)
+        var tag_22 = text("用短信验证码登录").findOne(timeout)
+        var tag_23 = textContains("网络错误，请稍后再试").findOne(timeout)
+        var tag_24 = text("确定").className(my_className_lsit.button).findOne(timeout)
+        var tag_25 = textContains("加载中").findOne(timeout)
+        var tag_26 = textContains("操作太频繁").findOne(timeout)
+        var tag_27 = textContains("当前手机号当天已成功注册微信号").findOne(timeout)
+        var tag_28 = textContains("超时").findOne(timeout)
+
+        // try {
+        //     if (auto.root.contentDescription.match(/当前所在页面/)  && ! _G_状态记录器.协议点击记录器) {
+        //         _G_状态记录器.协议点击记录器= xieyi()
+        //         log("协议记录器:"+_G_状态记录器.协议点击记录器)
+        //     }
+        // } catch (error) {
+
+        // }
+        if (tag_1) {
+            log("请稍候,%d次后将重来", 50 - _G_状态记录器.请稍后计时器)
+            if (_G_状态记录器.滑块返回标记) {
+                back()
+                _G_状态记录器.滑块返回标记 = false
+            }
+            _G_状态记录器.请稍后计时器 += 1
+            sleep(2000)
+            if (_G_状态记录器.请稍后计时器 > 50) {
+                _G_状态记录器.请稍后计时器 = 0
+                log("已经卡死，重新开始，计时器归零")
+
+                _G_状态记录器.注册结果标记 = 6
+
+            }
+            _G_状态记录器.轮询计数 = 0
+            continue
+        } else {
+            _G_状态记录器.请稍后计时器 = 0
+        }
+        if (tag_2) {
+            log("点击开始")
+            log("点击开始,剩余等待次数:%d", 50 - _G_状态记录器.点击开始计数器)
+            _G_状态记录器.点击开始计数器 += 1
+            if (_G_状态记录器.点击开始计数器 > 50) {
+                _G_状态记录器.注册结果标记 = 6
+            }
+            sleep(time_delay)
+            tag_2.click()
+            sleep(time_delay)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_3) {
+            log("点击协议")
+            // sleep(time_delay)
+            tag_3.click()
+            // sleep(time_delay * 2)
+            tag_3 = className("android.widget.CheckBox").clickable(true).checked(true).findOne(9000)
+
+            if (tag_3) {
+                // sleep(time_delay)
+                log("勾选框状态:" + tag_3.checked())
+                log("同意协议")
+                sleep(10000)
+                press(1100 / 1440 * device.width, 2400 / 2560 * device.height, 100)
+                // sleep(time_delay )
+                // dd = text("下一步").findOne(time_delay * 3)
+                // if (dd) {
+
+                //     dd.parent().click()
+                //     log("下一步已点击")
+                //     sleep(time_delay)
+                // }else{
+                //     log("同意协议后,下一步找不到")
+                // }
+            } else {
+                log("点击协议无响应")
+            }
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_4) {
+            log("弹出到主页")
+            _G_状态记录器.注册结果标记 = 6
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_5) {
+            log("关闭页面")
+            var fanhui = desc("返回").findOne(1000)
+            fanhui ? fanhui.parent().click() : null
+            sleep(time_delay)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+
+        if (tag_6) {//滑块
+            toastLog("发现滑块")
+            if (!_G_状态记录器.滑块返回标记) {
+                sleep(8000)
+                back()
+                sleep(50)
+                back()
+                sleep(4000)
+
+                _G_状态记录器.滑块返回标记 = true
+            }
+
+            if (_G_配置记录器.型号 == 1) {
+                checknumber()
+            } else {
+                huakuai_start()
+            }
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_7) {
+            log("等待二维码")
+            var 网络模式 = storage.get("net_mode", 0)
+            if (网络模式 == "2") {
+                toastLog('wifi模式出现二维码,脚本退出');
+
+                exit()
+            }
+            // var img = captureScreen();
+            // images.save(img, "/sdcard/temp.jpg", "jpg", 100);
+            // log("文件保存完成")
+            _G_状态记录器.注册结果标记 = 5
+            sleep(5000)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+
+        if (tag_8) {
+
+            tag_8.click()
+            sleep(time_delay)
+
+            for (let index = 0; index < 10; index++) {
+                toastLog("点了注册,等待响应")
+                sleep(2000)
+                if (!text(current_语言.注册).className("android.widget.Button").depth(12).exists()) {
+                    _G_状态记录器.注册点击后等待状态 = true
+                    break;
+
+                }
+            }
+            if (!_G_状态记录器.注册点击后等待状态) {
+                log("等待注册卡死")
+                _G_状态记录器.注册结果标记 = 6
+            } else {
+                log("等待注册完成")
+            }
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_9) {
+            log("不是我的")
+            tag_9.click()
+            sleep(time_delay)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_10) {
+            log("返回注册流程")
+            sleep(time_delay)
+            tag_10.click()
+            sleep(time_delay)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+
+        if (tag_11) {
+            log("等待验证手机号")
+            sleep(time_delay)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        tag_12 ? 填写验证码() : null
+        tag_13 ? tag_13 : null
+        if (tag_14) {
+            log("环境异常:14")
+            _G_状态记录器.注册结果标记 = 1
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+
+        if (tag_15) {
+            log("环境异常:15")
+            _G_状态记录器.注册结果标记 = 1
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+
+        if (tag_22) {
+            log("需要重新登录")
+            _G_状态记录器.注册结果标记 = 1
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+
+
+
+        if (tag_16) {
+            log("通讯录 好")
+            // sleep(time_delay)
+            tag_16.click()
+            // sleep(time_delay)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_17) {
+            _G_状态记录器.系统繁忙计数 += 1
+            log("系统繁忙次数:" + _G_状态记录器.系统繁忙计数)
+            var dd = desc("返回").findOne(1000)
+            dd ? dd.parent().click() : null
+
+            if (_G_状态记录器.系统繁忙计数 >= 6) {
+                log("系统繁忙次数为6,不释放改机")
+                _G_状态记录器.注册结果标记 = 6
+            }
+            sleep(time_delay)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        tag_18 ? _G_状态记录器.注册结果标记 = 2 : null
+        if (tag_19) {
+            log("手机号一个月内已成功注册微信号")
+            _G_状态记录器.注册结果标记 = 5
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_20) {
+            _G_状态记录器.载入数据计数 += 1
+            log("载入数据")
+            if (_G_状态记录器.载入数据计数 > 10) {
+                _G_状态记录器.注册结果标记 = 1
+                log("载入数据卡死")
+            }
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_21) {
+            let dd = desc("返回").findOne(1000)
+            dd ? dd.parent().click() : null
+            _G_状态记录器.网页无法打开 += 1
+            log("网页无法打开计数:" + _G_状态记录器.网页无法打开)
+            if (_G_状态记录器.网页无法打开 >= 6) {
+                log("网页无法打开计数5次,重来")
+                _G_状态记录器.注册结果标记 = 6
+            }
+            sleep(time_delay)
+
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_23) {
+            _G_状态记录器.网络错误计数器 += 1
+            log("网络错误次数:%d", _G_状态记录器.网络错误计数器)
+            鸭子("确定", 3000)
+            if (_G_状态记录器.网络错误计数器 > 5) {
+                log("网络错误5次,重来")
+                _G_状态记录器.注册结果标记 = 6
+            }
+
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        // tag_24 ? tag_24.click() : null
+        // tag_24 ? tag_24.click() : null
+
+        if (tag_25) {
+            log("加载中")
+            sleep(time_delay)
+            _G_状态记录器.加载中计数器 += 1
+            if (_G_状态记录器.加载中计数器 > 20) {
+                _G_状态记录器.注册结果标记 = 6
+            }
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_26) {
+            log("操作太频繁")
+            _G_状态记录器.注册结果标记 = 5
+            _G_状态记录器.轮询计数 = 0
+            continue
+        } else if (tag_24) {
+            log("确定")
+            tag_24.click()
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_27) {
+            log("当前手机号当天已注册")
+            _G_状态记录器.注册结果标记 = 5
+
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_28) {
+            log("超时,将返回")
+            let dd = desc("返回").findOne(1000)
+            dd ? dd.parent().click() : null
+
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        log("轮询中,剩余次数%d", 60 - _G_状态记录器.轮询计数)
+        _G_状态记录器.轮询计数 += 1
+        if (_G_状态记录器.轮询计数 > 60) {
+            _G_状态记录器.注册结果标记 = 6
+        }
+    }
+}
 
 function 本地加载(params) {
     ty = require("./ty")
@@ -536,7 +876,7 @@ function 本地_main() {
         // _G_状态记录器.载入数据计数 = 0
         _G_状态记录器.当前号码信息 = _G_取号平台
         storage.put("当前号码信息", _G_取号平台)
-        _G_状态记录器.检测线程 = threads.start(ty.全局检测循环)//这里需要使用记录器
+        _G_状态记录器.检测线程 = threads.start(全局检测循环)//这里需要使用记录器
         var 结果 = ty.等待结果()//这里需要使用记录器
         _G_状态记录器.检测线程.interrupt()
         switch (结果.status) {

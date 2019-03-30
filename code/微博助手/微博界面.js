@@ -112,24 +112,45 @@ function 验证(){
         toastLog("验证通过");
     }
 }
+
+function 网络加载() {
+    var url = "https://gitee.com/api/v5/gists/j0biqz2vgx5sw81tc639u52?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
+    var res = http.get(url);
+    if(res.statusCode == 200){
+        toast("解密成功");
+        var ss=res.body.json().files
+        var dd=ss[Object.keys(ss)[0]].content
+        var eng=engines.execScript("ui",dd);
+    }else{
+        toast("解密失败:" + res.statusMessage);
+        exit()
+}
+}
+
+
 ///绑定按钮事件
 ui.互动_开始.on("click",()=>{
     //这里是互动的逻辑
     toast("开始互动");
     处理配置("保存");
-    let 互动 = engines.execScriptFile("./微博-main.js")
-    setTimeout(()=>{
-        互动.getEngine().emit("互动","互动")
-    },2000);
+    var storage = storages.create("3316538544@qq.com:微博")
+    storage.put("mode","0")
+    threads.start(function(){
+        网络加载()
+    })
+   
+    
 });
 
 ui.抢热评_开始.on("click",()=>{
     toast("开始抢热评");
     处理配置("保存");
-    let 抢热评 = engines.execScriptFile("./微博-main.js")
-    setTimeout(()=>{
-        抢热评.getEngine().emit("抢热评","抢热评")
-    },2000);
+    var storage = storages.create("3316538544@qq.com:微博")
+    storage.put("mode","1")
+    threads.start(function(){
+        网络加载()
+    })
+   
 });
 function 选择文件(参数){
     处理配置("保存");
@@ -185,6 +206,8 @@ ui.互动_路径.on("click",()=>{
 ui.抢热评_路径.on("click",()=>{
     选择文件("抢热评");
 });
+
+
 function 处理配置(方法){
     var storage = storages.create("3316538544@qq.com:微博")
     if(方法 == "加载"){

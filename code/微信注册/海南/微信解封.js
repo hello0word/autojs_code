@@ -594,6 +594,7 @@ function 强行停止APP(包名) {
 }
 
 function 鸭子(文本, timeout) {
+    timeout = timeout || 3000
     var dd = text(文本).findOne(timeout)
     if (dd) {
         while (true) {
@@ -1509,7 +1510,74 @@ function 全局检测循环() {
 
     }
 }
+function 多米改机启动微信() {
+    for (let 多米计数 = 0; 多米计数 < 5; 多米计数++) {
+        app.launchApp("多米改机")
+        log("等待打开多米改机")
+        sleep(4000)
+        for (let index = 0; index < 30; index++) {
+            var yijian = text("一键新机").exists()
+            var denglu = text("登录").exists()
+            var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
+            var wangluoyichang=textContains("网络请求异常").exists()
+            if (yijian) {
 
+                // sleep(1000)
+                var xinji = text("一键新机").findOne(3000)
+                if (xinji) {
+                    log("发现一键改机")
+                    if(鸭子("一键新机")){
+                        log("一键新机点击完成")
+
+                        return true
+                    }
+                }
+
+            } else if (请输入手机号) {
+
+
+                var quedin = text("确定").findOne(3000)
+                if (quedin) {
+                    log("将点击改机确定:")
+                    quedin.click()
+                }
+
+                for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
+                    if (!_G_状态记录器.改机完成标记) {
+                        log("等待改机完成," + (10 - chaoshi) * 2 + "秒后重试")
+                        sleep(2000)
+                    } else {
+                        log("改机完成")
+                        home()
+                        log("退出改机软件")
+                        return
+                    }
+
+                }
+
+
+            } else if (denglu) {
+                log("发现登录按钮")
+                var ff = text("登录").findOne(1000)
+                ff ? ff.click() : null
+            } else if (wangluoyichang) {
+                var quedin = text("确定").findOne(3000)
+                if (quedin) {
+                    log("将点击确定")
+                    quedin.click()
+                }
+            }else{
+                log('等待中')
+            }
+            sleep(1000)
+        }
+        log("再次打开多米改机中")
+        强行停止APP(app.getPackageName("多米改机"))
+        sleep(3000)
+    }
+    log("5次开启多米改机失败,退出")
+    exit()
+}
 
 function main() {
     device.keepScreenOn()
@@ -1553,12 +1621,27 @@ function main() {
         _G_状态记录器.提取信息对象.国家代码 = _G_状态记录器.提取的信息.split("----")[2]//密码
         _G_状态记录器.提取信息对象.注册状态 = _G_状态记录器.提取的信息.split("----")[3]//密码
         _G_状态记录器.提取信息对象.A16 = _G_状态记录器.提取的信息.split("----")[4]//密码
-        gaiji()
-        if (!启动微信()) {
-            log("微信启动失败")
-            特殊标记.push(_G_状态记录器.当前号码信息)
-            continue
+        let xinhao=storage.get("xinhao")
+        console.assert(xinhao!=undefined,"型号获取失败")
+        if (xinhao==0 || xinhao==1) {
+            //调用ig改机
+            log("调用ig改机")
+            gaiji()
+            if (!启动微信()) {
+                log("微信启动失败")
+                特殊标记.push(_G_状态记录器.当前号码信息)
+                continue
+            }
+        }else if(xinhao==2){
+            //调用多米改机
+            log("调用多米改机")
+            if( !多米改机启动微信()){
+                log("多米改机启动失败")
+                特殊标记.push(_G_状态记录器.当前号码信息)
+                continue
+            }
         }
+        
         if (!登录()) {
             log("启动微信失败")
             特殊标记.push(_G_状态记录器.当前号码信息)
@@ -1584,25 +1667,10 @@ function main() {
 }
 
 function test() {
+
     let timeout = 1000
-    // 初始化配置数据()
-    // 获取token()
-    // let aa=get_yanzhengma("100687889921915")
-    // log(aa)
-    // let login=text(current_语言.登陆).findOne(1000)
-    // let tag_11  = text(current_语言.完成).className(my_className_lsit.button).findOne(1000)//确定这个应放在最后
-    // let tag_11=className(my_className_lsit.button).find()
-    // let tag_11 = text("Done").findOne(timeout)
-    // 
-    // 修改网络(1)
-    let back= desc(current_语言.返回).findOne(1000)
-                if (back) {
-                    log("返回")
-                    back.parent().click()
-                } else {
-                    log("返回按钮找不到")
-                }
-    console.hide()
+    
+    多米改机启动微信()
 }
 // test()
 // console.hide()

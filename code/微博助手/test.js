@@ -6,30 +6,30 @@
 // // // log( typeof myActivityManager)
 // 	/*
 // 	 * @Author Sun Ruichuan
-// 	 * 
+// 	 *
 // 	 * */
-	
+
 // // 	public ArrayList<HashMap<String, Object>> getItems(Context context) {
- 
+
 // // 		PackageManager pckMan = context.getPackageManager();
 // // 		ArrayList<HashMap<String, Object>> items = new ArrayList<HashMap<String, Object>>();
- 
+
 // // 		List<PackageInfo> packageInfo = pckMan.getInstalledPackages(0);
- 
+
 // // 		for (PackageInfo pInfo : packageInfo) {
- 
+
 // // 			HashMap<String, Object> item = new HashMap<String, Object>();
- 
+
 // // 			item.put("appimage", pInfo.applicationInfo.loadIcon(pckMan));
 // // 			item.put("packageName", pInfo.packageName);
 // // 			item.put("versionCode", pInfo.versionCode);
 // // 			item.put("versionName", pInfo.versionName);
 // // 			item.put("appName", pInfo.applicationInfo.loadLabel(pckMan).toString());
- 
+
 // // 			items.add(item);
- 
+
 // // 		}
- 
+
 // // 		return items;
 // // 	}
 // //PackageInfo
@@ -41,19 +41,17 @@
 // }
 
 
-
 // function test1(参数){
 // 	log(confi[参数])
 // }
 // test1("a")
 
 
-
 // // let ss= getAppversionName("微博");
 // // log(ss);
 // // /**
-// //  * 
-// //  * @param {String} appName 
+// //  *
+// //  * @param {String} appName
 // //  */
 // // function getAppversionName(appName){
 // // 	var pm = context.getPackageManager();
@@ -74,35 +72,35 @@
 // //    // const element = ss[index];
 // //     log(ss[index])
 // //     sb.append(ss[index].toString(16));
-    
+
 // // }
 // // log(sb);
 
 
 // // // var 系统信息=context.getSystemService(context.ACTIVITY_SERVICE);
 
-// // // var memoryInfo = 　new android.app.ActivityManager.MemoryInfo(); 
+// // // var memoryInfo = 　new android.app.ActivityManager.MemoryInfo();
 // // // log(系统信息.getMemoryInfo(memoryInfo));
 // // // log(memoryInfo)
 // // // /*
-// // // public ActivityManager myActivityManager = 　　(ActivityManager)getSystemService(Activity.ACTIVITY_SERVICE); 
-// // // public void upDateMemInfo(){ 
-// // // ActivityManager.MemoryInfo memoryInfo = 　new ActivityManager.MemoryInfo(); 
-// // // myActivityManager.getMemoryInfo(memoryInfo) ; 
-// // // long memSize = memoryInfo.availMem ; //字符类型转换 
-// // // leftMemSize = Formatter.formatFileSize(getBaseContext(), memSize); 
+// // // public ActivityManager myActivityManager = 　　(ActivityManager)getSystemService(Activity.ACTIVITY_SERVICE);
+// // // public void upDateMemInfo(){
+// // // ActivityManager.MemoryInfo memoryInfo = 　new ActivityManager.MemoryInfo();
+// // // myActivityManager.getMemoryInfo(memoryInfo) ;
+// // // long memSize = memoryInfo.availMem ; //字符类型转换
+// // // leftMemSize = Formatter.formatFileSize(getBaseContext(), memSize);
 // // // leftMem.setText(leftMemSize); }
 
 // // //     //myActivityManager = MainActivity.this.getSystemService(ACTIVITY_SERVICE);
-    
+
 // // //     proNum.setText(myActivityManager.getRunningAppProcesses().size() + "");
 // // //     arrayListPro = new ArrayList < String > ();
 // // //     mRunningPros = myActivityManager.getRunningAppProcesses();
-// // //     for (ActivityManager.RunningAppProcessInfo amPro: mRunningPros) { // 获得该进程占用的内存 
+// // //     for (ActivityManager.RunningAppProcessInfo amPro: mRunningPros) { // 获得该进程占用的内存
 // // //         int[] myMempid = new int[] {
 // // //             amPro.pid
-// // //         }; // 此MemoryInfo位于android.os.Debug.MemoryInfo包中，用来统计进程的内存信息 
-// // //         Debug.MemoryInfo[] memoryInfo = myActivityManager.getProcessMemoryInfo(myMempid); // 获取进程占内存信息形如3.14MB 
+// // //         }; // 此MemoryInfo位于android.os.Debug.MemoryInfo包中，用来统计进程的内存信息
+// // //         Debug.MemoryInfo[] memoryInfo = myActivityManager.getProcessMemoryInfo(myMempid); // 获取进程占内存信息形如3.14MB
 // // //         double memSize = memoryInfo[0].dalvikPrivateDirty / 1024.0;
 // // //         int temp = (int)(memSize * 100);
 // // //         memSize = temp / 100.0;
@@ -140,9 +138,9 @@
 // // //总位数无所谓,开始乱写一段,然后写fh94(这是一个固定的标记),fh94后面5位乱写,然后是第一个码,第一个码是用 40-当前的年份的后两位,现在就填22(40-18),然后写一个t,然后写
 // // //第二位码.第二位是(20-当前月份)比如(20-11=9)然后写g,第三位(40-当前日期:40-14=26),然后是f,第四位(45-当前小时:45-17=28),然后是y,最后一个注册码为(当前日期+小时=14+17=31),然后是j
 // // //写完大概就是******fh94*****22t9g26f28y31j*********  这样其中 fh94是固定的,t,g,f,y,j都是固定的,都是小写,期间的数字才是码,固定标记是用来定位码的.这一段固定的前后可以随便加其他的东西,
-// // // 22t 9g 27f 24y 33j 
-// // // a  b   c   d   e = 日+时 f 
-// // // 18 11  13  21 
+// // // 22t 9g 27f 24y 33j
+// // // a  b   c   d   e = 日+时 f
+// // // 18 11  13  21
 // // // 40 20  40  45
 // // //
 // // var 输入 = "kgjflo5465[asdgagf]tawasfh94jhit422t9g27f22y36j545gfgsfkhglshj";
@@ -169,7 +167,7 @@
 // // }else{log}
 
 /**
- * 
+ *
 
 unlock();
 
@@ -202,52 +200,52 @@ function unlock(){
 for(var i=0;i<50;i=i+1){
 
 	打开端口(i)
-    log(i)	
-	toast("客户端  "+i)		
-}		
+    log(i)
+	toast("客户端  "+i)
+}
 
 function 打开端口(i) {
-	click(541,2095)	
-	sleep(2000)	
-	click(315,2092)	
+	click(541,2095)
 	sleep(2000)
-	click(539,1885)	
-	sleep(2000)	
-	
+	click(315,2092)
+	sleep(2000)
+	click(539,1885)
+	sleep(2000)
+
 	//if(i==50){
 	//	break;
 	//}
 	var //ss="-con-coo-cop-coq-cor-cos-cot-cou-cov-cow-cox-coy-coz-col-cok-coj-coi-coh-cog-cof-coe-cod-coc-cob-coa-cpm-cpn-cpo-cpp-cpq-cpr-cps-cpt-cpu-cpv-cpw-cpx-cpy-cpz-cpl-cpk-cpj-cpi-cph-cpg-cpf-cpe-cpd-cpc-cpb"
-	
+
 	ss="-03-04-05-06-07-08-09-0A-0B-0C-0D-0E-0F-0G-0H-0I-0J-0K-0L-0M-0N-0O-0P-0Q-0R-12-13-14-15-16-17-18-19-1A-1B-1C-1D-1E-1F-1G-1H-1I-1J-1K-1L-1M-1N-1O-1P-1Q-1R-22-23-24-25-26-27-28-29-2A-2B-2C-2D-2E-2F-2G-2H-2I-2J-2K-2L-2M-2N-2O"
-	
+
 	var dd= ss.split("-")
 	var 界面配置=i
 	if(界面配置){
 		try {
 			var ff=dd[界面配置]
 		} catch (error) {
-			
-			return 
+
+			return
 		}
-		
+
 		}else{
 		var ff =dd[0,random(0,dd.length-1)]
 	}
 	//var pack="com.duoduo."+ff
-	var pack="com.wHEID.multplugin"+ff	
-	
+	var pack="com.wHEID.multplugin"+ff
+
 	log(pack)
 	//launchApp(pack)
-	//app.openAppSetting(pack)	
+	//app.openAppSetting(pack)
 	sleep(1000)
 	//click("结束运行")
 	sleep(500)
 	//click("确定")
-	app.launch(pack)     
+	app.launch(pack)
 	sleep(20000)
-	toast("客户端  "+i)		
-	
+	toast("客户端  "+i)
+
 	sleep(10000);
 	click(669,1929);
 	sleep(2000);
@@ -255,8 +253,8 @@ function 打开端口(i) {
 	sleep(2000);
 	swipe(400,1200,400,400,500);
 	sleep(2000);
-	
-	
+
+
 	requestScreenCapture();
 	var wx = images.read("./res/微信.png");
 	var p = findImage(captureScreen(), wx);
@@ -271,7 +269,7 @@ function 打开端口(i) {
 			setText("测试");
 			sleep(2000);
 			click(1008,1109)
-			sleep(2000);	
+			sleep(2000);
 		}
 	}
 	if(sj==2){
@@ -281,12 +279,12 @@ function 打开端口(i) {
 			click(p.x-480,p.y);
 			sleep(2000);
 		}
-	}		
-	
-		
+	}
+
+
 }
  */
- var base_path  ="/sdcard/tencent/TIMfile_recv/"
+const base_path ='/sdcard/tencent/TIMfile_recv/';
 // 	var filename="2580.jpg"
 // 	var img = images.read(base_path+filename)
 
@@ -295,8 +293,12 @@ function 打开端口(i) {
 
 
 
-function test2(){
-	
-	
-	//swipe(222,960,896,960,1000)
+function test2() {
+
+
+  // swipe(222,960,896,960,1000)
 }
+
+
+
+// /////////////////////

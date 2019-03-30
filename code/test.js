@@ -116,5 +116,26 @@ function 开关飞行(params) {
         log("开关飞行为止异常")
     }
 }
-开关飞行()
+// 开关飞行()
+// try {
+//     let res = http.get("http://192.168.43.175:5000?gjm=62")
+//     let data = res.body.json()
+//     if (data.enable=="true") {
+//         log( true)
+//     }else if(data.enable=="false"){
+//         log( false)
+//     }
+// } catch (error) {
+//     log(error)
+// }
 // log( days)
+a="0"
+switch(a){
+    case 0:
+    log(1)
+    break;
+    case "0":
+    log("2")
+    break
+}
+// log("0"==0)

@@ -6,7 +6,7 @@
     "build_time": 1541468623317
   },
   "icon": "res/logo.png",
-  "main": "微博界面.js",
+  "main": "url.js",
   "name": "微博助手",
   "packageName": "weibo.fuzhu",
   "versionCode": 1,

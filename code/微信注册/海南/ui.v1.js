@@ -16,6 +16,7 @@ ui.layout(
                             <radiogroup id="xinhao">
                                 <radio id="p_1080" text="小米-4c" checked="true" />
                                 <radio id="p_2k" text="格力手机" />
+                                <radio id="Xiaomi5sPlus" text="小米5s plus" />
                             </radiogroup>
                         </linear>
                         <linear bg="#90EE90">
@@ -36,6 +37,13 @@ ui.layout(
                                 <radio id="yuankjf" text="原卡解封" checked="true"/>
                                 <radio id="yikjf" text="异卡解封"  />
                             </radiogroup>
+                        </linear>
+                        <linear bg="#FFEBCD">
+                            <horizontal w="*">
+                            <text size="16" >计数设置:</text>
+                            <input id="计数设置" w="*"></input>
+                            </horizontal>
+                            
                         </linear>
                         <linear gravity="center">
                             <button id="zhuce" style="Widget.AppCompat.Button.Colored" text="注册" />
@@ -98,6 +106,9 @@ switch (storage.get("xinhao",0)) {
     case 1:
         ui.p_2k.performClick()
         break;
+    case 2:
+        ui.xiaomi5sPlus.performClick()
+        break;
     
 }
 switch (storage.get("guojiama",0)) {
@@ -129,6 +140,7 @@ switch (storage.get("net_mode")){
         ui.wifi_mode.performClick()
         break;
 }
+ui.计数设置.setText(storage.get("计数设置","10"))
 ui.zhuce.on("click", () => {
 
     if (Date.now() - 时间标记 < 10000) {
@@ -145,6 +157,8 @@ ui.zhuce.on("click", () => {
         storage.put("net_mode", net_mode)
         storage.put("xinhao", xinhao)
         storage.put("guojiama", guojia)
+        storage.put("计数设置",ui.计数设置.text())
+        // log(ui.计数设置.text())
         var thread = threads.start(function name(params) {
             var url = "https://gitee.com/api/v5/gists/s2jykot1978ugwxqv450f88?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
             var res = http.get(url);
@@ -187,6 +201,7 @@ ui.jiefeng.on("click",()=>{
         storage.put("xinhao", xinhao)
         storage.put("guojiama", guojia)
         storage.put("activity_mode",activity_mode)
+        storage.put("计数设置",ui.计数设置.text())
         var thread = threads.start(function name(params) {
             var url = "https://gitee.com/api/v5/gists/6r34wyndctisq750xujam90?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
             var res = http.get(url);
