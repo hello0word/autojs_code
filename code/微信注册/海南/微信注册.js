@@ -11,6 +11,7 @@ var 特殊标记 = Array()//作用为保留号码信息进行注册
 var _G_arr0 = Array()
 const 运行次数备份 = parseInt(storage.get("计数设置", 5))
 var gjm_tr
+const 微信名 = app.getAppName("com.tencent.mm")
 for (let x = 5; x < 160; x += 5) {
     _G_arr0.push([x, 0 + x, "#000000"])
     _G_arr0.push([x, 160 - x, "#000000"])
@@ -263,8 +264,40 @@ const YUYAN = {
         下一步: "下一步",
         开始: "开始 ",
         拖动下方滑块完成拼图: "拖动下方滑块完成拼图",
+        强行停止: "强行停止",
+        确定: "确定",
+        飞行模式: "飞行模式",//飞行模式
+        已连接: "已连接",//vpn
+        连接: "连接",
+        断开连接: "断开连接",
+        失败: "失败",//连接失败
+        返回: "返回",
+        结束运行: "结束运行",
     },
-
+    English: {
+        登陆: "Log In",
+        注册: "Sign Up",
+        昵称: "例如：陈晨",
+        国家: "Region",
+        手机号: "Enter mobile number",
+        密码: "密码",
+        下一步: "Next",
+        开始: "开始 ",
+        拖动下方滑块完成拼图: "Drag the slider below to fit the puzzle piece",
+        请稍候: "Please Wait",
+        操作太频繁: "Too many operations. Try again later.",
+        完成: "Done",
+        密码: "Password",
+        强行停止: "FORCE STOP",
+        确定: "OK",
+        飞行模式: "Airplane mode",
+        已连接: "Connected",
+        连接: "CONNECT",
+        断开连接: "DISCONNECT",
+        失败: "Unsuccessful",
+        返回: "Back",
+        结束运行: "Force stop",
+    }
 }
 var current_语言 = YUYAN.中文
 
@@ -274,10 +307,10 @@ function test() {
 
 
     //  main()
-    // get_phone_number()
+    修改网络()
     //    huakuai_start()
     // 全局检测循环()
-    gaiji()
+    // gaiji()
 
 }
 
@@ -537,8 +570,13 @@ function gaiji() {
                 }
 
             } else if (请输入手机号) {
-
-
+                let shurukuang = className(my_className_lsit.edit).findOne(1000)
+                if (shurukuang) {
+                    log("找到手机号码输入框")
+                    log("设置手机号:" + shurukuang.setText(_G_状态记录器.当前号码信息.手机号))
+                } else {
+                    log("找不到手机号输入框")
+                }
                 var quedin = text("确定").findOne(3000)
                 if (quedin) {
                     log("将点击改机确定:")
@@ -679,11 +717,9 @@ function 启动微信() {
     home()
     sleep(1000)
     home()
-    // let a=text("微信").findOne().bounds()
-    // // log(a)
-    // sleep(500)
-    // press(a.centerX(),a.centerY(),200)
-    鸭子("微信", 3000)
+
+    鸭子(微信名, 3000)
+
     for (let index = 0; index < 30; index++) {
         if (currentPackage() == "com.tencent.mm") {
             return true
@@ -745,7 +781,8 @@ function main() {
         phone_number.password = password_ss
         log(password_ss) //i0vm6jc4
         phone_number.国家代码 = 提取国家代码(phone_number.运营商)
-        if (xinhao==0 || xinhao==1) {
+        _G_状态记录器.当前号码信息 = phone_number
+        if (xinhao == 0 || xinhao == 1) {
             //调用ig改机
             log("调用ig改机")
             gaiji()
@@ -754,16 +791,16 @@ function main() {
                 特殊标记.push(_G_状态记录器.当前号码信息)
                 continue
             }
-        }else if(xinhao==2){
+        } else if (xinhao == 2) {
             //调用多米改机
             log("调用多米改机")
-            if( !多米改机启动微信()){
+            if (!多米改机启动微信()) {
                 log("多米改机启动失败")
                 特殊标记.push(_G_状态记录器.当前号码信息)
                 continue
             }
         }
-        
+
         if (!zhuce()) {
             log("启动微信失败")
             特殊标记.push(phone_number)
@@ -773,7 +810,7 @@ function main() {
 
         tianxie_info(phone_number.国家代码, phone_number.手机号, password_ss)
 
-        _G_状态记录器.当前号码信息 = phone_number
+
         storage.put("当前号码信息", phone_number)
         _G_状态记录器.检测线程 = threads.start(全局检测循环)
         等待结果()
@@ -821,12 +858,18 @@ function 修改网络(gn) {
 
 }
 
-function 开关飞行() {
+function 开关飞行(xinghao) {
+    xinghao = xinghao || storage.get("xinhao", 0)
     for (let feixing = 0; feixing < 6; feixing++) {
         var intent = new Intent()
         intent.setAction("android.settings.NFC_SETTINGS")
         app.startActivity(intent);
-        let biaoji = id("android:id/switch_widget").findOne(2000)
+        if (xinghao == 2) {
+            log("小米5s")
+            var biaoji = text(current_语言.飞行模式).findOne(1000)
+        } else {
+            var biaoji = id("android:id/switch_widget").findOne(1000)
+        }
         if (biaoji) {
             break;
         }
@@ -837,84 +880,169 @@ function 开关飞行() {
     }
 
     log("查找飞行模式按钮")
-    var 飞行模式 = text("飞行模式").findOne()
+    var 飞行模式 = text(current_语言.飞行模式).findOne()
     log("查找状态按钮")
-    if (id("android:id/switch_widget").findOne().text() == "ON") {
-        log("飞行模式已开启,将关闭")
-        飞行模式.parent().parent().click()
-        sleep(10000)
-        log("飞行模式关闭完成")
-    } else if (id("android:id/switch_widget").findOne().text() == "OFF") {
-        log("飞行模式已关,将重置")
-        text("飞行模式").findOne().parent().parent().click()
-        log("飞行模式已开")
-        sleep(3000)
-
-        text("飞行模式").findOne().parent().parent().click()
-        sleep(10000)
-        log("飞行模式关闭完成")
-    } else {
-        log("开关飞行为异常")
-    }
-}
-function vpn(gn) {
-    for (let vpn开启计数 = 0; vpn开启计数 < 5; vpn开启计数++) {
-        var intent = new Intent();
-        intent.setAction("android.settings.VPN_SETTINGS"); //VPN设置
-        app.startActivity(intent);
-        log("发送VPN意图完成")
-        var sz = desc("设置").id("settings_button").depth(15).findOne(3000)
-        if (sz) {
-            break;
-        }
-    }
-    sleep(1000)
-    var ylj = text("已连接").depth(14).findOne(50)
-    if (ylj) {
-        toastLog("已经连接,需要断开")
-        sleep(1000)
-        var vpn_list = className("android.support.v7.widget.RecyclerView").findOne(1000)
-        if (vpn_list) {
-            vpn_list.child(0).click()
-            toastLog("点开了vpn")
-            text("断开连接").depth(6).findOne().click()
+    if (xinghao == 2) {
+        var w = className("CheckBox").boundsInside(0, 0, device.width, device.height / 3).findOne();
+        if (!w.checked()) {
+            log("飞行模式没有打开")
+            w.parent().parent().click()
             sleep(2000)
         } else {
-            log("没有可用vpn")
+            log("飞行模式已打开")
+        }
+        let 飞行按钮 = text(current_语言.飞行模式).findOne(1000)
+        if (飞行按钮) {
+            飞行按钮.parent().parent().click()
+            sleep(10000)
+            log("飞行模式切换完成")
+
+        } else {
+            log("找不到飞行模式按钮")
         }
     } else {
-        log("没有已经连接的vpn")
+
+
+        if (id("android:id/switch_widget").findOne().text() == "ON") {
+            log("飞行模式已开启,将关闭")
+            飞行模式.parent().parent().click()
+            sleep(10000)
+            log("飞行模式关闭完成")
+        } else if (id("android:id/switch_widget").findOne().text() == "OFF") {
+            log("飞行模式已关,将重置")
+            text(current_语言.飞行模式).findOne().parent().parent().click()
+            log("飞行模式已开")
+            sleep(3000)
+
+            text(current_语言.飞行模式).findOne().parent().parent().click()
+            sleep(10000)
+            log("飞行模式关闭完成")
+        } else {
+            log("开关飞行为异常")
+        }
     }
-    if (gn) { //连接
+}
+function vpn(gn, xinghao) {
+    function vpn控制按钮() {
+        let dd = text("VPN").boundsContains(201, 1023, 290, 1078).findOne(1000)
+        if (dd) {
+            return dd.parent().parent().child(2).child(0)
+        }
+    }
+    function getPixel(x, y) {
+        if (x > 0 && x < device.width && y > 0 && y < device.height) {
+            let img = images.captureScreen();
+            let nu = img.pixel(x, y)
+            return colors.toString(nu)
+        } else {
+            log(arguments.callee.name + "参数有误")
+        }
+
+    }
+
+    xinghao = xinghao || storage.get("xinhao", 0)
+    if (xinghao == 2) {
+        强行停止APP("com.android.settings")
+        sleep(1000)
+        app.launch("com.android.settings")
+        sleep(1000)
+        // 鸭子("More")
+        // 鸭子("VPN")
+        let x = 1010, y = 1052, 断开标记 = false
         for (let index = 0; index < 100; index++) {
-            var vpn_list = className("android.support.v7.widget.RecyclerView").findOne(15000)
+
+            let 大框 = bounds(201, 987, 924, 1114).findOne(1000)
+            let 值 = 大框.child(0).text()
+            let 按钮状态 = getPixel(x, y)
+            if (值 == "VPN" && 按钮状态 == "#ff33b4ff") {//已连接
+                if (断开标记) {
+                    log("连接成功")
+                    return true
+                }
+                let ff = vpn控制按钮()
+                if (ff) {
+                    ff.click()
+                }
+                sleep(2000)
+                断开标记 = true
+            } else if (值 == "VPN" && 按钮状态 == "#ffffffff") {//没有连接
+                let ff = vpn控制按钮()
+                if (ff) {
+                    ff.click()
+                }
+                log("点了连接")
+                sleep(4000)
+            } else if (值 == "Connecting to VPN") {
+                log("连接中")
+                sleep(4000)
+            }
+
+        }
+    } else {
+        for (let vpn开启计数 = 0; vpn开启计数 < 5; vpn开启计数++) {
+            var intent = new Intent();
+            intent.setAction("android.settings.VPN_SETTINGS"); //VPN设置
+            app.startActivity(intent);
+            log("发送VPN意图完成")
+            if (xinghao == 2) {
+                var sz = text("VPN").findOne(3000)
+            } else {
+                var sz = id("settings_button").depth(15).findOne(3000)
+            }
+
+            if (sz) {
+                break;
+            }
+        }
+        sleep(1000)
+        var ylj = text(current_语言.已连接).depth(14).findOne(50)
+        if (ylj) {
+            toastLog("已经连接,需要断开")
+            sleep(1000)
+            var vpn_list = className("android.support.v7.widget.RecyclerView").findOne(1000)
             if (vpn_list) {
                 vpn_list.child(0).click()
                 toastLog("点开了vpn")
-                var lj = text("连接").className(my_className_lsit.button).depth(6).findOne(10000)
-                lj ? lj.click() : null
-                toastLog("点了连接")
-                sleep(time_delay)
-                while (true) {
-                    var sb = text("失败").depth(14).exists()
-                    var ylj = text("已连接").depth(14).exists()
-                    if (sb) {
-                        toastLog("vpn连接失败,重试次数:" + index)
-                        break;
-                    } else if (ylj) {
-                        toastLog("vpn连接成功")
-                        return
-                    }
-                    sleep(1000)
-                }
-
+                text(current_语言.断开连接).depth(6).findOne().click()
+                sleep(2000)
+            } else {
+                log("没有可用vpn")
             }
-            sleep(2000)
+        } else {
+            log("没有已经连接的vpn")
         }
-    } else { //
-        log("不连接")
+        if (gn) { //连接
+            for (let index = 0; index < 100; index++) {
+                var vpn_list = className("android.support.v7.widget.RecyclerView").findOne(15000)
+                if (vpn_list) {
+                    vpn_list.child(0).click()
+                    toastLog("点开了vpn")
+                    var lj = text(current_语言.连接).className(my_className_lsit.button).depth(6).findOne(10000)
+                    lj ? lj.click() : null
+                    toastLog("点了连接")
+                    sleep(2000)
+                    while (true) {
+                        var sb = text(current_语言.失败).depth(14).exists()
+                        var ylj = text(current_语言.已连接).depth(14).exists()
+                        if (sb) {
+                            toastLog("vpn连接失败,重试次数:" + index)
+                            break;
+                        } else if (ylj) {
+                            toastLog("vpn连接成功")
+                            return
+                        }
+                        sleep(1000)
+                    }
+
+                }
+                sleep(2000)
+            }
+        } else { //
+            log("不连接")
+        }
     }
 }
+
 
 
 function 强行停止APP(包名) {
@@ -1077,7 +1205,9 @@ function 全局检测循环() {
         var tag_27 = textContains("当前手机号当天已成功注册微信号").findOne(timeout)
         var tag_28 = textContains("超时").findOne(timeout)
         var tag_29 = textContains("加载联系人失败").findOne(timeout)
-
+        var tag_30 = textContains("登录过期").findOne(timeout)
+        var tag_31 = textContains("下一步").findOne(timeout)
+        var tag_32 = descContains("下一步").findOne(timeout)
         if (tag_1) {
             log("请稍候,%d次后将重来", 50 - _G_状态记录器.请稍后计时器)
             _G_状态记录器.请稍后计时器 += 1
@@ -1131,8 +1261,24 @@ function 全局检测循环() {
                 // sleep(time_delay)
                 log("勾选框状态:" + tag_3.checked())
                 log("同意协议")
-                sleep(10000)
-                press(1100 / 1440 * device.width, 2400 / 2560 * device.height, 100)
+                sleep(3000)
+                for (let index = 0; index < 4; index++) {
+                    let 下一步_text = textContains("下一步").findOne(5000)
+                    if (下一步_text) {
+                        下一步_text.click()
+                        log("下一步点击完成")
+                    } else {
+                        let 下一步_desc = descContains("下一步").findOne(5000)
+                        if (下一步_desc) {
+                            下一步_desc.click()
+                            log("下一步点击完成")
+                        } else {
+                            log('没有找到下一步')
+                        }
+                    }
+
+                }
+
 
             } else {
                 log("点击协议无响应")
@@ -1156,6 +1302,10 @@ function 全局检测循环() {
         }
 
         if (tag_6) {//滑块
+            if (device.sdkInt < 24) {
+                log("安卓版本低于7 ,需要手动滑块")
+                sleep(3000)
+            }
             if (xinhao == 1) {
                 toastLog("发现滑块")
                 sleep(3000)
@@ -1357,12 +1507,29 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
+        if (tag_30) {
+            log("登录过期")
+            _G_状态记录器.注册结果标记 = 1
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_31) {
+            log("下一步");
+            鸭子("下一步");
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_32) {
+            log("下一步")
+            tag_32.click()
+        }
         if (tag_24) {//这个未知确定的位置,放在最后
             log("确定")
             tag_24.click()
             _G_状态记录器.轮询计数 = 0
             continue
         }
+        log("轮询次数:%d", _G_状态记录器.轮询计数)
         log("轮询中,剩余次数%d", 30 - _G_状态记录器.轮询计数)
         _G_状态记录器.轮询计数 += 1
         if (_G_状态记录器.轮询计数 > 30) {
@@ -1378,6 +1545,7 @@ function 全局检测循环() {
                     // _G_状态记录器.跳码计数 += 1
                 } else {
                     log('返回失败')
+                    _G_状态记录器.注册结果标记 = 6
                 }
             }
 
@@ -1393,16 +1561,16 @@ function 多米改机启动微信() {
             var yijian = text("一键新机").exists()
             var denglu = text("登录").exists()
             var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
-            var wangluoyichang=textContains("网络请求异常").exists()
+            var wangluoyichang = textContains("网络请求异常").exists()
             if (yijian) {
 
                 // sleep(1000)
                 var xinji = text("一键新机").findOne(3000)
                 if (xinji) {
                     log("发现一键改机")
-                    if(鸭子("一键新机")){
+                    if (鸭子("一键新机")) {
                         log("一键新机点击完成")
-                        
+
                         return true
                     }
                 }
@@ -1440,7 +1608,7 @@ function 多米改机启动微信() {
                     log("将点击确定")
                     quedin.click()
                 }
-            }else{
+            } else {
                 log("等待中")
             }
             sleep(1000)
@@ -1505,6 +1673,7 @@ function 填写验证码() {
     log("输入验证码")
     var yanzheng = textContains("请输入验证码").findOne(1000)
     yanzheng ? yanzheng.setText(验证码) : log("没有验证码框")
+    sleep(1000)
     var xiyibu = text("下一步").className(my_className_lsit.button).depth(12).findOne(1000)
 
     if (xiyibu) {
@@ -1739,7 +1908,7 @@ function huakuai_start() {
                     // sleep(time_delay)
                     _G_状态记录器.huakuaijishu = 0
 
-                }else{
+                } else {
                     log("刷新按钮未找到")
                 }
             }

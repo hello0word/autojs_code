@@ -107,7 +107,8 @@ switch (storage.get("xinhao",0)) {
         ui.p_2k.performClick()
         break;
     case 2:
-        ui.xiaomi5sPlus.performClick()
+        ui.Xiaomi5sPlus.performClick()
+        // ui.p_2k.performClick()
         break;
     
 }
@@ -203,8 +204,12 @@ ui.jiefeng.on("click",()=>{
         storage.put("activity_mode",activity_mode)
         storage.put("计数设置",ui.计数设置.text())
         var thread = threads.start(function name(params) {
+            try{
             var url = "https://gitee.com/api/v5/gists/6r34wyndctisq750xujam90?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
             var res = http.get(url);
+            }catch (error){
+                log("网路错误")
+            }
             if (res.statusCode == 200) {
                 toast("从网络加载成功");
                 var ss = res.body.json().files
