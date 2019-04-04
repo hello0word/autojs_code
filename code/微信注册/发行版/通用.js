@@ -344,6 +344,7 @@ function 发邮件(info) {
     发送.click()
     sleep(1000)
 }
+
 function 传递信息(info) {
     log("本次数据:"+info)
     try {
