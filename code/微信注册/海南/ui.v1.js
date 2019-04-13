@@ -10,8 +10,11 @@ ui.layout(
                 <tabs id="tabs" />
             </appbar>
             <viewpager id="viewpager">
+            <scroll>
+
+           
                 <frame >
-                    <vertical h="auto" align="top" margin="50 50">
+                    <vertical h="auto" align="top" margin="30 30">
                         <linear bg="#FFEBCD">
                             <radiogroup id="xinhao">
                                 <radio id="p_1080" text="小米-4c" checked="true" />
@@ -38,10 +41,30 @@ ui.layout(
                                 <radio id="yikjf" text="异卡解封"  />
                             </radiogroup>
                         </linear>
-                        <linear bg="#FFEBCD">
+                        <linear bg="#C0F0C0">
+                            <radiogroup id="二维码飞行开关">
+                                <radio id="二维码飞行开" text="二维码开启飞行" checked="true"/>
+                                <radio id="二维码飞行关" text="二维码关闭飞行"  />
+                            </radiogroup>
+                        </linear>
+                        <linear bg="#00F0C0">
+                            <radiogroup id="滑块开关">
+                                <radio id="自动滑块开启" text="自动滑块开启" checked="true"/>
+                                <radio id="自动滑块关闭" text="自动滑块关闭"  />
+                            </radiogroup>
+                        </linear>
+                        <linear bg="#FFEBCD" orientation="vertical">
                             <horizontal w="*">
                             <text size="16" >计数设置:</text>
                             <input id="计数设置" w="*"></input>
+                            </horizontal>
+                            <horizontal w="*">
+                            <text size="16" >返回时间:</text>
+                            <input id="返回时间" w="*"></input>
+                            </horizontal>
+                            <horizontal w="*">
+                            <text size="16" >二维码返回次数:</text>
+                            <input id="二维码返回次数" w="*"></input>
                             </horizontal>
                             
                         </linear>
@@ -51,7 +74,7 @@ ui.layout(
                         </linear>
                     </vertical>
                 </frame>
-
+                </scroll>
                 <frame>
                 <text text="" textColor="red" textSize="16sp"/>
                 </frame>
@@ -141,7 +164,26 @@ switch (storage.get("net_mode")){
         ui.wifi_mode.performClick()
         break;
 }
+switch (storage.get("二维码飞行开关",0)){
+    case 0:
+        ui.二维码飞行开.performClick()
+        break;
+    case 1:
+        ui.二维码飞行关.performClick()
+        break;
+}
+switch (storage.get("滑块开关",0)){
+    case 0:
+        ui.自动滑块开启.performClick()
+        break;
+    case 1:
+        ui.自动滑块关闭.performClick()
+        break;
+}
+
 ui.计数设置.setText(storage.get("计数设置","10"))
+ui.返回时间.setText(storage.get("返回时间","30"))
+ui.二维码返回次数.setText(storage.get("二维码返回次数","5"))
 ui.zhuce.on("click", () => {
 
     if (Date.now() - 时间标记 < 10000) {
@@ -152,14 +194,19 @@ ui.zhuce.on("click", () => {
         var net_mode = selectedIndex(ui.net_mode)
         var xinhao = selectedIndex(ui.xinhao)
         var guojia = selectedIndex(ui.guojiama)
+        var 二维码飞行开关 = selectedIndex(ui.二维码飞行开关)
+        var 滑块开关 = selectedIndex(ui.滑块开关)
         log("型号:" + xinhao)
         log("网络模式:" + net_mode)
         log("国家码:" + guojia)
         storage.put("net_mode", net_mode)
         storage.put("xinhao", xinhao)
         storage.put("guojiama", guojia)
+        storage.put("二维码飞行开关", 二维码飞行开关)
+        storage.put("滑块开关", 滑块开关)
         storage.put("计数设置",ui.计数设置.text())
-        // log(ui.计数设置.text())
+        storage.put("返回时间",ui.返回时间.text())
+        storage.put("二维码返回次数",ui.二维码返回次数.text())
         var thread = threads.start(function name(params) {
             var url = "https://gitee.com/api/v5/gists/s2jykot1978ugwxqv450f88?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
             var res = http.get(url);
@@ -193,6 +240,8 @@ ui.jiefeng.on("click",()=>{
         var net_mode = selectedIndex(ui.net_mode)
         var xinhao = selectedIndex(ui.xinhao)
         var guojia = selectedIndex(ui.guojiama)
+        var 滑块开关 = selectedIndex(ui.滑块开关)
+        var 二维码飞行开关 = selectedIndex(ui.二维码飞行开关)
         var activity_mode = selectedIndex(ui.activity_mode)
         log("型号:" + xinhao)
         log("网络模式:" + net_mode)
@@ -201,8 +250,12 @@ ui.jiefeng.on("click",()=>{
         storage.put("net_mode", net_mode)
         storage.put("xinhao", xinhao)
         storage.put("guojiama", guojia)
+        storage.put("滑块开关", 滑块开关)
+        storage.put("二维码飞行开关", 二维码飞行开关)
         storage.put("activity_mode",activity_mode)
         storage.put("计数设置",ui.计数设置.text())
+        storage.put("返回时间",ui.返回时间.text())
+        storage.put("二维码返回次数",ui.二维码返回次数.text())
         var thread = threads.start(function name(params) {
             try{
             var url = "https://gitee.com/api/v5/gists/6r34wyndctisq750xujam90?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"

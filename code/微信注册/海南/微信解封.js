@@ -313,23 +313,53 @@ function get_phone_number() {
 
 function lahei(pid) {
     pid = String(pid)
-    log("准备拉黑")
+    log("拉黑:" + pid)
     var token = get_token()
-    try {
-        var res = http.get("http://47.74.144.186/yhapi.ashx?act=addBlack&token=" + token + "&pid=" + pid + "&reason=used", {}, function (res, err) {
-            if (err) {
-                console.error(err);
-                return;
+    while (true) {
+        try {
+            var res = http.get("http://47.74.144.186/yhapi.ashx?act=addBlack&token=" + token + "&pid=" + pid + "&reason=used")
+            let data= res.body.string()
+            data= data.split("|")
+            if (data[0]==1) {
+                log("拉黑完成")
+                return true
+            }else{
+                switch (data[1]) {
+                    case -1:
+                        log("Token不存在")
+                        log("拉黑失败")
+                        return false;
+                
+                    case -2:
+                        log("拉黑失败")
+                        log("pid不存在")
+                        return false;
+                
+                    case -3:
+                        log("拉黑失败")
+                        log("加黑原因不能为空")
+                        return false;
+                
+                    case -4:
+                        log("拉黑失败")
+                        log("手机号不存在或已释放")
+                        return false;
+                
+                    case -5:
+                        log("拉黑失败")
+                        log("未回码,请释放")
+                        return false;
+                }
+            
             }
-            log("code = " + res.statusCode);
-            log("html = " + res.body.string());
-            log("拉黑完成")
-        })
-    } catch (error) {
-        log(error)
+        } catch (error) {
+            log(error)
+        }
     }
+    
 
 }
+
 
 function get_yanzhengma(pid) {
     pid = String(pid)
@@ -540,8 +570,13 @@ function 开关飞行(xinghao) {
     }
 }
 function getPixel(x, y) {
+    log('调用者:'+arguments.callee.name)
     if (x > 0 && x < device.width && y > 0 && y < device.height) {
-        let img = images.captureScreen();
+
+        let img = 截图();
+        if (!img) {
+            return false
+        }
         let nu = img.pixel(x, y)
         return colors.toString(nu)
     } else {
@@ -948,7 +983,25 @@ function select_region(region) {
 function gaiji() {
 
     for (let 刺猬计数 = 0; 刺猬计数 < 5; 刺猬计数++) {
-        app.launchApp("IG刺猬精灵")
+        
+        if (device.sdkInt >=24) {
+            console.hide()
+            home();
+            sleep(1000)
+            home();
+            sleep(1000)
+            let dd=text("IG刺猬精灵").findOne(1000);
+            if (dd) {
+                
+                press(dd.bounds().centerX(),dd.bounds().centerY(),200)
+            }else{
+                toastLog("主页没找到IG刺猬精灵")
+            }
+            console.show()
+        } else {
+            app.launchApp("IG刺猬精灵")
+        }
+        
         log("等待打开刺猬精灵")
         sleep(4000)
         for (let index = 0; index < 30; index++) {
@@ -956,6 +1009,7 @@ function gaiji() {
             var denglu = text("登录").exists()
             var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
             var wangluoyichang = textContains("网络请求异常").exists()
+            var fangqi = textContains("更新提醒").exists()
             if (yijian) {
 
                 // sleep(1000)
@@ -999,7 +1053,14 @@ function gaiji() {
                 log("发现登录按钮")
                 var ff = text("登录").findOne(1000)
                 ff ? ff.click() : null
-            } else if (wangluoyichang) {
+            } else if (fangqi) {
+                log("发现更新提醒,将放弃")
+                let fq = text("放弃").findOne(500)
+                if (fq) {
+                    fq.click()
+                }
+
+            }else if (wangluoyichang) {
                 var quedin = text("确定").findOne(3000)
                 if (quedin) {
                     log("将点击确定")
@@ -1013,8 +1074,9 @@ function gaiji() {
         sleep(3000)
     }
     log("5次开启IG失败,退出")
-    exit()
+    // exit()
 }
+
 function 滑块处理() {
     /** 
  * 识别滑块位置
@@ -1248,7 +1310,10 @@ function 滑块处理() {
             _G_arr0.push([x, 宽 - x, "#000000"])
         }
         try {
-            var ime = captureScreen();
+            var ime = 截图();
+            if(!ime){
+                return false
+            }
             ime = images.cvtColor(ime, "BGR2GRAY", 3)
             ff = images.threshold(ime, 110, 255, "BINARY")
             ime.recycle()
@@ -1351,7 +1416,7 @@ function 等待结果() {
 
                 上传信息(_G_状态记录器.提取的信息, 4)
                 log("上传完成")
-
+                lahei(_G_状态记录器.当前号码信息.pid)
                 return
                 break;
             case 5: //拉黑//无效数据
@@ -1401,9 +1466,13 @@ function 全局检测循环() {
 
         let tag_8 = text("Select region").boundsInside(0, 0, device.width, device.height / 3).findOne(timeout)
         let tag_8_1 = desc("Select region").boundsInside(0, 0, device.width, device.height / 3).findOne(timeout)
+        let tag_8_new = text("Select country").boundsInside(0, 0, device.width, device.height / 3).findOne(timeout)
+        let tag_8_1_new = desc("Select country").boundsInside(0, 0, device.width, device.height / 3).findOne(timeout)
         let tag_9 = textContains("loading").findOne(timeout)
         let tag_10 = text('Code').findOne(timeout)
         let tag_10_desc = desc('Code').findOne(timeout)
+        let tag_10_new = textContains('Verification code').findOne(timeout)
+        let tag_10_desc_new = descContains('Verification code').findOne(timeout)
         let tag_11 = textContains("Incorrect account/password or wrong combination of account and password").findOne(timeout)//账号或密码错误
         let tag_12 = text("Too many operations. Try again later.").findOne(timeout)
         let tag_13 = textContains("This WeChat account has been confirmed of suspicious registration in batch or using plugins and is blocked.").findOne(timeout)//插件注册提示
@@ -1494,7 +1563,12 @@ function 全局检测循环() {
             let 选择地区 = text("Select region").boundsInside(0, 0, device.width, device.height / 3).findOne(1000)
             if (选择地区) {
                 while (选择地区) {
-                    if (选择地区.clickable()) {
+                    if (选择地区 && device.sdkInt >=24) {//这里7.0 优先处理
+                        log("坐标点击")
+                        press(选择地区.bounds().centerX(),选择地区.bounds().centerY(),200)
+                        sleep(3000)
+                        break;
+                    }else if (选择地区.clickable()) {
                         选择地区.click()
                         log("选地区无障碍点击完成")
                         break;
@@ -1513,13 +1587,88 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
         } else if (tag_8_1) {
             log("选择地区页面_desc")
-            // let  选择地区= desc("Select region").boundsInside(0, 0, device.width, device.height / 3).findOne(1000)
-            let 选择地区 = desc("Select region").boundsInside(41, 313, 1017, 382).findOne(1000)
+            let  选择地区= desc("Select region").boundsInside(0, 0, device.width, device.height / 3).findOne(1000)
             if (选择地区) {
                 // press(tag_8_1.bounds)
                 log('找到选择地区按钮')
                 while (true) {
-                    let 选择地区 = desc("Select region").boundsInside(41, 313, 1017, 382).findOne(1000)
+                    let 选择地区 =  desc("Select region").boundsInside(0, 0, device.width, device.height / 3).findOne(1000)
+                    
+                    if (选择地区 && device.sdkInt >=24) {
+                        log("坐标点击")
+                        press(选择地区.bounds().centerX(),选择地区.bounds().centerY(),200)
+                        sleep(3000)
+                        break;
+                    } 
+                    if (选择地区.clickable()) {
+                        
+                        选择地区.click()
+                        log("选地区无障碍点击完成")
+                        break;
+                    } else {
+                        if (选择地区.parent().clickable()) {
+                            选择地区.parent().click()
+                            log("选地区无障碍点击完成")
+                        } else if(选择地区.parent().parent().clickable()) {
+                            选择地区.parent().parent().click()
+                            log("选地区无障碍点击完成")
+                        }else if( 选择地区.parent().parent().parent().clickable()){
+                            选择地区.parent().parent().parent().click()
+                            log("选地区无障碍点击完成")
+                        }else{
+                        log("选择地区不可点击")
+                        
+                        
+                        sleep(500)
+                        // 选择地区=选择地区.parent()
+                        }
+                    }
+                }
+            } else {
+                log('没找到选择地区按钮')
+            }
+            if (select_region()) {
+                log("选择地区,填写信息流程成功")
+            } else {
+                log("选择地区失败")
+            }
+            _G_状态记录器.轮询计数 = 0
+        } else if (tag_8_new){
+            log("选择地区页面_text_new")
+            let 选择地区 = text("Select country").boundsInside(0, 0, device.width, device.height / 3).findOne(1000)
+            if (选择地区) {
+                while (选择地区) {
+                    if (选择地区 && device.sdkInt >=24) {//这里7.0 优先处理
+                        log("坐标点击")
+                        press(选择地区.bounds().centerX(),选择地区.bounds().centerY(),200)
+                        sleep(3000)
+                        break;
+                    }else if (选择地区.clickable()) {
+                        选择地区.click()
+                        log("选地区无障碍点击完成")
+                        break;
+                    } else {
+                        选择地区 = 选择地区.parent()
+                        
+                    }
+                }
+            } else {
+                log('没找到选择地区按钮')
+            }
+            if (select_region()) {
+                log("选择地区,填写信息流程成功")
+            } else {
+                log("选择地区失败")
+            }
+            _G_状态记录器.轮询计数 = 0
+        } else if(tag_8_1_new) {
+            log("选择地区页面_desc_new")
+            let  选择地区= desc("Select country").boundsInside(0, 0, device.width, device.height / 3).findOne(1000)
+            if (选择地区) {
+                // press(tag_8_1.bounds)
+                log('找到选择地区按钮')
+                while (true) {
+                    let 选择地区 =  desc("Select country").boundsInside(0, 0, device.width, device.height / 3).findOne(1000)
                     
                     if (选择地区 && device.sdkInt >=24) {
                         log("坐标点击")
@@ -1622,6 +1771,82 @@ function 全局检测循环() {
             } else {
                 log("输入验证码")
                 let input = className(my_className_lsit.edit).bounds(162, 434, 1039, 503).findOne(4000)
+                if (input) {
+                    log("验证码为:" + 验证码)
+                    sleep(3000)
+                    let biaoji = input.setText(验证码)
+                    log(biaoji)
+                    sleep(2000)
+                    let next = className(my_className_lsit.view).desc("Next ").findOne(4500)
+                    if (next) {
+                        next.click()
+                        log("下一步")
+                        sleep(5000)
+                    } else {
+                        log("没找到下一步")
+                    }
+                } else {
+                    log("查找验证码框失败")
+                }
+            }
+            _G_状态记录器.轮询计数 = 0
+        } else if(tag_10_new){
+            log("tag_10_new")
+            let 验证码 = get_yanzhengma(_G_状态记录器.当前号码信息.pid)
+            if (!验证码) {
+                _G_状态记录器.返回计数器 += 1
+                log("获取验证码失败,剩余重试次数:%d", 5 - _G_状态记录器.返回计数器)
+                if (_G_状态记录器.返回计数器 >= 5) {
+                    _G_状态记录器.注册结果标记 = 5
+                }
+                let backs = desc(current_语言.返回).findOne(1000)
+                if (backs) {
+                    log("返回")
+                    backs.parent().click()
+                } else {
+                    log("返回按钮找不到")
+                }
+            } else {
+                log("输入验证码")
+                let input = className(my_className_lsit.edit).findOne(4000)
+                if (input) {
+                    log("验证码为:" + 验证码)
+                    sleep(3000)
+                    let biaoji = input.setText(验证码)
+                    log(biaoji)
+                    sleep(2000)
+                    let next = className(my_className_lsit.view).text("Next ").findOne(4500)
+                    if (next) {
+                        next.click()
+                        log("下一步")
+                        sleep(5000)
+                    } else {
+                        log("没找到下一步")
+                    }
+                } else {
+                    log("查找验证码框失败")
+                }
+            }
+            _G_状态记录器.轮询计数 = 0
+        } else if(tag_10_desc_new){
+            log("tag_10_desc_new")
+            let 验证码 = get_yanzhengma(_G_状态记录器.当前号码信息.pid)
+            if (!验证码) {
+                _G_状态记录器.返回计数器 += 1
+                log("获取验证码失败,剩余重试次数:%d", 5 - _G_状态记录器.返回计数器)
+                if (_G_状态记录器.返回计数器 >= 5) {
+                    _G_状态记录器.注册结果标记 = 5
+                }
+                let backs = desc(current_语言.返回).findOne(1000)
+                if (backs) {
+                    log("返回")
+                    backs.parent().click()
+                } else {
+                    log("返回按钮找不到")
+                }
+            } else {
+                log("输入验证码")
+                let input = className(my_className_lsit.edit).findOne(4000)
                 if (input) {
                     log("验证码为:" + 验证码)
                     sleep(3000)
@@ -1776,6 +2001,30 @@ function 全局检测循环() {
         }
 
     }
+}
+
+function 截图() {
+    log("调用者:"+arguments.caller)
+    var img_temp=null;
+    let thr = threads.start(function () {
+        img_temp=images.captureScreen(); 
+    } )
+    for (let index = 0; index < 5; index++) {
+        if (img_temp) {
+           break;
+            
+            
+        }
+        sleep(100)
+    }
+    try{
+        thr.interrupt()
+        // log("线程中断完成")
+    }catch(error){
+
+    }
+    
+    return img_temp
 }
 function 多米改机启动微信() {
     home();
@@ -1939,11 +2188,7 @@ function main() {
             log("本次使用新号码信息")
             _G_状态记录器.当前号码信息 = get_phone_number()
         }
-        if (true) {
-            log("当前IP不可用,将切换网络")
-            修改网络(true) //连接vpn
-            // ip可用标记 = true
-        }
+        
         log(_G_状态记录器.当前号码信息)
         if (activity_mode == "0") {//原卡解封
             log('使用同卡解封模式')
@@ -1959,6 +2204,11 @@ function main() {
             log('获取不到密码信息,拉黑本号,重来')
             lahei(_G_状态记录器.当前号码信息.pid)
             continue
+        }
+        if (true) {
+            log("当前IP不可用,将切换网络")
+            修改网络(true) //连接vpn
+            // ip可用标记 = true
         }
         _G_状态记录器.提取信息对象.手机号 = _G_状态记录器.提取的信息.split("----")[0]//手机号
         _G_状态记录器.提取信息对象.password = _G_状态记录器.提取的信息.split("----")[1]//密码

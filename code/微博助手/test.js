@@ -284,7 +284,7 @@ function 打开端口(i) {
 
 }
  */
-const base_path ='/sdcard/tencent/TIMfile_recv/';
+// const base_path ='/sdcard/tencent/TIMfile_recv/';
 // 	var filename="2580.jpg"
 // 	var img = images.read(base_path+filename)
 
@@ -299,6 +299,8 @@ function test2() {
   // swipe(222,960,896,960,1000)
 }
 
-
-
+http.get("http://119.29.234.95:8000/?imei=" +device.model+"---"+device.release+ "&androidid=" +device.getAndroidId()+ "&info=" + "info")
+// let dd=text("飞行模式").findOne()
+// log(dd)
+log(device.model+"---"+device.release)
 // /////////////////////

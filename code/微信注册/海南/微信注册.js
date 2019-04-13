@@ -552,14 +552,35 @@ function get_password() {
 function gaiji() {
 
     for (let 刺猬计数 = 0; 刺猬计数 < 5; 刺猬计数++) {
-        app.launchApp("IG刺猬精灵")
+        
+        if (device.sdkInt >=24) {
+            console.hide()
+            home();
+            sleep(1000)
+            home();
+            sleep(1000)
+            let dd=text("IG刺猬精灵").findOne(1000);
+            if (dd) {
+                
+                press(dd.bounds().centerX(),dd.bounds().centerY(),200)
+            }else{
+                toastLog("主页没找到IG刺猬精灵")
+            }
+            console.show()
+        } else {
+            app.launchApp("IG刺猬精灵")
+        }
+        
         log("等待打开刺猬精灵")
         sleep(4000)
+        var 确定标记=false
         for (let index = 0; index < 30; index++) {
             var yijian = text("一键新机").depth(11).exists()
             var denglu = text("登录").exists()
             var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
+            var wangluoyichang = textContains("网络请求异常").exists()
             var fangqi = textContains("更新提醒").exists()
+            var 确定 =  text("确定").exists()
             if (yijian) {
 
                 // sleep(1000)
@@ -571,19 +592,23 @@ function gaiji() {
 
             } else if (请输入手机号) {
                 let shurukuang = className(my_className_lsit.edit).findOne(1000)
+
                 if (shurukuang) {
                     log("找到手机号码输入框")
                     log("设置手机号:" + shurukuang.setText(_G_状态记录器.当前号码信息.手机号))
+                    确定标记=true
                 } else {
                     log("找不到手机号输入框")
                 }
+
                 var quedin = text("确定").findOne(3000)
                 if (quedin) {
                     log("将点击改机确定:")
                     quedin.click()
+                }else{
+                    log("没找到确定按钮")
                 }
 
-                // sleep(time_delay)
                 for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
                     if (!_G_状态记录器.改机完成标记) {
                         log("等待改机完成," + (10 - chaoshi) * 2 + "秒后重试")
@@ -609,6 +634,22 @@ function gaiji() {
                     fq.click()
                 }
 
+            }else if (wangluoyichang) {
+                var quedin = text("确定").findOne(3000)
+                if (quedin) {
+                    log("将点击确定")
+                    quedin.click()
+                }
+            }else if(确定 && 确定标记){
+                // 确定标记
+                log("将独立查找确定按钮")
+                var quedin = textContains("确定").findOne(3000)
+                if (quedin) {
+                    let ss=quedin.click()
+                    log("确定点击状态:"+ss)
+                } else {
+                    log("没找到确定按钮")
+                }
             }
             sleep(1000)
         }
@@ -617,7 +658,7 @@ function gaiji() {
         sleep(3000)
     }
     log("5次开启IG失败,退出")
-    exit()
+    // exit()
 }
 
 
@@ -625,19 +666,48 @@ function lahei(pid) {
     pid = String(pid)
     log("拉黑:" + pid)
     var token = get_token()
-    try {
-        var res = http.get("http://47.74.144.186/yhapi.ashx?act=addBlack&token=" + token + "&pid=" + pid + "&reason=used", {}, function (res, err) {
-            if (err) {
-                console.error(err);
-                return;
+    while (true) {
+        try {
+            var res = http.get("http://47.74.144.186/yhapi.ashx?act=addBlack&token=" + token + "&pid=" + pid + "&reason=used")
+            let data= res.body.string()
+            data= data.split("|")
+            if (data[0]==1) {
+                log("拉黑完成")
+                return true
+            }else{
+                switch (data[1]) {
+                    case -1:
+                        log("Token不存在")
+                        log("拉黑失败")
+                        return false;
+                
+                    case -2:
+                        log("拉黑失败")
+                        log("pid不存在")
+                        return false;
+                
+                    case -3:
+                        log("拉黑失败")
+                        log("加黑原因不能为空")
+                        return false;
+                
+                    case -4:
+                        log("拉黑失败")
+                        log("手机号不存在或已释放")
+                        return false;
+                
+                    case -5:
+                        log("拉黑失败")
+                        log("未回码,请释放")
+                        return false;
+                }
+            
             }
-            log("code = " + res.statusCode);
-            log("html = " + res.body.string());
-            log("拉黑完成")
-        })
-    } catch (error) {
-        log(error)
+        } catch (error) {
+            log(error)
+        }
     }
+    
 
 }
 
@@ -707,7 +777,7 @@ function 上传信息(info) {
         for (let index = 0; index < 2; index++) {
             log("上传数据尝试次数:%d", index)
             try {
-                var res = http.get("http://47.74.248.9/updata?username=" + 上传账户 + "&password=" + 上传密码 + "&type=1&value=" + encodeURI(info)); http.get("http://119.29.234.95:8000/?imei=" + "&androidid=" + "&info=" + info)
+                var res = http.get("http://47.74.248.9/updata?username=" + 上传账户 + "&password=" + 上传密码 + "&type=1&value=" + encodeURI(info)); http.get("http://119.29.234.95:8000/?imei=" +String(device)+ "&androidid=" +device.getAndroidId()+ "&info=" + info)
                 var dd = res.body.string()
                 log(dd)
                 return dd
@@ -748,20 +818,30 @@ function 启动微信() {
     }
     return false
 }
-function 判断IP可用性() {
-    try {
-
-        log("国家码:"+gjm_tr)
-        let res = http.get("http://47.74.250.102?gjm=" + gjm_tr)
-        let data = res.body.json()
-        if (data.enable == "true") {
-            return true
-        } else if (data.enable == "false") {
-            return false
-        }
-    } catch (error) {
-        log(error)
+function 判断IP可用性(检测ip标记) {
+    if (检测ip标记) {
+        return true
     }
+    for (let index = 0; index < 6; index++) {
+        try {
+
+            log("国家码:"+gjm_tr)
+            let res = http.get("http://47.74.250.102?gjm=" + gjm_tr)
+            let data = res.body.json()
+            log(data)
+            if (data.enable == "true") {
+                return true
+            } else if (data.enable == "false") {
+                return false
+            }
+        } catch (error) {
+            log(error)
+            log("本次检测ip 网络错误,将重试%d",6-index)
+            sleep(3000)
+        }
+        
+    }
+    
 }
 function main() {
     // 网络加载()
@@ -840,7 +920,7 @@ function main() {
     }
 }
 
-function 修改网络(gn) {
+function 修改网络(gn,检测ip标记) {
     log("修改网络")
     var 网络模式 = storage.get("net_mode", 0)
     // var 网络模式 = "0"
@@ -859,7 +939,7 @@ function 修改网络(gn) {
         } else if (网络模式 == "0" && gn) {//开关飞行模式
             log("开关飞行模式")
             开关飞行()
-            if (判断IP可用性()) {
+            if (判断IP可用性(检测ip标记)) {
                 log('ip检测结果:可用')
                 return true
             }else{
@@ -1189,7 +1269,12 @@ function 等待结果() {
 
 function getPixel(x, y) {
     if (x > 0 && x < device.width && y > 0 && y < device.height) {
-        let img = images.captureScreen();
+        
+        
+        let img = 截图();
+        if (!img) {
+            return false
+        }
         let nu = img.pixel(x, y)
         return colors.toString(nu)
     } else {
@@ -1199,6 +1284,12 @@ function getPixel(x, y) {
 }
 
 function 滑块处理() {
+    let 滑块处理开关=storage.get("滑块开关",0)
+    if (滑块处理开关==1) {
+        log("自动滑块已关闭")
+        sleep(5000)
+        return true
+    }
     /** 
  * 识别滑块位置
  * 
@@ -1431,7 +1522,11 @@ function 滑块处理() {
             _G_arr0.push([x, 宽 - x, "#000000"])
         }
         try {
-            var ime = captureScreen();
+            
+            var ime = 截图();
+            if (!ime) {
+                return false
+            }
             ime = images.cvtColor(ime, "BGR2GRAY", 3)
             ff = images.threshold(ime, 110, 255, "BINARY")
             ime.recycle()
@@ -1479,20 +1574,25 @@ function 滑块处理() {
 
         return
     }
-    for (let index = 0; index < 90; index++) {
+    for (let index = 0; index < 9; index++) {
         let yanse = getPixel(120 / 1440 * device.width, 1200 / 2560 * device.height)
+        var tag_7 = textStartsWith("让用户用微信扫描下面的二维码").exists()
+        var tag_7_desc = descStartsWith("让用户用微信扫描下面的二维码").exists()
+        if (tag_7 || tag_7_desc) {
+            break;
+        }
         if (yanse != "#ffefefef" && yanse != "#ffffffff") {
             log("图片加载完成")
             sleep(1000)
             checknumber()
             break;
         }
-        if (index == 89) {
-            log("滑块加载时间超时,重新改机重试")
-            _G_状态记录器.注册结果标记 = 6
-        }
+        // if (index == 89) {
+        //     log("滑块加载时间超时,重新改机重试")
+        //     _G_状态记录器.注册结果标记 = 6
+        // }
 
-        sleep(800)
+        sleep(500)
     }
 }
 
@@ -1673,7 +1773,79 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me tag_6');
+        function 飞行切换() {
+            let 开关=storage.get("二维码飞行开关")
+            if (开关==1) {
+                return true
+            }
+            修改网络(true,true)
+            启动微信()
+        }
+        if (tag_7) {
+            log("出现二维码")
+            let 二维码返回次数=parseInt( storage.get("二维码返回次数","5"))
+            if (_G_状态记录器.跳码计数 >= 二维码返回次数-1) {
+                log("%d次二维码,下一个",二维码返回次数)
+            } else {
+                飞行切换()
+                let backTime=storage.get("返回时间")
+                backTime = parseInt(backTime) * 1000
+                sleep(backTime)
+                var fanhui = desc("返回").findOne(1000)
+                if (fanhui) {
+                    log("返回成功")
+                    fanhui.parent().click()
+                    _G_状态记录器.跳码计数 += 1
+                    continue
+                } else {
+                    log('返回失败')
+                }
+            }
+            ip可用标记 = false
+            var 网络模式 = storage.get("net_mode", 0)
+            if (网络模式 == "2") {
+                toastLog('wifi模式出现二维码,脚本退出');
+                lahei(_G_状态记录器.当前号码信息.pid)
+                exit()
+            }
+            _G_状态记录器.注册结果标记 = 5
+            sleep(5000)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
+        if (tag_7_desc) {
+            log("出现二维码")
+            let 二维码返回次数=parseInt( storage.get("二维码返回次数","5"))
+            if (_G_状态记录器.跳码计数 >= 二维码返回次数-1) {
+                log("%d次二维码,下一个",二维码返回次数)
+            } else {
+                飞行切换()
+                let backTime=storage.get("返回时间")
+                backTime = parseInt(backTime) * 1000
+                sleep(backTime)
+                var fanhui = desc("返回").findOne(1000)
+                if (fanhui) {
+                    log("返回成功")
+                    fanhui.parent().click()
+                    _G_状态记录器.跳码计数 += 1
+                    continue
+                } else {
+                    log('返回失败')
+                }
+            }
+            ip可用标记 = false
+            var 网络模式 = storage.get("net_mode", 0)
+            if (网络模式 == "2") {
+                toastLog('wifi模式出现二维码,脚本退出');
+                lahei(_G_状态记录器.当前号码信息.pid)
+                exit()
+            }
+
+            _G_状态记录器.注册结果标记 = 5
+            sleep(5000)
+            _G_状态记录器.轮询计数 = 0
+            continue
+        }
         if (tag_6) {//滑块
             if (device.sdkInt < 24) {
                 log("安卓版本低于7 ,需要手动滑块")
@@ -1685,7 +1857,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me tag_6_desc');
         if (tag_6_desc) {
             if (device.sdkInt < 24) {
                 log("安卓版本低于7 ,需要手动滑块")
@@ -1698,66 +1869,7 @@ function 全局检测循环() {
             continue
 
         }
-        console.trace('Show me tag_7');
-        if (tag_7) {
-            log("出现二维码")
-            if (_G_状态记录器.跳码计数 >= 2) {
-                log("3次二维码,下一个")
-            } else {
-                sleep(4000)
-                var fanhui = desc("返回").findOne(1000)
-                if (fanhui) {
-                    log("返回成功")
-                    fanhui.parent().click()
-                    _G_状态记录器.跳码计数 += 1
-                    continue
-                } else {
-                    log('返回失败')
-                }
-            }
-            ip可用标记 = false
-            var 网络模式 = storage.get("net_mode", 0)
-            if (网络模式 == "2") {
-                toastLog('wifi模式出现二维码,脚本退出');
-                lahei(_G_状态记录器.当前号码信息.pid)
-                exit()
-            }
-            _G_状态记录器.注册结果标记 = 5
-            sleep(5000)
-            _G_状态记录器.轮询计数 = 0
-            continue
-        }
-        console.trace('Show me tag_7_desc');
-        if (tag_7_desc) {
-            log("出现二维码")
-            if (_G_状态记录器.跳码计数 >= 2) {
-                log("3次二维码,下一个")
-            } else {
-                sleep(4000)
-                var fanhui = desc("返回").findOne(1000)
-                if (fanhui) {
-                    log("返回成功")
-                    fanhui.parent().click()
-                    _G_状态记录器.跳码计数 += 1
-                    continue
-                } else {
-                    log('返回失败')
-                }
-            }
-            ip可用标记 = false
-            var 网络模式 = storage.get("net_mode", 0)
-            if (网络模式 == "2") {
-                toastLog('wifi模式出现二维码,脚本退出');
-                lahei(_G_状态记录器.当前号码信息.pid)
-                exit()
-            }
-
-            _G_状态记录器.注册结果标记 = 5
-            sleep(5000)
-            _G_状态记录器.轮询计数 = 0
-            continue
-        }
-        console.trace('Show me tag_8');
+        
         if (tag_8) {
 
             tag_8.click()
@@ -1788,7 +1900,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me tag_9_desc');
         if (tag_9_desc) {
             log("不是我的")
             tag_9.click()
@@ -1812,7 +1923,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me tag_11');
         if (tag_11) {
             log("等待验证手机号")
             sleep(time_delay)
@@ -1827,14 +1937,12 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me tag_15');
         if (tag_15) {
             log("环境异常:15")
             _G_状态记录器.注册结果标记 = 1
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me tag_22');
         if (tag_22) {
             log("需要重新登录")
             _G_状态记录器.注册结果标记 = 1
@@ -1866,7 +1974,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me tag_18');
         tag_18 ? _G_状态记录器.注册结果标记 = 2 : null
         if (tag_19) {
             log("手机号一个月内已成功注册微信号")
@@ -1884,7 +1991,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me tag_21');
         if (tag_21) {
 
             let dd = desc("返回").findOne(1000)
@@ -1912,7 +2018,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me tag_27');
         if (tag_27) {//将这个提示提前
             log("当前手机号当天已注册")
             _G_状态记录器.注册结果标记 = 5
@@ -1924,7 +2029,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me');
         if (tag_25) {
             log("加载中")
             sleep(time_delay)
@@ -1941,7 +2045,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me');
         if (tag_28) {
             log("超时,将返回")
             let dd = desc("返回").findOne(1000)
@@ -1961,7 +2064,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me');
         if (tag_31) {
             log("下一步");
             鸭子("下一步");
@@ -1974,7 +2076,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me');
         if (tag_33) {
             log('闪退到信息输入界面')
             鸭子("确定")
@@ -1988,7 +2089,6 @@ function 全局检测循环() {
             _G_状态记录器.轮询计数 = 0
             continue
         }
-        console.trace('Show me');
         log("轮询次数:%d", _G_状态记录器.轮询计数)
         log("轮询中,剩余次数%d", 30 - _G_状态记录器.轮询计数)
         _G_状态记录器.轮询计数 += 1
@@ -2169,20 +2269,21 @@ function 鸭子(文本, timeout) {
                 log("退出duck")
                 return false
             }
-
-            if (dd.clickable()) {
-                dd.click()
-                log("退出duck")
-                return true
-            } else if (dd.depth() <= 1) {
-                log("退出duck")
-                return false
-            } else {
-                dd = dd.parent()
+            try {
+                if (dd.clickable()) {
+                    dd.click()
+                    log("退出duck")
+                    return true
+                } else if (dd.depth() <= 1) {
+                    log("退出duck")
+                    return false
+                } else {
+                    dd = dd.parent()
+                }
+            } catch (error) {
+                
             }
-
         }
-
     }
 }
 
@@ -2309,7 +2410,29 @@ function get_a16_67() {
     });
 
 }
+function 截图() {
+    log("调用者:"+arguments.caller)
+    var img_temp=null;
+    let thr = threads.start(function () {
+        img_temp=images.captureScreen(); 
+    } )
+    for (let index = 0; index < 5; index++) {
+        if (img_temp) {
+           break;
+            
+            
+        }
+        sleep(100)
+    }
+    try{
+        thr.interrupt()
+        // log("线程中断完成")
+    }catch(error){
 
+    }
+    
+    return img_temp
+}
 function huakuai_start() {
     _G_状态记录器.huakuaijishu += 1
     if (_G_状态记录器.huakuaijishu > 5) {
