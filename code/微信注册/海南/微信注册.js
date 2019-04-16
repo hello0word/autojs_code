@@ -536,16 +536,32 @@ function get_phone_number() {
 
 
 function get_password() {
-    var st1 = ""
-
-    for (let index = 0; index < 4; index++) {
-        var dd = random(1, 23)
-        var a = "abcdefghijklmnopqrstuvwxyz".substr(dd, 1)
-        st1 += a
+    function randomWord(randomFlag, min, max){
+        var str = "",
+            range = min,
+            arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','#','$','%',',','.','_','~','!','@','&'];
+     
+        // 随机产生
+        if(randomFlag){
+            range = Math.round(Math.random() * (max-min)) + min;
+        }
+        for(var i=0; i<range; i++){
+            pos = Math.round(Math.random() * (arr.length-1));
+            str += arr[pos];
+        }
+        return str;
     }
+    // var st1 = ""
 
-    var st2 = String(random(1000, 9999))
-    return st1 + st2
+    // for (let index = 0; index < 4; index++) {
+    //     var dd = random(1, 23)
+    //     var a = "abcdefghijklmnopqrstuvwxyz".substr(dd, 1)
+    //     st1 += a
+    // }
+
+    // var st2 = String(random(1000, 9999))
+    // return st1 + st2
+    return randomWord(true, 8, 16)
 }
 
 
