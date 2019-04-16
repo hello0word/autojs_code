@@ -1476,8 +1476,8 @@ function 全局检测循环() {
         let tag_11 = textContains("Incorrect account/password or wrong combination of account and password").findOne(timeout)//账号或密码错误
         let tag_12 = text("Too many operations. Try again later.").findOne(timeout)
         let tag_13 = textContains("This WeChat account has been confirmed of suspicious registration in batch or using plugins and is blocked.").findOne(timeout)//插件注册提示
-        let tag_14 = textContains("Your account may have been compromised. In order to verify your identity, you will need to find a WeChat user to help assist in verifying your identity").findOne(timeout)
-        let tag_14_desc = descContains("Your account may have been compromised. In order to verify your identity, you will need to find a WeChat user to help assist in verifying your identity").findOne(timeout)
+        let tag_14 = textContains("Suspicious activity was detected on your account").findOne(timeout)
+        let tag_14_desc = descContains("Suspicious activity was detected on your account").findOne(timeout)
         let tag_15 = textContains("WeChat account has been activated").findOne(timeout)
         let tag_15_desc = descContains("WeChat account has been activated").findOne(timeout)
         let tag_16 = textContains("Start to verify").findOne(timeout)//不需要解封
