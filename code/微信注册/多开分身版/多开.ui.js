@@ -2,7 +2,7 @@
 var color = "#009688";
 var storage= storages.create("微信")
 var 模式_list = "注册|解封"
-var 机型_list = "小米5s Plus"
+var App列表 = "小米5s Plus"
 var 网络模式_list = "开关飞行模式|vpn模式|wifi模式"
 var 国家_list = "马来西亚|印度尼西亚"
 var 解封模式_list = "原卡解封|异卡解封"

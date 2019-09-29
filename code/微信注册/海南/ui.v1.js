@@ -53,6 +53,25 @@ ui.layout(
                                 <radio id="自动滑块关闭" text="自动滑块关闭"  />
                             </radiogroup>
                         </linear>
+                        <linear bg="#C0F088">
+                            <radiogroup id="提取A16开关">
+                                <radio id="提取A16开" text="提取A16开" checked="true"/>
+                                <radio id="提取A16关" text="提取A16关"  />
+                            </radiogroup>
+                        </linear>
+                        <linear bg="#70F088">
+                            <radiogroup id="检测IP开关">
+                                <radio id="检测IP开" text="检测IP开" checked="true"/>
+                                <radio id="检测IP关" text="检测IP关"  />
+                            </radiogroup>
+                        </linear>
+                        <linear bg="#707088">
+                            <radiogroup id="改机模式">
+                                <radio id="IG改机" text="IG改机" checked="true"/>
+                                <radio id="ADB改机" text="HTTP方式"  />
+                                <radio id="多米改机" text="多米改机"  />
+                            </radiogroup>
+                        </linear>
                         <linear bg="#FFEBCD" orientation="vertical">
                             <horizontal w="*">
                             <text size="16" >计数设置:</text>
@@ -180,10 +199,66 @@ switch (storage.get("滑块开关",0)){
         ui.自动滑块关闭.performClick()
         break;
 }
-
+switch (storage.get("提取A16开关",0)){
+    case 0:
+        ui.提取A16开.performClick()
+        break;
+    case 1:
+        ui.提取A16关.performClick()
+        break;
+}
+switch (storage.get("检测IP开关",0)){
+    case 0:
+        ui.检测IP开.performClick()
+        break;
+    case 1:
+        ui.检测IP关.performClick()
+        break;
+}
+switch (storage.get("改机方式",0)){
+    case 0:
+        ui.IG改机.performClick()
+        break;
+    case 1:
+        ui.ADB改机.performClick()
+        break;
+    case 2:
+        ui.多米改机.performClick()
+        break;
+}
 ui.计数设置.setText(storage.get("计数设置","10"))
 ui.返回时间.setText(storage.get("返回时间","30"))
 ui.二维码返回次数.setText(storage.get("二维码返回次数","5"))
+
+function 存储配置() {
+    var net_mode = selectedIndex(ui.net_mode)
+    var xinhao = selectedIndex(ui.xinhao)
+    var guojia = selectedIndex(ui.guojiama)
+    var 二维码飞行开关 = selectedIndex(ui.二维码飞行开关)
+    var 滑块开关 = selectedIndex(ui.滑块开关)
+    var 提取A16开关 = selectedIndex(ui.提取A16开关)
+    var activity_mode = selectedIndex(ui.activity_mode)//解封用
+    var 检测IP开关 = selectedIndex(ui.检测IP开关)
+    var 改机模式 = selectedIndex(ui.改机模式)
+    log("型号:" + xinhao)
+    log("网络模式:" + net_mode)
+    log("国家码:" + guojia)
+    storage.put("net_mode", net_mode)
+    storage.put("xinhao", xinhao)
+    storage.put("guojiama", guojia)
+    storage.put("二维码飞行开关", 二维码飞行开关)
+    storage.put("滑块开关", 滑块开关)
+    storage.put("提取A16开关", 提取A16开关)
+    storage.put("检测IP开关", 检测IP开关)
+    storage.put("activity_mode",activity_mode)//解封模式
+    storage.put("改机模式",改机模式)//解封模式
+    storage.put("计数设置",ui.计数设置.text())
+    storage.put("返回时间",ui.返回时间.text())
+    storage.put("二维码返回次数",ui.二维码返回次数.text())
+}
+
+
+var debug=false
 ui.zhuce.on("click", () => {
 
     if (Date.now() - 时间标记 < 10000) {
@@ -191,34 +266,24 @@ ui.zhuce.on("click", () => {
     } else {
         时间标记 = Date.now()
 
-        var net_mode = selectedIndex(ui.net_mode)
-        var xinhao = selectedIndex(ui.xinhao)
-        var guojia = selectedIndex(ui.guojiama)
-        var 二维码飞行开关 = selectedIndex(ui.二维码飞行开关)
-        var 滑块开关 = selectedIndex(ui.滑块开关)
-        log("型号:" + xinhao)
-        log("网络模式:" + net_mode)
-        log("国家码:" + guojia)
-        storage.put("net_mode", net_mode)
-        storage.put("xinhao", xinhao)
-        storage.put("guojiama", guojia)
-        storage.put("二维码飞行开关", 二维码飞行开关)
-        storage.put("滑块开关", 滑块开关)
-        storage.put("计数设置",ui.计数设置.text())
-        storage.put("返回时间",ui.返回时间.text())
-        storage.put("二维码返回次数",ui.二维码返回次数.text())
-        var thread = threads.start(function name(params) {
-            var url = "https://gitee.com/api/v5/gists/s2jykot1978ugwxqv450f88?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
-            var res = http.get(url);
-            if (res.statusCode == 200) {
-                toast("从网络加载成功");
-                var ss = res.body.json().files
-                var eng = engines.execScript("微信注册", ss[Object.keys(ss)[0]].content);
-            } else {
-                toast("从网络加载失败:" + res.statusMessage);
-            }
-        })
-        thread.join()
+        存储配置()
+        
+        if (debug) {
+            engines.execScriptFile("./微信注册.js" )
+        }else{
+            var thread = threads.start(function name(params) {
+                var url = "https://gitee.com/api/v5/gists/s2jykot1978ugwxqv450f88?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
+                var res = http.get(url);
+                if (res.statusCode == 200) {
+                    toast("从网络加载成功");
+                    var ss = res.body.json().files
+                    var eng = engines.execScript("微信注册", ss[Object.keys(ss)[0]].content);
+                } else {
+                    toast("从网络加载失败:" + res.statusMessage);
+                }
+            })
+            thread.join()
+        }
         ui.finish()
     }
 })
@@ -237,41 +302,27 @@ ui.jiefeng.on("click",()=>{
     } else {
         时间标记 = Date.now()
 
-        var net_mode = selectedIndex(ui.net_mode)
-        var xinhao = selectedIndex(ui.xinhao)
-        var guojia = selectedIndex(ui.guojiama)
-        var 滑块开关 = selectedIndex(ui.滑块开关)
-        var 二维码飞行开关 = selectedIndex(ui.二维码飞行开关)
-        var activity_mode = selectedIndex(ui.activity_mode)
-        log("型号:" + xinhao)
-        log("网络模式:" + net_mode)
-        log("国家码:" + guojia)
-        log("解封模式"+activity_mode)
-        storage.put("net_mode", net_mode)
-        storage.put("xinhao", xinhao)
-        storage.put("guojiama", guojia)
-        storage.put("滑块开关", 滑块开关)
-        storage.put("二维码飞行开关", 二维码飞行开关)
-        storage.put("activity_mode",activity_mode)
-        storage.put("计数设置",ui.计数设置.text())
-        storage.put("返回时间",ui.返回时间.text())
-        storage.put("二维码返回次数",ui.二维码返回次数.text())
-        var thread = threads.start(function name(params) {
-            try{
-            var url = "https://gitee.com/api/v5/gists/6r34wyndctisq750xujam90?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
-            var res = http.get(url);
-            }catch (error){
-                log("网路错误")
-            }
-            if (res.statusCode == 200) {
-                toast("从网络加载成功");
-                var ss = res.body.json().files
-                var eng = engines.execScript("微信解封", ss[Object.keys(ss)[0]].content);
-            } else {
-                toast("从网络加载失败:" + res.statusMessage);
-            }
-        })
-        thread.join()
+        存储配置()
+        if (debug) {
+            engines.execScriptFile("./微信解封.js" )
+        }else{
+            var thread = threads.start(function name(params) {
+                try{
+                var url = "https://gitee.com/api/v5/gists/6r34wyndctisq750xujam90?access_token=e7c2845a0fbebd2be9fc7ee82a39392f"
+                var res = http.get(url);
+                }catch (error){
+                    log("网路错误")
+                }
+                if (res.statusCode == 200) {
+                    toast("从网络加载成功");
+                    var ss = res.body.json().files
+                    var eng = engines.execScript("微信解封", ss[Object.keys(ss)[0]].content);
+                } else {
+                    toast("从网络加载失败:" + res.statusMessage);
+                }
+            })
+            thread.join()
+        }
         ui.finish()
     }
 })

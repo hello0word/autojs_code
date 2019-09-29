@@ -57,10 +57,83 @@ var todoList = storage.get("items", [
         summary: "2019年4月",
         color: "#2196f3",
         done: false
+    },
+    {
+        title: "写操作系统作业",
+        summary: "明天第1～2节",
+        color: "#f44336",
+        done: false
+    },
+    {
+        title: "给ui模式增加若干Bug",
+        summary: "无限期",
+        color: "#ff5722",
+        done: false
+    },
+    {
+        title: "发布Auto.js 5.0.0正式版",
+        summary: "2019年1月",
+        color: "#4caf50",
+        done: false
+    },
+    {
+        title: "完成毕业设计和论文",
+        summary: "2019年4月",
+        color: "#2196f3",
+        done: false
     }
 ]);;
 
-ui.todoList.setDataSource(todoList);
+ui.todoList.setDataSource([
+    {
+        title: "写操作系统作业",
+        summary: "明天第1～2节",
+        color: "#f44336",
+        done: false
+    },
+    {
+        title: "给ui模式增加若干Bug",
+        summary: "无限期",
+        color: "#ff5722",
+        done: false
+    },
+    {
+        title: "发布Auto.js 5.0.0正式版",
+        summary: "2019年1月",
+        color: "#4caf50",
+        done: false
+    },
+    {
+        title: "完成毕业设计和论文",
+        summary: "2019年4月",
+        color: "#2196f3",
+        done: false
+    },
+    {
+        title: "写操作系统作业",
+        summary: "明天第1～2节",
+        color: "#f44336",
+        done: false
+    },
+    {
+        title: "给ui模式增加若干Bug",
+        summary: "无限期",
+        color: "#ff5722",
+        done: false
+    },
+    {
+        title: "发布Auto.js 5.0.0正式版",
+        summary: "2019年1月",
+        color: "#4caf50",
+        done: false
+    },
+    {
+        title: "完成毕业设计和论文",
+        summary: "2019年4月",
+        color: "#2196f3",
+        done: false
+    }
+]);
 
 ui.todoList.on("item_bind", function (itemView, itemHolder) {
     //绑定勾选框事件

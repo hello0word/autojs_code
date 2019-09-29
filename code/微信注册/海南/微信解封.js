@@ -310,7 +310,6 @@ function get_phone_number() {
         }
     }
 }
-
 function lahei(pid) {
     pid = String(pid)
     log("拉黑:" + pid)
@@ -318,45 +317,46 @@ function lahei(pid) {
     while (true) {
         try {
             var res = http.get("http://47.74.144.186/yhapi.ashx?act=addBlack&token=" + token + "&pid=" + pid + "&reason=used")
-            let data= res.body.string()
-            data= data.split("|")
-            if (data[0]==1) {
+            let data = res.body.string()
+            log("拉黑返回信息:"+data)
+            data = data.split("|")
+            if (data[0] == "1") {
                 log("拉黑完成")
                 return true
-            }else{
+            } else {
                 switch (data[1]) {
-                    case -1:
+                    case "-1":
                         log("Token不存在")
                         log("拉黑失败")
                         return false;
-                
-                    case -2:
+
+                    case"-2":
                         log("拉黑失败")
                         log("pid不存在")
                         return false;
-                
-                    case -3:
+
+                    case "-3":
                         log("拉黑失败")
                         log("加黑原因不能为空")
                         return false;
-                
-                    case -4:
+
+                    case "-4":
                         log("拉黑失败")
                         log("手机号不存在或已释放")
                         return false;
-                
-                    case -5:
+
+                    case "-5":
                         log("拉黑失败")
                         log("未回码,请释放")
                         return false;
                 }
-            
+
             }
         } catch (error) {
             log(error)
         }
     }
-    
+
 
 }
 

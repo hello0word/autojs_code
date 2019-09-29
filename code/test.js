@@ -129,13 +129,62 @@ function 开关飞行(params) {
 //     log(error)
 // }
 // log( days)
-a="0"
-switch(a){
-    case 0:
-    log(1)
-    break;
-    case "0":
-    log("2")
-    break
-}
+// a="0"
+// switch(a){
+//     case 0:
+//     log(1)
+//     break;
+//     case "0":
+//     log("2")
+//     break
+// }
 // log("0"==0)
+toast("ok")
+var newPath="/sdcard/360/123"
+function copyToNewPath(path){
+    if (files.isDir(path)) {
+        log("目录:"+path)
+        var AllChildPath=files.listDir(path)
+        log(AllChildPath)
+        for (let index = 0; index < AllChildPath.length; index++) {
+            var element = AllChildPath[index];
+            var childPath=files.join(path, element )
+            log("copy:"+childPath)
+            copyToNewPath(childPath)
+            // return copyToNewPath(childPath)
+        }
+    }else{
+        
+        // log(path)
+        var fileName=files.getName(path )
+        if (fileName!=".nomedia") {
+            log("文件:"+path)
+            files.copy(path, files.join(newPath, files.getName(path )) )
+        }
+        
+    }
+
+}
+function main(){
+    var basePath="/sdcard/Tencent/MicroMsg/5c9e06f49e57055cb8eb7ece30b195ad/image2"
+    // copyToNewPath(basePath)
+    // exit()
+
+    var allFile=files.listDir(newPath)
+    // log(allFile)
+    // exit()
+    for (let index = 0; index < allFile.length; index++) {
+        var element = allFile[index];
+        var path=files.join(newPath,element)
+        // copyToNewPath(path)
+        var ex=files.getExtension(path )
+        if (!ex) {
+            files.rename(path ,files.getName(path )+".jpg")
+        }
+
+    }
+
+    // log(allFile)
+
+}
+main()

