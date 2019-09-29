@@ -1,0 +1,10 @@
+{
+    "name": "QQHD",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.qqhdtool.scn",
+    "versionName": "1.0.3",
+    "versionCode": 9
+}
