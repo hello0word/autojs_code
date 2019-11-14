@@ -1,4 +1,13 @@
-auto.waitFor()
+importClass(java.security.MessageDigest)
+importClass(java.lang.Integer)
+importClass(android.content.Context);
+importClass(android.provider.Settings);
+importClass(android.os.Process)
+importClass(android.net.Uri)
+importClass(android.media.Ringtone)
+importClass(android.media.RingtoneManager)
+importClass(java.lang.System)
+
 if (!requestScreenCapture()) {
     toastLog("请求截图失败");
     exit();
@@ -8,16 +17,84 @@ device.keepScreenOn()
 console.setGlobalLogConfig({
     "file": "/sdcard/QQHDLOG.txt"
 })
+console.setSize(device.width/2,device.height)
+console.show()
+var sh_root= new RootAutomator()
+events.on('exit', function(){ 
+    sh_root.exit();
+    console.hide()
+ });
+
+
+// 监听暂时关闭
+events.broadcast.on("data_deliver_down", function(data){
+    toast("收到命令,取数据");
+    var data= storage.get("data","")
+    wordsContainer=data
+});
+
+
+function openAccessbility() {
+    var packagename_self = context.getPackageName()
+
+    var dd = shell("pm grant " + packagename_self + " android.permission.WRITE_SECURE_SETTINGS", true)
+    sleep(200)
+    //log(dd)
+    try {
+        var enabledServices = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+        //log('当前已启用的辅助服务\n', enabledServices);
+        /*
+        附上几个我安装的应用的辅助功能服务
+        AutoJsPro版 org.autojs.autojspro/com.stardust.autojs.core.accessibility.AccessibilityService
+        AutoJS免费版 org.autojs.autojs/com.stardust.autojs.core.accessibility.AccessibilityService
+        Nova桌面 com.teslacoilsw.launcher/com.teslacoilsw.launcher.NovaAccessibilityService
+        
+        注意每个服务之间要用英文冒号链接
+        
+        重要！
+        建议把要用的所有辅助服务打开，然后通过上面那个log获取到已开启的服务，再把Services变量写死
+        由于Android的一些bug，有时候实际没有开启的服务仍会出现在已启用的里面，所有没办法通过判断得知服务是否开启
+        像当前这样子会导致已开启服务里面有很多重复项目，所有建议直接写死不再每次重新获取
+        */
+
+        var Services = enabledServices + ":" + packagename_self + "/com.stardust.autojs.core.accessibility.AccessibilityService";
+        Settings.Secure.putString(context.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, Services);
+        Settings.Secure.putString(context.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, '1');
+        log("无障碍开启成功");
+        // auto.waitFor();
+        return true
+    } catch (error) {
+        //授权方法：开启usb调试并使用adb工具连接手机，执行 adb shell pm grant org.autojs.autojspro android.permission.WRITE_SECURE_SETTING
+        // log("\n请确保已给予 WRITE_SECURE_SETTINGS 权限\n\n授权代码已复制，请使用adb工具连接手机执行(重启不失效)\n\n", error);
+        // setClip("adb shell pm grant org.autojs.autojspro android.permission.WRITE_SECURE_SETTINGS");
+        log("无障碍开启失败:"+error)
+        return false
+    }
+}
+
+openAccessbility()
+sleep(500)
+auto.waitFor()
+
 
 var 测试标记 = false
+// log($shell.checkAccess("root"))
+// log($shell.setDefaultConfig({root:true}))
 var sh = new Shell(true);
+// log(Object.keys(sh))
+// log(sh.root)
 var BASEURL
 var loginTime = 40 * 1000
 var sendTime = 20 * 1000
 var changeIp = true
-var wordsK = 20 //depth 比例
+var wordsK = 5 //depth 比例
 var robotcount = 0
 var robotinfoBak=null
+
+var number = ""//全局暂存的当前QQ号
+
+// var word_list_count=0;//对同一关键词,检查的项目计数
+var storage=storages.create("QQHDdata")
 
 var wordsContainer = {
     "arr": [],
@@ -26,7 +103,7 @@ var wordsContainer = {
         if (wordsContainer.words.count > 0) {
             return wordsContainer.words.words
         } else if (wordsContainer.arr.length == 0) {
-            wordsInit()
+            wordsInit(number)
             wordsContainer.words = wordsContainer.arr.pop()
             return wordsContainer.getWords()
         } else if (wordsContainer.arr.length > 0) {
@@ -34,9 +111,12 @@ var wordsContainer = {
             return wordsContainer.getWords()
         }
     },
-    "useWords": function () { //用于判断是不是需要换关键词
+    "useWords": function () { //用于判断是不是需要换关键词//不进行关键词重新填充
         if (wordsContainer.words.count > 0) {
             wordsContainer.words.count -= 1
+            log("上载数据到控制器")
+            storage.put("data",wordsContainer)
+            events.broadcast.emit("data_deliver_up","up");
             return true
         } else {
             return false
@@ -44,6 +124,8 @@ var wordsContainer = {
     }
 }
 while (true) {
+    System.gc()
+
     function openNetwork() {
         toastLog("等待网络可用")
         sh.exec("settings put global airplane_mode_on 0")
@@ -85,15 +167,16 @@ function updata() {
     }
 }
 updata()
+// BASEURL="http://fast.abc.com/enlovo/api/"
 const QQHDpackageName = app.getPackageName("QQ HD")
+log(QQHDpackageName)
 
-
-sh.setCallback({
-    onNewLine: function (line) {
-        //有新的一行输出时打印到控制台
-        log("sh输出:" + line);
-    }
-})
+// sh.setCallback({
+//     onNewLine: function (line) {
+//         //有新的一行输出时打印到控制台
+//         log("sh输出:" + line);
+//     }
+// })
 events.on("exit", function () {
     log("结束运行");
     device.cancelKeepingAwake()
@@ -122,6 +205,7 @@ var currentTaskType = "number" /// 可以为 number   或  words
 var accountUnLogin = false
 //toast监听线程
 threads.start(function () {
+    log("Toast监听已启动")
     events.observeToast();
     events.onToast(function (toast) {
         var pack = toast.getPackageName()
@@ -153,11 +237,18 @@ threads.start(function () {
 //异常界面监控线程
 var weigui = false
 threads.start(function () {
-    var errorSelect = [text("确定").clickable(), textStartsWith("拒绝").clickable()]
+    log("异常界面监听已启动")
+    var errorSelect = [text("确定").clickable(true), 
+    // textStartsWith("拒绝").clickable(),
+    text("允许").clickable(true),
+
+    ]
     while (true) {
+        
         errorSelect.forEach((element) => {
             try {
-                if (element.exists()) {
+                if (element.exists() ) {
+                    log(element+"已点击")
                     element.click()
                 }
             } catch (error) {
@@ -212,6 +303,65 @@ function 接口1(username, password, deviceid) {
     }
 }
 
+
+function getToken() {
+    let msg=new Date()
+    let y=String(msg.getFullYear())
+    let m=msg.getMonth()
+    let d=String(msg.getDate())
+    m+=1
+    if(m <= 9){
+        m="0"+String(m)
+
+    }
+    if(d <= 9){
+        d="0"+String(d)
+
+    }
+    log(y+m+d)
+    var dataStr=new java.lang.String(y+m+d)
+    var mmsg = MessageDigest.getInstance("MD5");
+    mmsg.update(dataStr.getBytes("UTF8"));
+    var s = mmsg.digest();
+    var result = "";
+    for (var i = 0; i < s.length; i++) {
+        result += Integer.toHexString((0x000000FF & s[i]) | 0xFFFFFF00).substring(6);
+    }
+    return result;
+
+    // return $crypto.digest(y+m+d, "MD5");
+    
+}   
+
+function getQQNumber() {
+    id("tab_item_container").findOne().click()
+    sleep(1000)
+    log(text("帐号管理").findOne().parent().click())
+    sleep(2000) 
+    var QQ号=id("account").find()[0].text()
+    log("读取到得QQ号:"+QQ号)
+    return QQ号
+
+    text("帐号信息").findOne()
+    var info = id("info").find()
+    if (info.length!=0) {
+        var num= info[0].text()
+        log(num)
+        var re=/[0-9]+/
+        num=re.exec(num)
+        if (num) {
+            num=num[0]
+            back()
+            sleep(500)
+            return num
+        }else{
+            return null
+        }
+        
+    }
+}
+
+
 //上传信息
 function 接口2(username, password, robotid, clientid, status) {
     while (true) {
@@ -254,25 +404,32 @@ function 接口2(username, password, robotid, clientid, status) {
     }
 }
 //获取 待添加好友列表
-function 接口3(username, password, robotid) {
+function 接口3(number ) {
     if (测试标记) {
         log("接口3 测试中")
         return 1
     }
     while (true) {
         toastLog("接口3运行中")
+        var token = getToken()
+        log(token)
         try {
-            var reData = http.get(BASEURL + "/enlovo/api/FriendList?username=" + username + "&password=" + password + "&robotid=" + robotid)
+            var url=BASEURL + "/enlovo/api/FriendListForNumber?token="+token+"&number="+number
+            log(url)
+            var reData = http.get(url)
             if (reData.statusCode == 200) {
                 var data = reData.body.json()
                 log("接口3返回内容:")
                 log(data)
                 if (data.message == "success") {
-                    log(data.data)
+                    // log(data.data)
                     return data.data
                 } else if (data.message == "暂无数据") {
                     toastLog("接口3暂无数据,启用关键词加群") ///
                     return 1
+                }else if(data.message =="QQ号码错误，最近12小时已有回执"){
+                    toastLog("QQ号码错误，最近12小时已有回执")
+                    return 0
                 }
             } else {
 
@@ -281,29 +438,42 @@ function 接口3(username, password, robotid) {
             log(error)
             updata()
         }
-
+        sleep(2000)
     }
 }
-//更新群状态
-function 接口4(username, password, enlovo_task_id, status, friendid, robotid, question, message, quota) {
+
+/**
+ * //更新好友/群状态   通过 指定账号添加
+ * @param {*} enlovo_task_id 
+ * @param {*} status 
+ * @param {*} friendid 
+ * @param {*} question 
+ * @param {*} message 
+ * @param {*} quota 
+ * @param {*} number 
+ */
+function 接口4(enlovo_task_id, status, friendid, question, message, quota) {
     if (测试标记) {
         log("接口4测试中")
         return true
     }
     question = question || ""
     message = message || ""
+    quota=1
     while (true) {
         toastLog("接口4运行中")
 
         try {
-            let url = BASEURL + "/enlovo/api/FriendStatus"+"?username="+username+"&password="+password+"&robotid="+robotid
+            let token=getToken()
+            let url = BASEURL + "/enlovo/api/FriendStatusForNumber"+"?token="+token
             let data = {
                 "enlovo_task_id": enlovo_task_id,
                 "status": status,
                 "friendid": friendid,
                 "question": question,
                 "message": message,
-                "quota": quota
+                "quota": quota,
+                "number":number,
             }
             log("接口4上传数据:")
             log(data)
@@ -332,11 +502,13 @@ function 接口4(username, password, enlovo_task_id, status, friendid, robotid, 
 }
 
 //getTask  开放api get
-function 接口5(username,password,robotid) {
+function 接口5(number) {
     while (true) {
         toastLog("接口5运行中")
         try {
-            let url = BASEURL + "/enlovo/api/getTask"+"?username="+username+"&password="+password+"&robotid="+robotid
+            let token = getToken()
+            let url = BASEURL + "/enlovo/api/getTaskForNumber"+"?token="+token+"&number="+number
+            log(url)
             let res = http.get(url)
             if (res.statusCode == 200) {
                 let resData = res.body.json()
@@ -361,23 +533,38 @@ function 接口5(username,password,robotid) {
         }
     }
 }
-//上传群信息,等待结果  post
-function 接口6(number, name, total, words, tags, info, id) {
+
+
+/**
+ * ///*上传群信息,等待结果  post
+ * @param { string } group 群号
+ * @param {*} name //群名
+ * @param {*} total //群成员数量
+ * @param {*} words 
+ * @param {*} tags 
+ * @param {*} info 
+ * @param {*} id 
+ * @param {*} number 
+ */
+function 接口6(group, name, total, words, tags, info, id,number) {
     tags = tags || "群标签为空"
     info = info || "群介绍为空"
 
     while (true) {
         try {
-            let url = BASEURL + "/enlovo/api/FriendInfo"+"?username="+USERNAME+"&password="+PASSWORD+"&robotid="+robotinfoBak.id
+            let token = getToken()
+            let url = BASEURL + "/enlovo/api/FriendInfoForNumber"+"?token="+token
             log(url)
             let data = {
-                "number": number,
+                "enlovo_task_id": id,
+                "group": group,
                 "name": name,
                 "total": total,
                 "words": words,
                 "tags": tags,
                 "info": info,
-                "enlovo_task_id": id,
+                "status":"1",
+                "number":number,
             }
             log("接口6上传信息:")
             log(data)
@@ -412,9 +599,9 @@ function 接口6(number, name, total, words, tags, info, id) {
     }
 }
 
-function wordsInit() {
+function wordsInit(number) {
     log("拉取关键词")
-    var redata = 接口5(USERNAME,PASSWORD,robotinfoBak.id)
+    var redata = 接口5(number)
     var data = {
         "id": "",
         "name": "",
@@ -428,11 +615,13 @@ function wordsInit() {
         if (element != "") {
             // log(element)
             let data = new Object()
-            data.id = redata.id
+            data.id = redata.task_id
             data.name = redata.name
             data.words = element
             data.depth = redata.depth
-            data.count = wordsK * redata.depth
+            // data.count = wordsK * redata.depth
+            data.count = wordsK
+
             // log(data)
             wordsContainer.arr.push(data)
 
@@ -441,9 +630,9 @@ function wordsInit() {
     }
 
 
-    log("wordsInitOk")
-    wordsContainer.words = wordsContainer.arr.pop()
-    wordsContainer.getWords()
+    // log("wordsInitOk")
+    // wordsContainer.words = wordsContainer.arr.pop()
+    // wordsContainer.getWords()
     // log(wordsContainer.arr)
 
 }
@@ -595,13 +784,18 @@ function loginQQ(QQAccount, QQpasswor) {
 }
 
 function start_check() {
-    for (let index = 0; index < 20; index++) {
+    for (let index = 0; index < 80; index++) {
         log("查找中")
         sleep(3000)
         // sh.exec("am start -p "+QQHDpackageName)
-        let login = text("登 录").clickable().findOne(2000)
+        let login = id("search_icon").findOne(500)
         if (login) {
             return true //这里代表启动成功
+        }
+    
+    let main=id("head_layout").findOne(500)
+        if (main) {
+            return true
         }
     }
     //这里是备用方案,使用坐标点击
@@ -609,6 +803,7 @@ function start_check() {
     sleep(1500)
     click("QQ HD")
     waitForActivity("com.tencent.mobileqq.activity.RegisterGuideActivity")
+    return start_check()
 }
 
 function addFriend(friendInfo) {
@@ -618,25 +813,31 @@ function addFriend(friendInfo) {
         message: "",
         statusCode: 0
     }
+    log(arguments.callee.name)
     let search_people = text("找人:").findOne().parent().click() //zh这里可能
     log("找人按钮" + search_people)
     let add_friend = desc("加好友").clickable().findOne(20000)
     if (add_friend) {
         log("找到加好友")
         add_friend.click()
-        let yanzheng = className("android.widget.EditText").id('request_info_et').findOne().setText(friendInfo.msg)
-        log("找到验证框")
-        sleep(2500)
-        let next = text("下一步").clickable().findOne().click()
-        log("找到下一步")
-        sleep(1500)
+        sleep(3000)
+        let yanzheng = className("android.widget.EditText").id('request_info_et').findOne(3000)
+        if(yanzheng){
+            log("找到验证框")
+            yanzheng.setText(friendInfo.msg)
+            sleep(2500)
+        
+            let next = text("下一步").clickable().findOne().click()
+            log("找到下一步")
+            sleep(1500)
+        }
         let send = text("发送").clickable().findOne().click()
         log("找到发送")
         for (let index = 0; index < 10; index++) {
             if (sendOK) {
                 log("添加成功")
                 re.status = true
-                re.statusCode = 2
+                re.statusCode = 1
                 re.message = "成功发送请求"
                 return re
             } else if (requestsFailed) {
@@ -676,35 +877,12 @@ function addOrganization(friendInfo) {
     if (jiaqun) {
         jiaqun.parent().click()
         log("加入群聊按钮找到")
+        sleep(5000)
+
         for (let index = 0; index < 45; index++) {
-            let yanzheng = className("android.widget.EditText").id('verify_troop_qa_answer_edit').findOne(500)
-            if (yanzheng) {
-                yanzheng.setText(friendInfo.msg)
-                sleep(2000)
-                let send = text("发送").clickable().findOne().click()
-                log("发送点击完成")
-                for (let index = 0; index < 10; index++) {
-                    if (sendOK) {
-                        log("添加成功")
-                        re.status = true
-                        re.message = "成功发送请求"
-                        re.statusCode = 0
-                        return re
-                    } else if (requestsFailed) {
-                        re.status = false
-                        re.statusCode = 3
-                        re.message = "请求发送失败"
-                        return re
-                    }
-                    sleep(1000)
-                }
-                log("没响应")
-                re.status = false
-                re.statusCode = 0
-                re.message = "没响应" //这里需要增加捕获到的添加失败的原因
-                return re
-            }
+            let yanzheng = className("android.widget.EditText").findOne(500)
             let guanliyuanTiwen = text("管理员需要你回答以下验证问题").findOne(500)
+            var qunziliao  = text("群资料").findOne(500)
             if (guanliyuanTiwen) {
                 let problem = textStartsWith("问题:").findOne(1000)
 
@@ -735,6 +913,34 @@ function addOrganization(friendInfo) {
                 re.message = "没响应"
                 return re ////////////////////这里需要增加捕获到的添加失败的原因
             }
+            if (yanzheng && !guanliyuanTiwen && !qunziliao) {
+                log("将输入的信息:"+friendInfo.msg)
+                yanzheng.setText(friendInfo.msg)
+                sleep(3000)
+                let send = text("发送").clickable().findOne().click()
+                log("发送点击完成")
+                for (let index = 0; index < 10; index++) {
+                    if (sendOK) {
+                        log("添加成功")
+                        re.status = true
+                        re.message = "成功发送请求"
+                        re.statusCode = 1
+                        return re
+                    } else if (requestsFailed) {
+                        re.status = false
+                        re.statusCode = 3
+                        re.message = "请求发送失败"
+                        return re
+                    }
+                    sleep(1000)
+                }
+                log("没响应")
+                re.status = false
+                re.statusCode = 0
+                re.message = "没响应" //这里需要增加捕获到的添加失败的原因
+                return re
+            }
+            
             if (notAllowedAdd) {
                 notAllowedAdd = false
                 re.status = false
@@ -762,11 +968,11 @@ function addStartNumber(friendInfo) {
     sleep(1000)
     desc("搜索栏、QQ号、手机号、邮箱、群、生活服务、连按两次编辑").clickable().findOne().click()
     sleep(1000)
-    desc("搜索").className("android.widget.EditText").findOne().click() //激活输入框
-    sleep(500)
+    // desc("搜索").className("android.widget.EditText").findOne().click() //激活输入框
+    // sleep(500)
     sendOK = false
-    let et_search_keyword = id("et_search_keyword").findOne().setText(friendInfo.number) ////设置信息
-
+    let et_search_keyword = editable(true).find()[0].setText(friendInfo.number) ////设置信息
+    sleep(1000)
     if (friendInfo.type == "0") {
         log("开始找人")
         return addFriend(friendInfo)
@@ -782,15 +988,21 @@ function addStartNumber(friendInfo) {
 //获取关键词,输入关键词,找到一个群,判断是否可加,发送加入信息
 //返回一个状态  status
 //method 可以是从主页进来的=主页,或在查找界面=查找界面  /修改为识别当前页面
-function addStartWords(robotinfo) {
+function addStartWords(number) {
+    back_index()
+    log(arguments.callee.name)
+    descStartsWith("消息栏").findOne().click()
+    log("消息栏点击成功")
     className("android.widget.FrameLayout").clickable(true).depth(12).findOne().click()
+    log("添加按钮点击成功")
     sleep(1000)
     text("加好友").findOne().parent().child(1).click()
     //if 关键词池为空,则初始化
+    log("加好友按钮点击成功")
     currentTaskType = "words"
     if (wordsContainer.arr.lenhth == 0) {
         log('初始化关键词')
-        wordsInit(robotinfo)
+        wordsInit(number)
     }
     var re = {
         "status": true,
@@ -801,7 +1013,7 @@ function addStartWords(robotinfo) {
     log("关键词:")
     log(关键词)
 
-    function 进入后(robotinfo, elementView) {
+    function 进入后( elementView) {
         var re = {
             "status": true,
             "message": ""
@@ -811,11 +1023,11 @@ function addStartWords(robotinfo) {
             re.message = "界外"
             return re
         }
-        if (robotinfo.quota <= 0) {
-            re.status = true
-            re.message = "当前QQ机器人quota=0"
-            return re
-        }
+        // if (robotinfo.quota <= 0) {
+        //     re.status = true
+        //     re.message = "当前QQ机器人quota=0"
+        //     return re
+        // }
         // log("roboto")
         if (!wordsContainer.useWords()) {
 
@@ -826,7 +1038,7 @@ function addStartWords(robotinfo) {
 
         }
         // log("robotook")
-        let tianJiaJieguo = addOver(robotinfo) //返回到一个合适的页面
+        let tianJiaJieguo = addOver() //返回到一个合适的页面
         if (!tianJiaJieguo.status) { //添加中出错//这里为被封号
             re = {
                 "status": false,
@@ -837,54 +1049,69 @@ function addStartWords(robotinfo) {
 
         try {
             var descModel=false
+            var top=0
             try {
+                top=elementView.child(1).child(0).bounds().top
                 var 群名 = elementView.child(1).child(0).text()
             } catch (error) {
                 var 群名 = elementView.child(1).desc()
                 descModel=true
             }
-            
-            log(群名)
-            try {
-                var 成员数 = elementView.child(1).child(1).text()
-            } catch (error) {
-                var 成员数 = elementView.child(2).desc()
-            }
-            
-            log(成员数)
-            if (descModel) {
-                log("desc模式")
-                var 总数 = elementView.childCount()
-                var 标签 = []
-                if (总数 > 5) {
-                    for (let index = 0; index < 总数 - 5; index++) {
-                        标签.push(elementView.child(index+3).desc())
-    
+            log("desc状态:"+descModel)
+            log("群名:"+群名)
+
+            var 成员数,标签总数,介绍
+            if (!descModel) {//非desc模式
+                if (elementView.child(1).child(1).bounds().top == top) {//这是有认证图标的时候
+                    成员数= elementView.child(1).child(2).text()
+
+
+                    标签总数 = elementView.child(1).childCount()
+                    var 标签 = []
+                    if (标签总数 > 3) {
+                        for (let index = 0; index < 标签总数 - 3; index++) {
+                            标签.push(elementView.child(1).child(3 + index).text())
+                            
+                        }
                     }
-                }
-            }else{
-                var 总数 = elementView.child(1).childCount()
-                var 标签 = []
-                if (总数 > 2) {
-                    for (let index = 0; index < 总数 - 2; index++) {
-                        标签.push(elementView.child(1).child(2 + index).text())
-    
+
+
+                    介绍 = elementView.child(3).child(0).child(2).text()
+                    
+                }else{//没有认证图标的情况
+                    成员数= elementView.child(1).child(1).text()
+                    
+                    
+                    标签总数 = elementView.child(1).childCount()
+                    var 标签 = []
+                    if (标签总数 > 2) {
+                        for (let index = 0; index < 标签总数 - 2; index++) {
+                            标签.push(elementView.child(1).child(2 + index).text())
+        
+                        }
                     }
+
+                    介绍 = elementView.child(3).child(0).child(0).text()
+
+
+
                 }
+
+            }else{//desc 模式
+                成员数 = elementView.child(2).desc()
             }
-            
+            log("成员数:"+成员数)
             标签 = 标签.join(",")
-            log(标签)
-            try {
-                var 介绍 = elementView.child(3).child(0).child(0).text()
-            } catch (error) {
-                var 介绍 = elementView.child(总数-1).child(0).desc()
-            }
+            log("标签:"+标签)
+            log("介绍:"+介绍)
+
+
             
-            log(介绍)
-            click(elementView.bounds().centerX(), elementView.bounds().centerY())
+            
+            // log("介绍:"+介绍)
+            sh_root.press(elementView.bounds().centerX()+200, elementView.bounds().centerY(),200)
             var 群号 = id("troop_uin").findOne().text()
-            log(群号)
+            log("群号:"+群号)
         } catch (error) {
             log("读取群信息错误:")
             log(error)
@@ -901,7 +1128,7 @@ function addStartWords(robotinfo) {
         }
         
         let 任务ID = wordsContainer.words.id
-        let 群查询结果 = 接口6(群号, 群名, 成员数, 关键词, 标签, 介绍, 任务ID)
+        let 群查询结果 = 接口6(群号, 群名, 成员数, 关键词, 标签, 介绍, 任务ID,number)
 
 
         let friendInfo = {
@@ -915,36 +1142,37 @@ function addStartWords(robotinfo) {
             log("判断为需要添加")
             // if (   !(群查询结果.status >0 && 群查询结果.status < 4) || (群查询结果.diff < 86400 ) ) {
             var 添加结果 = addOrganization(friendInfo) //
-            robotinfo.quota -= 1 //
+            // robotinfo.quota -= 1 //
             if (添加结果.status) {
                 //更新群状态
                 log("关键词模式调用接口4+0.1")
                 log("调用传递值:群状态")
                 log(添加结果.statusCode)
-                接口4(USERNAME, PASSWORD, wordsContainer.words.id, 添加结果.statusCode, 群查询结果.id, robotinfo.id, 添加结果.question, 添加结果.message, 0.1)
+                接口4(wordsContainer.words.id, 添加结果.statusCode, 群查询结果.id, 添加结果.question, 添加结果.message, 0.1)
             } else {
                 log("关键词模式调用接口4-0.1")
                 log("调用传递值:群状态")
                 log(添加结果.statusCode)
-                接口4(USERNAME, PASSWORD, wordsContainer.words.id, 添加结果.statusCode, 群查询结果.id, robotinfo.id, 添加结果.question, 添加结果.message, -0.1)
+                接口4( wordsContainer.words.id, 添加结果.statusCode, 群查询结果.id, 添加结果.question, 添加结果.message, -0.1)
             }
             sleep(1000)
             while (!text("群资料").exists() && !text("查找结果").exists()) {
                 back();
+                log("返回中")
                 sleep(1000)
             }
-
+            re.status = true
+            re.message = "添加完成"
+            return re
+        }else{
+            log("判断为本群不需要添加")
+            re.status = true
+            re.message = "本群不需要添加"
+            return re
         }
-        if (!text("查找结果").findOne(1500)) {
-            back() //返回到查找结果页面
-            sleep(1000)
+        
 
-            log("使用了返回")
-        }
-
-        re.status = true
-        re.message = "添加完成"
-        return re
+       
     }
 
     if (text("添加").exists()) {
@@ -958,13 +1186,25 @@ function addStartWords(robotinfo) {
 
     if (查找列表) {
 
-        for (let index = 0; index < 5000; index++) {
+        
+        while(true){
+            System.gc()
+            // if (!wordsContainer.useWords()) {//同一关键词查找10次都已添加
+            //     ///更新关键词
+            //     log("关键词用完了")
+            //     back(); // 回到首页
+            //     wordsContainer.getWords()
+            //     var returnre= addStartWords(number)
+            //     log(returnre)
+            //     return returnre
+            // }
+            log("查找开始:"+ (wordsK- wordsContainer.words.count  ))
             查找列表 = className("android.widget.ListView").findOne()
             var 子集合 = 查找列表.children()
-            log("列表序号:" + index)
-            var element = 子集合[index];
+            log("第一次列表序号:" + (wordsK- wordsContainer.words.count  ))
+            var element = 子集合[(wordsK- wordsContainer.words.count  )];
             // log(element)
-            let 本次添加结果 = 进入后(robotinfo, element)
+            let 本次添加结果 = 进入后(element)
             log("本次添加结果:")
             log(本次添加结果)
             if (本次添加结果.status) {
@@ -977,33 +1217,52 @@ function addStartWords(robotinfo) {
                     ///更新关键词
                     log("关键词用完了")
                     back(); // 回到首页
-                    return addStartWords(robotinfo)
+                    var returnre= addStartWords(number)
+                    log(returnre)
+                    return returnre
                 } else if (本次添加结果.message == "界外") {
-                    log("该元素在界外,不使用")
+                    log("该元素在界外,不使用,反向滑动尝试纠正")
+                    sh_root.swipe(device.width /2,device.height /5 *2 ,device.width /2,device.height /5*3 ,300 )
+
+                }else if (本次添加结果.message == "本群不需要添加") {
+                    log("本群不需要添加")
+                    log("返回上一页")
+                    // word_list_count++//为了切换为下一个群,这个群已被添加过
+
+                    // back()
+                    id("ivTitleBtnLeft").findOne().click()
+                    log("返回上一页成功")
+                    
                 } else {
                     log("本次添加完成") /////////////////
+                    // word_list_count++//成功加了一个群,计数加一
+                    break;
                 }
             } else {
                 log("出现添加错误") /////////////////
             }
             
-                while (true) {
-                    查找列表 = className("android.widget.ListView").findOne()
-                    子集合 = 查找列表.children()
-                    log("列表序号:" + index)
-                    var element = 子集合[index];
-                    // element=
-                    if (element.bounds().bottom > device.height * 0.7) {
-                        log("滑动")
-                        // className("android.webkit.WebView").findOne().scrollDown()
-                        swipe(device.width /2,device.height /3 *2 ,device.width /2,device.height /3 ,700 )
-                        sleep(20)
-                    }else{
-                        break
-                    }
-                    
+            while (true) {
+                 System.gc()
+
+                查找列表 = className("android.widget.ListView").findOne()
+                子集合 = 查找列表.children()
+                log("第二次列表序号:" + (wordsK- wordsContainer.words.count  ))
+                var element = 子集合[(wordsK- wordsContainer.words.count  )];
+                // element=
+                if (element.bounds().bottom > device.height * 0.7) {
+                    log("滑动")
+                    log("元素下界："+element.bounds().bottom)
+                    log("设备0.7："+device.height * 0.7)
+                    // className("android.webkit.WebView").findOne().scrollDown()
+                    sh_root.swipe(device.width /2,device.height /5 *3 ,device.width /2,device.height /5*2 ,700 )
+                    sleep(3000)
+                }else{
+                    log("跳出检测循环")
+                    break
                 }
                 
+            } 
             
         }
 
@@ -1020,11 +1279,10 @@ function addStartWords(robotinfo) {
 
 function openANDclose() {
     log("初始化QQHD")
-    log(shell("pm disable " + QQHDpackageName, true))
-    log(shell("pm clear " + QQHDpackageName, true))
-    log(shell("pm enable " + QQHDpackageName, true))
-    app.launch(QQHDpackageName)
-    sleep(1000)
+    // log(shell("am force-stop " + QQHDpackageName, true))
+    log(shell("am start -S -W com.tencent.minihd.qq/com.tencent.mobileqq.activity.SplashActivity",true))
+    sleep(2000)
+  
     if (changeIp) {
         log(shell("settings put global airplane_mode_on 1", true))
         log(shell("am broadcast -a android.intent.action.AIRPLANE_MODE --ez state true", true))
@@ -1036,8 +1294,86 @@ function openANDclose() {
 }
 
 
+function back_index() {
+    var re = {
+        "status": true,
+        "message": ""
+    }
+    let status = [
+        [text("群资料").className("android.widget.TextView"), () => {
+            back()
+        }],
+        [text("个人资料").id("ivTitleName"), () => {
+            back();
+            log("返回1次");
+            sleep(3000)
+        }],
+        // [text("登 录").clickable(), () => {
+        //     className("android.widget.EditText").id('password').findOne().setText(robotinfo.password)
+        //     sleep(1000)
+        //     text("登 录").clickable().findOne().click()
+        // }]
+        [text("查找结果"),()=>{
+            back();
+            log("返回1次");
+            sleep(2000)
+        }],
+        [textStartsWith("找群"),()=>{
+            back();
+            log("返回1次");
+            sleep(2000)
+        }],
+        [textStartsWith("添加"),()=>{
+            back();
+            log("返回1次");
+            sleep(2000)
+        }],
+        [textStartsWith("身份验证"),()=>{
+            back();
+            log("返回1次");
+            sleep(2000)
+        }],
+    ]
+    for (let index = 0; index < 30; index++) {
+        log("等待回到主页")
+        if (weigui) {
+            weigui = false
+            re.status = false
+            re.message = "违规被封号"
+            return re
+        }
+        status.forEach((element) => {
+            let a = element[0].findOne(10)
+            if (a) {
+                element[1]()
+                sleep(1500)
+            }
+        })
+        if (currentPackage() != QQHDpackageName) {
+            app.launch(QQHDpackageName)
+            sleep(3000)
+        } 
+        // else if (currentActivity() == "com.tencent.mobileqq.activity.SplashActivity" && !textEndsWith("资料").exists()) {
+        //     re.status = true
+        //     re.message = "成功返回"
+        //     return re
+        // }
+        else if (className("android.widget.FrameLayout").clickable(true).depth(12).exists()) {
+            re.status = true
+            re.message = "成功返回"
+            return re
+        }else if (text("帐号管理").exists()) {
+            re.status = true
+            re.message = "成功返回"
+            return re
+        }
+        sleep(500)
+    }
+}
+
 //添加完处理
-function addOver(robotinfo) {
+function addOver() {
+    log(arguments.callee.name)
     var re = {
         "status": true,
         "message": ""
@@ -1060,11 +1396,11 @@ function addOver(robotinfo) {
             log("返回1次");
             sleep(3000)
         }],
-        [text("登 录").clickable(), () => {
-            className("android.widget.EditText").id('password').findOne().setText(robotinfo.password)
-            sleep(1000)
-            text("登 录").clickable().findOne().click()
-        }]
+        // [text("登 录").clickable(), () => {
+        //     className("android.widget.EditText").id('password').findOne().setText(robotinfo.password)
+        //     sleep(1000)
+        //     text("登 录").clickable().findOne().click()
+        // }]
 
     ]
     for (let index = 0; index < 30; index++) {
@@ -1089,6 +1425,14 @@ function addOver(robotinfo) {
             re.status = true
             re.message = "成功返回"
             return re
+        }else if (className("android.widget.FrameLayout").clickable(true).depth(12).exists()) {
+            re.status = true
+            re.message = "成功返回"
+            return re
+        }else if (text("帐号管理").exists()) {
+            re.status = true
+            re.message = "成功返回"
+            return re
         }
         sleep(500)
     }
@@ -1098,23 +1442,32 @@ function addOver(robotinfo) {
     return re
 }
 
-function 登录完成后添加(robotinfo) {
+function 登录完成后添加() {
 
     var re = {
         "status": true,
         "message": ""
     }
-    for (let index = 0; index < parseInt(robotinfo.quota); index++) { //可以添加多次
+    for (let index = 0; index < parseInt(10000); index++) { //可以添加多次
         // for (let index = 0; index < parseInt(3); index++) {//可以添加多次
-
-        //////////////////
-
-        var friendInfo = 接口3(USERNAME, PASSWORD, robotinfo.id) //这里需要分别处理,分为按号加群,和按关键词加群  这里如果返回的是  1  则关键词加群
+        
+        var friendInfo = 接口3(number) //这里需要分别处理,分为按号加群,和按关键词加群  这里如果返回的是  1  则关键词加群
         if (friendInfo == 1) {
-            return addStartWords(robotinfo) //这里直接完成所有任务
+            var returnre=addStartWords(number) //这里直接完成所有任务
+            log(returnre)
+            return returnre
         }
-
-
+        if (friendInfo == 0) {
+            var time=30
+            for (let index = 0; index < time; index++) {
+                toastLog("休眠"+(time - index)+"分钟")
+                sleep(60 * 1000)
+            }
+            continue
+        }
+        //这里确认回到消息栏
+        sleep(1000)
+        descStartsWith("消息栏").findOne().click()
         let addButton = className("android.widget.FrameLayout").clickable(true).depth(12).findOne(10000)
         if (addButton) {
             addButton.click()
@@ -1128,10 +1481,10 @@ function 登录完成后添加(robotinfo) {
                 var addjieguo = addStartNumber(friendInfo)
 
                 if (addjieguo.status) { //成功
-                    接口4(USERNAME, PASSWORD, friendInfo.enlovo_task_id, addjieguo.statusCode, friendInfo.id, robotinfo.id, addjieguo.question, addjieguo.message, 0.1)
+                    接口4( friendInfo.enlovo_task_id, addjieguo.statusCode, friendInfo.id, addjieguo.question, addjieguo.message, 0.1,number)
                 } else {
                     log("错误信息:" + addjieguo.message)
-                    接口4(USERNAME, PASSWORD, friendInfo.enlovo_task_id, addjieguo.statusCode, friendInfo.id, robotinfo.id, addjieguo.question, addjieguo.message, -0.1)
+                    接口4(friendInfo.enlovo_task_id, addjieguo.statusCode, friendInfo.id, addjieguo.question, addjieguo.message, -0.1,number)
                 }
 
                 //////这里内部添加完的步骤
@@ -1142,7 +1495,7 @@ function 登录完成后添加(robotinfo) {
             log("找不到添加按钮")
         }
         // log("loginAndadd")
-        let tianJiaJieguo = addOver(robotinfo) //返回到一个合适的页面
+        let tianJiaJieguo = addOver() //返回到一个合适的页面
         if (!tianJiaJieguo.status) { //添加中出错//这里为被封号
             re = {
                 "status": false,
@@ -1186,10 +1539,44 @@ function 重启运行() {
 
 }
 
+function new接口1() {
+    let timeout = 9999
+    while (true) {
+        toastLog("接口1运行中")
+        try {
+            let url = BASEURL + "/enlovo/api/RobotInfo?username=" + username + "&password=" + password + "&deviceid=" + deviceid
+            log(url)
+            let reData = http.get(url)
+            if (reData.statusCode == 200) {
+                let data = reData.body.json()
+                log("接口1返回内容:")
+                log(data)
+                if (data.message == "success") {
 
+                    log("接口1 正确")
+                    robotcount += 1
+                    return data.data
+                } else if (data.message == "暂无数据") {
+                    toastLog("暂无数据")
+                }
+            } else {
+                log("错误代码:" + reData.statusCode)
+                log("错误信息:" + reData.body.json())
+            }
+        } catch (error) {
+
+            log(error)
+            updata()
+        }
+        sleep(3000)
+    }
+    //http://fast.abc.com/enlovo/api/FriendListForNumber?token=44ccc5f5f3d044c85297f609f185b53d&number=2957368915
+}
 function main() {
     log("开始运行")
     while (true) {
+        System.gc()
+
         var currenttime = new Date()
         var hours = currenttime.getHours()
         if (hours < 9 && false) {
@@ -1199,34 +1586,99 @@ function main() {
         }
 
         openANDclose()
-        var robotinfo =robotinfoBak= 接口1(USERNAME, PASSWORD, "ADC7K")
-        if (robotcount >= 60) {
-            重启运行()
-            sleep(2000)
-            toastLog("60次已满,本脚本退出,新脚本已启动")
-            exit()
-        }
+        // var robotinfo =robotinfoBak= 接口1(USERNAME, PASSWORD, "ADC7K")  //这里因接口1关闭已弃用
+        // if (robotcount >= 60) {
+        //     重启运行()  
+        //     sleep(2000)
+        //     toastLog("60次已满,本脚本退出,新脚本已启动")
+        //     exit()
+        // }
         if (start_check()) { //确认打开后进入输入账号界面
-            text("登 录").clickable().findOne().click()
+            log("打开QQHD成功")
+            // text("登 录").clickable().findOne().click()
+        }else{
+            toastLog("打开QQHD失败")
         }
-        weigui = false
-        if (!loginQQ(robotinfo.number, robotinfo.password, robotinfo.id)) {
-            log("登录异常")
-            接口2(USERNAME, PASSWORD, robotinfo.id, robotinfo.clientid, 3) //异常
-            continue //重新开始新一轮执行
-        } else {
-            接口2(USERNAME, PASSWORD, robotinfo.id, robotinfo.clientid, 2) //登录成功
+        // weigui = false
+        // if (!loginQQ(robotinfo.number, robotinfo.password, robotinfo.id)) {
+        //     log("登录异常")
+        //     接口2(USERNAME, PASSWORD, robotinfo.id, robotinfo.clientid, 3) //异常
+        //     continue //重新开始新一轮执行
+        // } else {
+        //     接口2(USERNAME, PASSWORD, robotinfo.id, robotinfo.clientid, 2) //登录成功
+        // }
+        
+        number=getQQNumber()
+        let tianJiaJieGuo = 登录完成后添加()
+        
+        // if (tianJiaJieGuo.status) {
+        //     接口2(USERNAME, PASSWORD, robotinfo.id, robotinfo.clientid, 0)
+        // } else {
+        //     接口2(USERNAME, PASSWORD, robotinfo.id, robotinfo.clientid, 3) //重置当前登录QQ状态
+        // }
+        sleep(1000)
+        if (text("查找结果").exists()) {
+            log("从查找结果返回")
+            back()
+            sleep(1000)
         }
-        let tianJiaJieGuo = 登录完成后添加(robotinfo)
-        if (tianJiaJieGuo.status) {
-            接口2(USERNAME, PASSWORD, robotinfo.id, robotinfo.clientid, 0)
-        } else {
-            接口2(USERNAME, PASSWORD, robotinfo.id, robotinfo.clientid, 3) //重置当前登录QQ状态
+        if (textStartsWith("找人").exists() ) {
+            log("从搜索页返回")
+            back()
+            sleep(1000)
         }
-
+        if (textStartsWith("添加").exists() ) {
+            log("从添加页返回")
+            back()
+            sleep(1000)
+        }
+        if(changeNumber()){
+            back()
+        }else{
+            var uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            var rt = RingtoneManager.getRingtone(context, uri);
+            for (let index = 0; index < 20*20; index++) {
+                rt.play();
+                toast("错误")
+                sleep(3000)
+            }
+            
+        }
     }
 
 }
+/**
+ * 切换QQ号
+ */
+function changeNumber(){
+    log(arguments.callee.name)
+    back_index()
+    id("tab_item_container").findOne().click()
+    desc("帐号管理").findOne().click()  
+    sleep(1000)
+    while (true) {
+        System.gc()
+
+        var ff=desc("添加帐号").findOne()
+        log(ff.bounds().centerY())
+        if (ff.bounds().centerY()< device.height /3 *2) {
+            var ee=ff.parent().parent().parent()
+            log(ee.childCount())
+            log(ee.child([ee.childCount()-2]).click())
+            if (id("login").findOne(4000)) {
+                return false
+            }else if(text("帐号管理").exists()){
+                return true
+            }
+            
+        }else{
+            log("没到底部")
+        }
+        sh_root.swipe(device.width /2 +200,device.height /5 * 4,device.width /2 +200 ,device.height/5,50)
+        sleep(100)
+    }
+}
+
 ///status 0  未加      1   添加中    2  已经添加过
 ///diff   秒数     
 ////  quota 成功+0.1  失败-0.1
@@ -1243,45 +1695,14 @@ function test() {
     // var sendTime=20*1000
     sendTime = 1 * 1000
     changeIp = false
-    // wordsInit()
-    // for (let index = 0; index < 100; index++) {
-    //     log(wordsContainer.getWords())
-    //     if (wordsContainer.useWords()) {
-
-    //     } else {
-    //         log(wordsContainer.getWords())
-    //     }
-
-    // }
-    // for (let index = 0; index < 3; index++) {
-    //     // const element = array[index];
-    //     var robotinfo = 接口1(USERNAME, PASSWORD, "ADC7K")
-    //     sleep(10000)
-    //     log(接口2(USERNAME,PASSWORD,robotinfo.id,robotinfo.clientid,0))
-    // }
-    // input_check()
-    // log("lllll" + loginQQ("1364091814", "qpmbrs4x4s"))
-    // exit()
-    测试标记 = true
-    // loginOKadd()
-    // log(接口1(USERNAME,PASSWORD,"ADC7K"))
-    // main()
-    // let QQhao = desc("搜索栏、QQ号、手机号、邮箱、群、生活服务、连按两次编辑").clickable().findOne().click()
-    // let search = desc("搜索").className("android.widget.EditText").findOne().click()//激活输入框
-    let robotinfo = robotinfo || { "quota": 100, "id": 67, "password": "2347qweasd", "msg": "我想学习" }
-    addStartWords(robotinfo)
-    // main()
-    // wordsInit()
-    // log(wordsContainer.arr)
-    // wordsInit()
-    // app.getPackageName("QQ HD")
-    // openANDclose()
-    // sh.exec("am start -W "+QQHDpackageName+"/.LoginActivity")
+    
 
     ////   1374504817
     ////   1374504817
     ////   1993171950
     ////   1993171950
+    main()
+    // changeNumber()
 }
 
 // test()

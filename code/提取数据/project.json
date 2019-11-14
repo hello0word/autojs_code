@@ -1,0 +1,28 @@
+{
+  "assets": [],
+  "build": {
+    "build_id": "EA2A860F-8",
+    "build_number": 8,
+    "build_time": 1570582410081,
+    "release": false
+  },
+  "encryptLevel": 1,
+  "useFeatures": [],
+  "icon": "res/logo.png",
+  "launchConfig": {
+    "displaySplash": false,
+    "hideLogs": false,
+    "splashText": "Powered by Auto.js Pro",
+    "stableMode": false
+  },
+  "main": "main.js",
+  "name": "提取数据",
+  "optimization": {
+    "removeOpenCv": true,
+    "unusedResources": false
+  },
+  "packageName": "com.gettiantiandata.auto",
+  "scripts": {},
+  "versionCode": 1,
+  "versionName": "1.0.0"
+}

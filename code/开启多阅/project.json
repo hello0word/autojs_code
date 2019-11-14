@@ -1,0 +1,10 @@
+{
+    "name": "开启多阅",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.startduoyue.com",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}

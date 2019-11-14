@@ -1,0 +1,27 @@
+{
+    "assets": [],
+    "build": {
+      "build_id": "43C4F1B1-1",
+      "build_number": 1,
+      "build_time": 1572968487309,
+      "release": false
+    },
+    "encryptLevel": 1,
+    "useFeatures": [],
+    "launchConfig": {
+      "displaySplash": true,
+      "hideLogs": false,
+      "splashText": "Powered by Auto.js Pro",
+      "stableMode": false
+    },
+    "main": "run.js",
+    "name": "抖音外挂新",
+    "optimization": {
+      "removeOpenCv": false,
+      "unusedResources": false
+    },
+    "packageName": "com.douyintool",
+    "scripts": {},
+    "versionCode": 3,
+    "versionName": "1.0.3"
+  }

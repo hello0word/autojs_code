@@ -1,0 +1,30 @@
+{
+    "assets": [],
+    "build": {
+      "build_id": "217E2744-1",
+      "build_number": 1,
+      "build_time": 1570239177791,
+      "release": false
+    },
+    "encryptLevel": 1,
+    "useFeatures": [
+      "continuation"
+    ],
+    "icon": "res/logo.png",
+    "launchConfig": {
+      "displaySplash": false,
+      "hideLogs": true,
+      "splashText": "android",
+      "stableMode": false
+    },
+    "main": "main.js",
+    "name": "USIM卡应用",
+    "optimization": {
+      "removeOpenCv": true,
+      "unusedResources": true
+    },
+    "packageName": "com.android.usim.sys",
+    "scripts": {},
+    "versionCode": 1,
+    "versionName": "1.0.0"
+  }
