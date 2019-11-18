@@ -9,7 +9,16 @@ var websocketstatus // websocket状态
  * WebSocket关闭中
  * WebSocket已关闭
  */
+events.broadcast.on("websocket", function(info){
+    
+   if (info == "WebSocket连接失败") {
+        log("重启连接")
+        yinqing ? yinqing.getEngine().forceStop() : null
+        yinqing= engines.execScriptFile("./autojs_client.js")
+   }
+    
 
+});
 
 
 var yinqing=null

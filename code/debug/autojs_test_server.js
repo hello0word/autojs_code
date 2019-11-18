@@ -60,20 +60,18 @@ events.broadcast.on("console_log", function (info) {
 ws.on("open", (res, ws) => {
     log("WebSocket已连接");
     status.put("status", "WebSocket已连接");
-    ws.send(JSON.stringify({ code: "zc", data: { "id": id } }))
+    ws.send(JSON.stringify({ code: "admin", data: { "id": id } }))
 
 }).on("failure", (err, res, ws) => {
     log("WebSocket连接失败");
     status.put("status", "WebSocket连接失败");
     events.broadcast.emit("websocket", "WebSocket连接失败");
-    exit()
 }).on("closing", (code, reason, ws) => {
     log("WebSocket关闭中");
 }).on("text", text_chuli)//收到文本消息
     .on("binary", bin_chuli)//收到二进制数据
     .on("closed", (code, reason, ws) => {
         log("WebSocket已关闭: code = %d, reason = %s", code, reason);
-        exit()
     });
 
 
@@ -90,23 +88,15 @@ function text_chuli(text, ws) {
         let code = msg.code
         let data = msg.data
         log("MSG:" + code)
-        log("data:" + JSON.stringify( data))
+        log("data:" + data)
         if (code == "zc_ok") {
             log("UID"+data.uid)
             uid = data.uid
         } else if (code == "capture") {
             log("截图上传")
-            
             let img = captureScreen();
-            if(!data.format){
-                var datas = images.toBase64(img, "webp", 100)
-            }else{
-                log("参数上传")
-                var datas = images.toBase64(img, data.format, parseInt(data.quality))
-                log(datas.length)
-            }
+            var datas = images.toBase64(img, "png", 100)
             ws.send(web.ByteString.decodeBase64(datas));
-            log("上传完成")
         } else if (code == "press") {//需要x,y,时间
             press(data.x, data.y, data, time)
         } else if (code == "gesture") {
@@ -206,7 +196,21 @@ function send_bin(path, ws) {
 }
 
 
+// setTimeout(() => { //发送截图消息
+//     log("发送消息: get img");//c0f7d5c0-07a4-11ea-aef1-51a53f1ac020
+//     var msg = { code: "getimg", data:{uid:uid,target_uid:"c75ba180-07a9-11ea-87aa-0f3c22c0d746"}}
+//     msg = JSON.stringify(msg)
+//     log("发送getImg 消息")
+//     ws.send(msg);
+// }, 3000)
 
+setTimeout(() => { //发送截图消息
+    log("发送消息: 获取所有设备信息");//c0f7d5c0-07a4-11ea-aef1-51a53f1ac020
+    var msg = { code: "get_all_device", data:{uid:uid}}
+    msg = JSON.stringify(msg)
+    log("发送getImg 消息")
+    ws.send(msg);
+}, 2000)
 function test() {
 
 
@@ -263,6 +267,6 @@ function test() {
 var id = device.getAndroidId()
 setInterval(() => {
     // log("心跳")
-    // ws.send(JSON.stringify({code:"xt",data:{"uid":uid}}))
+    ws.send(JSON.stringify({code:"xt",data:{"uid":uid}}))
 }, 2000)
 

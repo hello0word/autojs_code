@@ -602,9 +602,10 @@ function comment() {
     log("设置 文本完成")
     className("EditText").findOne().parent().child(2).click()
     log("点击表情完成")
+    sleep(1000)
     for (let index = 0; index < 30; index++) {
         var send = className("EditText").findOne()
-        if (send.parent() && send.parent().childCount() == 4) {
+        if (send.parent() != null && send.parent().childCount() == 4) {
             send.parent().child(3).click()
             log("发送完成")
             return true
@@ -729,6 +730,7 @@ function up_image(result) {
         return false
     }
     function file_select(count) {
+
         if (text_or_desc("最近").findOne(4000)) {
             log("找到最近")
 
@@ -748,13 +750,19 @@ function up_image(result) {
             if (img_arr && img_arr.childCount() != 0 && img_arr.child(0).bounds().left < 100) {
                 log("找到图片列表")
                 sleep(2000)
-                var mubiao = img_arr.child(count).bounds()
-                log("图片位置:" + mubiao)
+                log("count为:"+count)
+                try {
+                    var mubiao = img_arr.child(count).bounds()
+                    log("图片位置:" + mubiao)
 
-                my_click(mubiao.centerX(), mubiao.centerY())
+                    my_click(mubiao.centerX(), mubiao.centerY())
 
-                sleep(1000)
-                break
+                    sleep(1000)
+                    break
+                } catch (error) {
+                    log(error)
+                }
+                
             } else {
                 log("没找到图片列表")
             }
