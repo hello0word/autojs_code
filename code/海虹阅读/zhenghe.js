@@ -497,7 +497,6 @@ function task_start() {
             let ran = random(15, 20)
             log("休眠:" + ran + "秒")
             sleep(ran * 1000)
-            task_managers()
             return 9
         }
         toastLog("15秒内无反应，66阅读可能卡死，关闭重进")
