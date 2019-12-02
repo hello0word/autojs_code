@@ -168,8 +168,7 @@ function openAccessbility() {
         var Services = enabledServices + ":" + myself_package_name + "/com.stardust.autojs.core.accessibility.AccessibilityService";
         Settings.Secure.putString(context.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, Services);
         Settings.Secure.putString(context.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, '1');
-        log("无障碍开启完成");
-        // auto.waitFor();
+        log("代码执行完毕")
         return true
     } catch (error) {
         //授权方法：开启usb调试并使用adb工具连接手机，执行 adb shell pm grant org.autojs.autojspro android.permission.WRITE_SECURE_SETTING
@@ -1431,7 +1430,7 @@ function main() {
         exit()
     }
     // root开启无障碍()
-    if (auto.serivce == null) {
+    if (auto.service == null) {
         log("代码开启无障碍")
         openAccessbility()
     }
