@@ -1343,7 +1343,7 @@ function loop() {
         for (let index = 1; index < currenttime; index += 2) {
             toastLog("休眠中,剩余" + (currenttime - index) + "秒")
             log("检查更新")
-
+            检查更新()
             sleep(2500)
         }
 
@@ -1420,9 +1420,6 @@ function main() {
         exit()
     }
     // init_comment()//初始化评论
-
-    current_task = "快手"
-
 
     //授权
     if (!shouquan()) {
