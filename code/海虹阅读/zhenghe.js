@@ -7,6 +7,9 @@ var myself_package_name
 var yuedu_66_packagename
 var all_text = new Array() //全局评论数组
 console.setSize(350, 900)
+console.setGlobalLogConfig({
+    file:"/sdcard/海虹阅读log.txt"
+})
 console.show()
 log(app.autojs.versionName)
 var pid = android.os.Process.myPid()
