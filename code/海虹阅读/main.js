@@ -73,6 +73,7 @@ ui.立即开始.on("click", () => {
     if (new Date().getTime() - 上次点击时间 > 5000) {
         上次点击时间 = new Date().getTime()
         execution = engines.execScriptFile("./zhenghe.js");
+        ui.finish()
     } else {
         toastLog("请等待")
     }
@@ -294,8 +295,8 @@ function startChooseFile(mimeType, callback) {
 setInterval(() => {
     倒计时 -= 1
     if (倒计时 <= 0) {
+        execution = engines.execScriptFile("./zhenghe.js");
         ui.finish()
-        engines.execScript("test", "toast(\"123\")")
     }
     ui.立即开始.setText("立即开始(" + 倒计时 + ")")
 }, 1000)

@@ -280,11 +280,14 @@ function start_66_yuedu(timeout) {
 
     timeout = timeout || 30
     for (let index = 0; index < timeout; index++) {
-        app.openAppSetting(yuedu_66_packagename)
-        text("强行停止").findOne().click()
-        let qd = text("确定").findOne(2000)
-        qd ? qd.click() : log("已关闭")
-        sleep(1000)
+        if (!text("联系客服").exists()) {
+            app.openAppSetting(yuedu_66_packagename)
+            text("强行停止").findOne().click()
+            let qd = text("确定").findOne(2000)
+            qd ? qd.click() : log("已关闭")
+            sleep(1000)
+        }
+        log("发送意图")
         app.startActivity({
             action: "android.intent.action.VIEW",
             packageName: yuedu_66_packagename,
@@ -351,6 +354,8 @@ function task_managers() {
                 log("没任务了")
                 本次没任务的标记 = false
                 current_task = 切换(current_task)
+            }else{
+                current_task="抖音"
             }
         } else if (当前选择的交替模式 == 1) {//运行一定时间后切换(分钟)
             if (!开始任务时间) {
@@ -591,10 +596,9 @@ function 抖音点赞和关注(arg) {
                 return false
             }
             var t = random(15, 25)
-            for (let index = 0; index < t; index++) {
+            for (let index = 0; index < t; index+=3) {
                 log("休眠:" + (t - index) + "秒")
-                sleep(1000)
-
+                sleep(3000)
             }
             return true
         } else {
@@ -774,47 +778,82 @@ function comment() {
  * 点赞关注
  * @param {}  /
  */
-function 抖音_点赞关注(arg) {
-    function 打开关注() {
+function 抖音_点赞关注() {
+
+    function 返回到抖音首页() {
+        for (let index = 0; index < 3; index++) {
+            log("返回上一页")
+            back()
+            return true
+            // let a= bounds(0,1112,720,1208).findOne(4000)
+            // if (a) {
+            //     log("回到首页")
+            //     return true
+            // }else{
+            //     log("没找到首页输入框")
+            // }          
+        }
+        log("可能卡死")
+        return false
+    }
+    function open_guanzhu() {
         my_click(guanzhu_tap_x, guanzhu_tap_y)
-        sleep(4000)
-        for (let index = 0; index < 4; index++) {
+        console.hide()
+        sleep(6000)
+        var count = 0
+        for (let index = 0; index < 6; index++) {
             var img = images.captureScreen()
             var color = colors.red(img.pixel(open_guanzhu_x, open_guanzhu_y))
-            if (color > 150) {
-                back()
-                return true
+            log("颜色值:" + color)
+            if (color < 150) {//已关注
+                log("已关注")
+                // my_click(douyin_back_x, douyin_back_y)//返回到抖音页面
+
+
+                return 返回到抖音首页()
             } else {
+                log("点击关注")
                 my_click(open_guanzhu_x, open_guanzhu_y)
-                sleep(2000)
+                sleep(4000)
                 if (desc("刷新").exists() && descStartsWith("请在下图中").exists()) {
                     log("发现验证,需要停下")
-                    抖音勾选 = false
-                    return false
+                    while (true) {
+                        sleep(1000000000)
+                    }
                 }
+                // my_click(douyin_back_x, douyin_back_y)//返回到抖音页面
+                // sleep(2000)
+                // return 返回到抖音首页()
             }
         }
         return false
     }
     function check_img() {
-        for (let index = 0; index < 5; index++) {
+        var guanzhu_flg = false
+        for (let index = 0; index < 4; index++) {
             var jiance = 0
-
-            if (打开关注()) {//判断关注否
+            if (guanzhu_flg) {
+                jiance += 1
+            }
+            if (!guanzhu_flg && open_guanzhu()) {//判断关注否
                 log("关注检测通过")
-                jiance = jiance + 1
-            } else {
-                log("关注失败")
-                return false
+                guanzhu_flg = true
+                sleep(5000)
             }
             img = images.captureScreen()
-            if (colors.green(img.pixel(dianzan_x, dianzan_y)) < 150) {//判断点赞否
+            if (colors.green(img.pixel(dianzan_x, dianzan_y)) < 150 && colors.red(img.pixel(dianzan_x, dianzan_y)) > 150) {//判断点赞否
                 log("点赞检测通过")
                 jiance = jiance + 1
             } else {
-                log("当前颜色" + colors.red(img.pixel(dianzan_x, dianzan_y)))
-                log("点赞检测未通过,点一下")
-                my_click(dianzan_x, dianzan_y)
+                log("当前颜色" + colors.green(img.pixel(dianzan_x, dianzan_y)))
+                if (colors.green(img.pixel(dianzan_x, dianzan_y)) > 150) {
+                    log("点赞检测未通过,点一下")
+                    my_click(dianzan_x, dianzan_y)
+                } else {
+                    log("抖音卡住")
+                    return false
+                }
+
             }
             if (jiance == 2) {
                 log("检测通过,可以截图")
@@ -825,13 +864,15 @@ function 抖音_点赞关注(arg) {
         log("检测无法通过且无法修复")
         return false
     }
-
-    if (!check_img()) {
-        log("抖音打开失败")
-        shell("am force-stop com.ss.android.ugc.aweme", true)
-        return false
+    try {
+        if (!check_img()) {
+            return false
+        } else {
+            return true
+        }
+    } catch (error) {
+        log(error)
     }
-
 
 
 }
@@ -1004,12 +1045,14 @@ function up_image(result) {
 
 
 function douyin_点赞关注评论(result, image_name) {
+    log("douyin_点赞关注评论:result:"+result)
     if (result == 1) {//1,点赞和关注   二进制第一位为点赞  第二位为关注
         if (!抖音点赞和关注(3)) {
             return false
         } //抖音点赞评论  11 =3
         sleep(2000)
         image_name.push(jietu_save())//截图点赞和关注
+        return true
     } else if (result == 2) {//
         if (!抖音点赞和关注(2)) {
 
@@ -1021,6 +1064,8 @@ function douyin_点赞关注评论(result, image_name) {
         comment()//评论
         sleep(2000)
         image_name.push(jietu_save())//截图评论
+        return true
+
     } else if (result == 3) {//点赞  10 = 2
         if (!抖音点赞和关注(2)) {
 
@@ -1029,6 +1074,7 @@ function douyin_点赞关注评论(result, image_name) {
         }
         sleep(2000)
         image_name.push(jietu_save())//截图点赞
+        return true
 
     } else if (result == 4) {//
         if (!抖音点赞和关注(3)) {
@@ -1041,6 +1087,8 @@ function douyin_点赞关注评论(result, image_name) {
         comment()//评论
         sleep(2000)
         image_name.push(jietu_save())//截图评论
+        return true
+
     } else {
         log("未知任务")
 
@@ -1243,14 +1291,14 @@ function loop() {
             exit()
         }
         task_managers()
-        var result = task_start()
-        if (result == "66阅读卡死" || result == "没找到领取任务") {
+        var 接任务结果 = task_start()
+        if (接任务结果 == "66阅读卡死" || 接任务结果 == "没找到领取任务") {
             continue
         }
-        if (result == 9) {//暂时没有任务
+        if (接任务结果 == 9) {//暂时没有任务
             continue
         }
-        if (!result) {//留言任务
+        if (!接任务结果) {//留言任务
             log("包含留言任务")
             log("留言任务")
             let a = text_or_desc("放弃任务").clickable().findOne(3500)
@@ -1271,12 +1319,12 @@ function loop() {
             }
         }
         if (current_task == "抖音") {
-            let result = douyin_点赞关注评论(result, image_name)
-            if (!result) {
+            let 抖音点赞关注评论结果 = douyin_点赞关注评论(接任务结果, image_name)
+            if (!抖音点赞关注评论结果) {
                 continue
             }
         } else if (current_task == "快手") {
-            if (!kuaishou_点赞关注评论(result)) {//快手打开失败
+            if (!kuaishou_点赞关注评论(接任务结果)) {//快手打开失败
                 for (let index = 0; index < 5; index++) {
                     log("返回")
                     back()
@@ -1307,7 +1355,7 @@ function loop() {
                 image_name.push(jietu_save())
             }
         }
-        var up_su = up_image(result)
+        var up_su = up_image(接任务结果)
         if (up_su == 0) {
 
             continue
@@ -1338,15 +1386,15 @@ function loop() {
         delete_image()
         成功计数 += 1
         sleep(5000)
-
+        back()
+        log("检查更新")
+        // 检查更新()
         var currenttime = random(15, 20)
         for (let index = 1; index < currenttime; index += 2) {
             toastLog("休眠中,剩余" + (currenttime - index) + "秒")
-            log("检查更新")
-            检查更新()
             sleep(2500)
         }
-
+        
     }
 }
 
