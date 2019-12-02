@@ -85,7 +85,7 @@ function my_click(x, y) {
 function shouquan() {
     if (isroot()) {
         var dd = shell("pm grant " + myself_package_name + " android.permission.WRITE_SECURE_SETTINGS", true)
-        log(dd)
+        // log(dd)
         if (dd.code != 0) {
             toastLog("授权失败")
             return false
