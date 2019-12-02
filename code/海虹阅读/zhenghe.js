@@ -20,15 +20,20 @@ const comment_x = 652, comment_y = 740//评论的位置
 const cd_x = 652, cd_y = 1085
 var zhongxing_temp // 中性词评论
 
-var current_task = null
-var 本次没任务的标记 = false
 
 
 var storage = storages.create("海虹阅读")
+
+var current_task = storage.get("current_task", null)
+var 本次没任务的标记 = storage.get("本次没任务的标记", false)
+
+
+
+var 抖音验证 = false
 var 抖音勾选 = storage.get("抖音勾选", false)
 var 快手勾选 = storage.get("快手勾选", false)
-var 评论文件位置 = storage.get("评论文件位置","")
-var 评论开关= storage.get("评论开关",false)
+var 评论文件位置 = storage.get("评论文件位置", "")
+var 评论开关 = storage.get("评论开关", false)
 var 当前选择的交替模式 = storage.get("交替模式", 0)
 var 存储内容读取_时间间隔 = storage.get("时间间隔", "5")
 var 存储内容读取_每成功 = storage.get("每成功", "3")
@@ -36,9 +41,10 @@ var 存储内容读取_每没任务 = storage.get("每没任务", "2")
 
 
 //切换模式记录
-var 成功计数=0
-var 没任务计数 = 0
-var 开始任务时间=null
+var 成功计数 = storage.get("成功计数", 0)
+var 没任务计数 = storage.get("没任务计数", 0)
+var 开始任务时间 = storage.get("开始任务时间", null)
+
 
 
 var ra = new RootAutomator();
@@ -280,14 +286,20 @@ function start_66_yuedu(timeout) {
         let qd = text("确定").findOne(2000)
         qd ? qd.click() : log("已关闭")
         sleep(1000)
-        app.launchPackage(yuedu_66_packagename)
+        app.startActivity({
+            action: "android.intent.action.VIEW",
+            packageName: yuedu_66_packagename,
+            className: yuedu_66_packagename + ".MainActivity",
+            flags: ["activity_new_task"],
+            root: true,
+        });
         sleep(4000)
         if (currentActivity() == "com.yxcorp.gifshow.detail.PhotoDetailActivity") {
             log("在快手页面")
             back()
             continue
         }
-        if (text_or_desc("联系客服").clickable().findOne(8000)) {
+        if (text_or_desc("联系客服").clickable().findOne(8000) && text("任务中心").exists()) {
             toastLog("66阅读开启成功")
             return true
         }
@@ -325,51 +337,51 @@ function wait_network() {
  */
 function task_managers() {
     function 切换(current_task) {
-        if (current_task=="快手") {
-            current_task="抖音"
+        if (current_task == "快手") {
+            current_task = "抖音"
             log("切换到抖音任务")
-        }else{
-            current_task="快手"
+        } else {
+            current_task = "快手"
             log("切换到快手任务")
         }
         return current_task
     }
     if (抖音勾选 && 快手勾选) {
-        if (当前选择的交替模式 ==0) {//没了就换
+        if (当前选择的交替模式 == 0) {//没了就换
             if (本次没任务的标记) {
                 log("没任务了")
-                本次没任务的标记 = true
-                current_task= 切换(current_task)
+                本次没任务的标记 = false
+                current_task = 切换(current_task)
             }
-        }else if (当前选择的交替模式 ==1) {//运行一定时间后切换(分钟)
-            if( !开始任务时间){
+        } else if (当前选择的交替模式 == 1) {//运行一定时间后切换(分钟)
+            if (!开始任务时间) {
                 开始任务时间 = new Date.getTime()
-            }else{
+            } else {
                 let 当前任务运行时间 = new Date.getTime() - 开始任务时间
                 if (当前任务运行时间 > 存储内容读取_时间间隔 * 60 * 1000) {
                     log("任务运行时间到了,切换")
-                    current_task= 切换(current_task)
+                    current_task = 切换(current_task)
                     开始任务时间 = new Date.getTime()
                 }
             }
-        } else if (当前选择的交替模式 ==2) {
+        } else if (当前选择的交替模式 == 2) {
             if (成功计数 >= parseInt(存储内容读取_每成功)) {
-                log("已成功"+存储内容读取_每成功+"次,切换")
-                current_task= 切换(current_task)
-                成功计数=0
+                log("已成功" + 存储内容读取_每成功 + "次,切换")
+                current_task = 切换(current_task)
+                成功计数 = 0
             }
-        } else if (当前选择的交替模式 ==3) {
+        } else if (当前选择的交替模式 == 3) {
             if (没任务计数 >= 存储内容读取_每没任务) {
-                log("已没任务"+存储内容读取_每成功+"次,切换")
-                current_task= 切换(current_task)
-                没任务计数=0
+                log("已没任务" + 存储内容读取_每成功 + "次,切换")
+                current_task = 切换(current_task)
+                没任务计数 = 0
             }
         }
-    }else if(!抖音勾选 && 快手勾选){
+    } else if (!抖音勾选 && 快手勾选) {
         current_task = "快手"
-    }else if(抖音勾选 && !快手勾选){
+    } else if (抖音勾选 && !快手勾选) {
         current_task = "抖音"
-    }else if(!抖音勾选 && !快手勾选){
+    } else if (!抖音勾选 && !快手勾选) {
         log("没有勾选任务,退出")
         exit()
     }
@@ -396,9 +408,7 @@ function douyin() {
             sleep(4000)
         } else {
             log("没发现授权并登录")
-
         }
-
         return
     } else {
         log("没找到观看抖音视频")
@@ -410,19 +420,6 @@ function kuaishou() {
     if (re) {
         my_click(re.bounds().centerX(), re.bounds().centerY())
         log("观看快手视频")
-        if (current_task == "抖音") {
-            var shouquan = text_or_desc("授权并登录").clickable().findOne(3000)
-            if (shouquan) {
-                log("发现授权并登录")
-                shouquan.click()
-                sleep(4000)
-            } else {
-                log("没发现授权并登录")
-
-            }
-        }
-
-
         return
     } else {
         log("没找到观看快手视频")
@@ -468,17 +465,14 @@ function task_start() {
             for (let index = 0; index < ee; index++) {
                 log("等待:" + (ee - index) + "秒")
                 sleep(1000)
-
             }
             return "没找到领取任务"
         }
         re = my_click(re.bounds().centerX(), re.bounds().centerY())
-
         log("领取任务" + re)
     } else if (current_task == "快手") {
         log("快手任务")
         let jieguo = 多个状态分开检测(["完成下载（领取200积分）", "领取任务"], 10000)
-        // log("多任务查找结果:"+JSON.stringify(jieguo))
         if (jieguo.index == 1) {
             jieguo.result.click()
         } else if (jieguo.index == 0) {
@@ -487,16 +481,13 @@ function task_start() {
         }
 
     }
-
-
-
-
-
-    re = text_or_desc("任务要求：").findOne(15000)
+    re = text_or_desc("任务要求：").findOne(10000)
     if (re) {
         log("任务要求：")
     } else {
         if (text("暂时没有任务，请尝试其它任务").exists()) {
+            本次没任务的标记 = true
+            没任务计数 += 1
             log("暂时没有任务，请尝试其它任务,返回")
             back()
             let ran = random(15, 20)
@@ -511,11 +502,7 @@ function task_start() {
 
     if (text_or_desc("1、关注").exists()) {
         log("关注任务")
-        if (current_task == "抖音") {
-            re = text_or_desc("打开“DY”做任务").clickable().findOne().click()
-        } else if (current_task == "快手") {
-            re = text_or_desc("打开“KS”做任务").clickable().findOne().click()
-        }
+        textMatches("^打开.+做任务$").clickable().findOne().click()
         log("打开" + current_task + "做任务")
         return 1
     } else if (text_or_desc("1、留言").exists()) {
@@ -529,11 +516,7 @@ function task_start() {
         log("打开" + current_task + "做任务")
         return 2
     } else if (text_or_desc("1、点赞").exists()) {
-        if (current_task == "抖音") {
-            re = text_or_desc("打开“DY”做任务").clickable().findOne().click()
-        } else if (current_task == "快手") {
-            re = text_or_desc("打开“KS”做任务").clickable().findOne().click()
-        }
+        textMatches("^打开.+做任务$").clickable().findOne().click()
         log("点赞任务")
         log("打开" + current_task + "做任务")
         return 3
@@ -601,11 +584,11 @@ function wait_douyin() {
  * 点赞和关注
  * @param {} 
  */
-function commmend(arg) {
+function 抖音点赞和关注(arg) {
 
     try {
         if (wait_douyin()) {
-            if (!dianzan_guanzhu(arg)) {
+            if (!抖音_点赞关注(arg)) {
                 return false
             }
             var t = random(15, 25)
@@ -792,35 +775,38 @@ function comment() {
  * 点赞关注
  * @param {}  /
  */
-function dianzan_guanzhu(arg) {
-    function open_guanzhu() {
+function 抖音_点赞关注(arg) {
+    function 打开关注() {
         my_click(guanzhu_tap_x, guanzhu_tap_y)
         sleep(4000)
         for (let index = 0; index < 4; index++) {
             var img = images.captureScreen()
             var color = colors.red(img.pixel(open_guanzhu_x, open_guanzhu_y))
             if (color > 150) {
-                my_click(douyin_back_x, douyin_back_y)//返回到抖音页面
-                sleep(2000)
+                back()
                 return true
             } else {
                 my_click(open_guanzhu_x, open_guanzhu_y)
                 sleep(2000)
+                if (desc("刷新").exists() && descStartsWith("请在下图中").exists()) {
+                    log("发现验证,需要停下")
+                    抖音勾选 = false
+                    return false
+                }
             }
         }
+        return false
     }
     function check_img() {
         for (let index = 0; index < 5; index++) {
             var jiance = 0
 
-            if (open_guanzhu()) {//判断关注否
+            if (打开关注()) {//判断关注否
                 log("关注检测通过")
                 jiance = jiance + 1
             } else {
-                // var img = images.captureScreen()
-                // log("当前颜色" + colors.red(img.pixel(guanzhu_x, guanzhu_y)))
-                // log("关注检测未通过,点一下")
-                // my_click(guanzhu_x, guanzhu_y)
+                log("关注失败")
+                return false
             }
             img = images.captureScreen()
             if (colors.green(img.pixel(dianzan_x, dianzan_y)) < 150) {//判断点赞否
@@ -840,15 +826,13 @@ function dianzan_guanzhu(arg) {
         log("检测无法通过且无法修复")
         return false
     }
-    try {
-        if (!check_img()) {
-            log("抖音打开失败")
-            shell("am force-stop com.ss.android.ugc.aweme", true)
-            return false
-        }
-    } catch (error) {
-        log(error)
+
+    if (!check_img()) {
+        log("抖音打开失败")
+        shell("am force-stop com.ss.android.ugc.aweme", true)
+        return false
     }
+
 
 
 }
@@ -1022,17 +1006,14 @@ function up_image(result) {
 
 function douyin_点赞关注评论(result, image_name) {
     if (result == 1) {//1,点赞和关注   二进制第一位为点赞  第二位为关注
-        if (!commmend(3)) {
-            start_66_yuedu()
-            task_managers()
+        if (!抖音点赞和关注(3)) {
             return false
         } //抖音点赞评论  11 =3
         sleep(2000)
         image_name.push(jietu_save())//截图点赞和关注
     } else if (result == 2) {//
-        if (!commmend(2)) {
-            start_66_yuedu()
-            task_managers()
+        if (!抖音点赞和关注(2)) {
+
             return false
 
         } //抖音点赞评论
@@ -1042,9 +1023,8 @@ function douyin_点赞关注评论(result, image_name) {
         sleep(2000)
         image_name.push(jietu_save())//截图评论
     } else if (result == 3) {//点赞  10 = 2
-        if (!commmend(2)) {
-            start_66_yuedu()
-            task_managers()
+        if (!抖音点赞和关注(2)) {
+
             return false
 
         }
@@ -1052,9 +1032,8 @@ function douyin_点赞关注评论(result, image_name) {
         image_name.push(jietu_save())//截图点赞
 
     } else if (result == 4) {//
-        if (!commmend(3)) {
-            start_66_yuedu()
-            task_managers()
+        if (!抖音点赞和关注(3)) {
+
             return false
 
         }
@@ -1065,8 +1044,7 @@ function douyin_点赞关注评论(result, image_name) {
         image_name.push(jietu_save())//截图评论
     } else {
         log("未知任务")
-        start_66_yuedu()
-        task_managers()
+
         return false
 
     }
@@ -1261,18 +1239,16 @@ function kuaishou_点赞关注评论(result) {
 function loop() {
     var image_name = []
     while (true) {
-        if (!text("联系客服").exists() && !start_66_yuedu()) {
+        if (!start_66_yuedu()) {
             toastLog("66阅读开启失败,退出")
             exit()
         }
         task_managers()
         var result = task_start()
         if (result == "66阅读卡死" || result == "没找到领取任务") {
-            start_66_yuedu()
-            task_managers()
             continue
         }
-        if (result == 9) {
+        if (result == 9) {//暂时没有任务
             continue
         }
         if (!result) {//留言任务
@@ -1295,14 +1271,6 @@ function loop() {
                 continue
             }
         }
-        // threads.shutDownAll()
-        // var thread = threads.start(function () {
-        //     // if (text_or_desc("请完成下列验证后继续").findOne()) {
-        //     //     log("发现验证,退出")
-        //     //     exit()
-        //     // } 
-
-        // })
         if (current_task == "抖音") {
             let result = douyin_点赞关注评论(result, image_name)
             if (!result) {
@@ -1328,12 +1296,11 @@ function loop() {
                         }
                     } else {
                         log("没找到放弃任务按钮")
-                        
+
                     }
                     if (index == 4) {
-                        start_66_yuedu()
-                        task_managers()
-                        
+
+
                     }
                 }
                 continue
@@ -1341,23 +1308,15 @@ function loop() {
                 image_name.push(jietu_save())
             }
         }
-        try {
-            thread.interrupt()
-            log("验证监听结束")
-        } catch (error) {
-            //log(error)
-        }
         var up_su = up_image(result)
         if (up_su == 0) {
-            start_66_yuedu()
-            task_managers()
+
             continue
         }
         sleep(1000)
         if (text_or_desc("请上传截图，再提交任务").exists()) {
             log("图片加载失败")
-            start_66_yuedu()
-            task_managers()
+
             continue
         }
         function delete_image() {
@@ -1378,18 +1337,46 @@ function loop() {
             }
         }
         delete_image()
+        成功计数 += 1
         sleep(5000)
-
-
 
         var currenttime = random(15, 20)
         for (let index = 1; index < currenttime; index += 2) {
             toastLog("休眠中,剩余" + (currenttime - index) + "秒")
+            log("检查更新")
+
             sleep(2500)
         }
 
     }
 }
+
+function 检查更新() {
+    try {
+        var res = http.get("https://gitee.com/jixiangxia_admin/autojs/raw/master/code/%E6%B5%B7%E8%99%B9%E9%98%85%E8%AF%BB/zhenghe.js")
+        if (res.statusCode == 200) {
+            if (!files.exists("./zhenghe.js")) {
+                files.write("./zhenghe.js", res.body.string())
+            }
+            var 原来的源码 =  files.read("./zhenghe.js")
+            var 新源码 = res.body.string()
+            if (原来的源码 != 新源码) {
+                log("需要更新")
+                files.write("./zhenghe.js", res.body.string())
+                toastLog("功能模块加载完成")
+                engines.execScriptFile("./zhenghe.js")
+                exit()
+            }else{
+                log("不需要更新")
+            }
+        } else {
+            toastLog("网络异常")
+        }
+    } catch (error) {
+        log(error)
+    }
+}
+
 
 function root开启无障碍() {
     var sh = new Shell(true)
@@ -1406,7 +1393,7 @@ function root开启无障碍() {
         sleep(2000)
         auto.waitFor()
         return true
-        
+
     }
     sh.exit()
     log("全部失败")
@@ -1420,23 +1407,23 @@ function main() {
     yuedu_66_packagename = app.getPackageName("66阅读")
     if (yuedu_66_packagename) {
         log(yuedu_66_packagename)
-        
-    }else{
+
+    } else {
         toastLog("未安装66阅读")
         exit()
     }
-    if(!app.getPackageName("抖音短视频") && 抖音勾选){
+    if (!app.getPackageName("抖音短视频") && 抖音勾选) {
         toastLog("未安装抖音短视频")
         exit()
     }
-    if(!app.getPackageName("快手") && 快手勾选){
+    if (!app.getPackageName("快手") && 快手勾选) {
         toastLog("未安装快手")
         exit()
     }
     // init_comment()//初始化评论
 
     current_task = "快手"
-    
+
 
     //授权
     if (!shouquan()) {
@@ -1444,15 +1431,15 @@ function main() {
         exit()
     }
     // root开启无障碍()
-    if (auto.serivce ==null ) {
+    if (auto.serivce == null) {
         log("代码开启无障碍")
         openAccessbility()
     }
     auto.waitFor()
     log("无障碍开启成功")
     device.keepScreenOn(2 * 3600 * 1000)
-   
-    
+
+
     loop()
 
 
@@ -1461,7 +1448,7 @@ function main() {
 
 
 function test() {
-    
+
 
 
 }

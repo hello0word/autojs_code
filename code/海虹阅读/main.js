@@ -5,7 +5,7 @@ var 倒计时 = 60
 var storage = storages.create("海虹阅读")
 
 var 抖音勾选 = storage.get("抖音勾选", false), 快手勾选 = storage.get("快手勾选", false)
-var 评论文件位置 = storage.get("评论文件位置","")
+var 评论文件位置 = storage.get("评论文件位置", "")
 ui.layout(
     <vertical padding="16">
         <text gravity="center" textSize="40sp" textColor="red" textStyle="bold">海虹阅读</text>
@@ -17,10 +17,10 @@ ui.layout(
                 <checkbox id="快手勾选框" text="快手" checked={快手勾选}></checkbox>
             </vertical>
             <vertical>
-                <Switch margin="30 5 20 0" id='评论开关' text="评论开关:" w="auto"/>
-                <button margin="25 0 20 0" text="更改评论文件" id = "更改评论文件" w="auto"  ></button>
+                <Switch margin="30 5 20 0" id='评论开关' text="评论开关:" w="auto" />
+                <button margin="25 0 20 0" text="更改评论文件" id="更改评论文件" w="auto"  ></button>
             </vertical>
-            
+
 
         </horizontal>
         <horizontal>
@@ -39,7 +39,7 @@ ui.layout(
             <text id="config_danwei" margin="0 5 0 0" textSize="14sp" textStyle="bold" text="" w="50"></text>
         </horizontal>
         <horizontal>
-            <text id="评论文件位置" text={"评论文件位置:"+评论文件位置}></text>
+            <text id="评论文件位置" text={"评论文件位置:" + 评论文件位置}></text>
         </horizontal>
 
         <button id="立即开始" text={"立即开始(" + 倒计时 + ")"} w="*" gravity="center" style="Widget.AppCompat.Button.Colored" />
@@ -47,7 +47,7 @@ ui.layout(
 );
 
 
-
+var 上次点击时间 = 0
 ui.立即开始.on("click", () => {
     var 输入内容读取 = ui.配置输入框.text()
     var 当前选择的交替模式 = storage.get("交替模式", 0)
@@ -69,12 +69,17 @@ ui.立即开始.on("click", () => {
             break;
 
     }
-  //log(输入内容读取)
-    engines.execScriptFile("./zhenghe.js")
-    ui.finish()
+    //log(输入内容读取)
+    if (new Date().getTime() - 上次点击时间 > 5000) {
+        上次点击时间 = new Date().getTime()
+        execution = engines.execScriptFile("./zhenghe.js");
+    } else {
+        toastLog("请等待")
+    }
+
 })
 
-ui.更改评论文件.on("click",()=>{
+ui.更改评论文件.on("click", () => {
     startChooseFile("*/*");
 })
 
@@ -93,10 +98,10 @@ ui.post(
             if (i == 交替模式) {
                 view.checked = true
             }
-            if (i==0) {
+            if (i == 0) {
                 ui.配置输入框.setVisibility(View.INVISIBLE)
             }
-            var 评论开关= storage.get("评论开关",false)
+            var 评论开关 = storage.get("评论开关", false)
             ui.评论开关.setChecked(评论开关)
             var content = view.getText().toString()
             单选按钮集合.push({
@@ -105,7 +110,7 @@ ui.post(
                 content: content,
             })
         }
-      //log(单选按钮集合)
+        //log(单选按钮集合)
 
     }
 )
@@ -117,7 +122,7 @@ function getAttr(obj) {
         attrs.push(k)
     }
     attrs.sort()
-  //log(attrs)
+    //log(attrs)
 }
 importClass(android.view.View)
 ui.交替模式.setOnCheckedChangeListener(//单选框选择
@@ -127,13 +132,13 @@ ui.交替模式.setOnCheckedChangeListener(//单选框选择
         storage.put("交替模式", myIdStartFrom0)
 
         if (myIdStartFrom0 == 0) {
-          //log("0")
+            //log("0")
             ui.配置输入框.setVisibility(View.INVISIBLE)
             ui.config_name.setText(默认配置)
             var 存储内容读取 = 0
             ui.config_danwei.setText("")
         } else if (myIdStartFrom0 == "1") {
-          //log("1")
+            //log("1")
             ui.配置输入框.setVisibility(View.VISIBLE)
             ui.config_name.setText("时间间隔:")
             var 存储内容读取 = storage.get("时间间隔", "5")
@@ -182,7 +187,7 @@ ui.快手勾选框.on("check", (checked) => {
     }
 });
 ui.评论开关.on("check", (checked) => {
-    storage.put("评论开关",checked);
+    storage.put("评论开关", checked);
 });
 
 /**
@@ -190,12 +195,12 @@ ui.评论开关.on("check", (checked) => {
  */
 var ResultIntent = {
     intentCallback: {},
-    init: function() {
+    init: function () {
         activity.getEventEmitter().on("activity_result", (requestCode, resultCode, data) => {
             this.onActivityResult(requestCode, resultCode, data);
         });
     },
-    startActivityForResult: function(intent, callback) {
+    startActivityForResult: function (intent, callback) {
         var i;
         for (i = 0; i < 65536; i++) {
             if (!(i in this.intentCallback)) break;
@@ -207,7 +212,7 @@ var ResultIntent = {
         this.intentCallback[i] = callback;
         activity.startActivityForResult(intent, i);
     },
-    onActivityResult: function(requestCode, resultCode, data) {
+    onActivityResult: function (requestCode, resultCode, data) {
         var cb = this.intentCallback[requestCode];
         if (!cb) return;
         delete this.intentCallback[requestCode];
@@ -216,70 +221,70 @@ var ResultIntent = {
 };
 ResultIntent.init();
 function URIUtils_uriToFile(uri) { //Source : https://www.cnblogs.com/panhouye/archive/2017/04/23/6751710.html
-        var r = null,
-            cursor, column_index, selection = null,
-            selectionArgs = null,
-            isKitKat = android.os.Build.VERSION.SDK_INT >= 19,
-            docs;
-        if (uri.getScheme().equalsIgnoreCase("content")) {
-            if (isKitKat && android.provider.DocumentsContract.isDocumentUri(activity, uri)) {
-                if (String(uri.getAuthority()) == "com.android.externalstorage.documents") {
-                    docs = String(android.provider.DocumentsContract.getDocumentId(uri)).split(":");
-                    if (docs[0] == "primary") {
-                        return android.os.Environment.getExternalStorageDirectory() + "/" + docs[1];
-                    }
-                } else if (String(uri.getAuthority()) == "com.android.providers.downloads.documents") {
-                    uri = android.content.ContentUris.withAppendedId(
-                        android.net.Uri.parse("content://downloads/public_downloads"),
-                        parseInt(android.provider.DocumentsContract.getDocumentId(uri))
-                    );
-                } else if (String(uri.getAuthority()) == "com.android.providers.media.documents") {
-                    docs = String(android.provider.DocumentsContract.getDocumentId(uri)).split(":");
-                    if (docs[0] == "image") {
-                        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                    } else if (docs[0] == "video") {
-                        uri = android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                    } else if (docs[0] == "audio") {
-                        uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                    }
-                    selection = "_id=?";
-                    selectionArgs = [docs[1]];
+    var r = null,
+        cursor, column_index, selection = null,
+        selectionArgs = null,
+        isKitKat = android.os.Build.VERSION.SDK_INT >= 19,
+        docs;
+    if (uri.getScheme().equalsIgnoreCase("content")) {
+        if (isKitKat && android.provider.DocumentsContract.isDocumentUri(activity, uri)) {
+            if (String(uri.getAuthority()) == "com.android.externalstorage.documents") {
+                docs = String(android.provider.DocumentsContract.getDocumentId(uri)).split(":");
+                if (docs[0] == "primary") {
+                    return android.os.Environment.getExternalStorageDirectory() + "/" + docs[1];
                 }
-            }
-            try {
-                cursor = activity.getContentResolver().query(uri, ["_data"], selection, selectionArgs, null);
-                if (cursor && cursor.moveToFirst()) {
-                    r = String(cursor.getString(cursor.getColumnIndexOrThrow("_data")));
+            } else if (String(uri.getAuthority()) == "com.android.providers.downloads.documents") {
+                uri = android.content.ContentUris.withAppendedId(
+                    android.net.Uri.parse("content://downloads/public_downloads"),
+                    parseInt(android.provider.DocumentsContract.getDocumentId(uri))
+                );
+            } else if (String(uri.getAuthority()) == "com.android.providers.media.documents") {
+                docs = String(android.provider.DocumentsContract.getDocumentId(uri)).split(":");
+                if (docs[0] == "image") {
+                    uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if (docs[0] == "video") {
+                    uri = android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if (docs[0] == "audio") {
+                    uri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
                 }
-            } catch (e) {
-                log(e)
+                selection = "_id=?";
+                selectionArgs = [docs[1]];
             }
-            if (cursor) cursor.close();
-            return r;
-        } else if (uri.getScheme().equalsIgnoreCase("file")) {
-            return String(uri.getPath());
         }
-        return null;
+        try {
+            cursor = activity.getContentResolver().query(uri, ["_data"], selection, selectionArgs, null);
+            if (cursor && cursor.moveToFirst()) {
+                r = String(cursor.getString(cursor.getColumnIndexOrThrow("_data")));
+            }
+        } catch (e) {
+            log(e)
+        }
+        if (cursor) cursor.close();
+        return r;
+    } else if (uri.getScheme().equalsIgnoreCase("file")) {
+        return String(uri.getPath());
     }
+    return null;
+}
 
 function startChooseFile(mimeType, callback) {
     var i = new android.content.Intent(android.content.Intent.ACTION_GET_CONTENT);
     i.setType(mimeType);
-    ResultIntent.startActivityForResult(i, function(resultCode, data) {
+    ResultIntent.startActivityForResult(i, function (resultCode, data) {
         if (resultCode != activity.RESULT_OK) return;
         var f = URIUtils_uriToFile(data.getData());
         //toastLog(f);
         if (files.exists(f)) {
-            if(files.getExtension(f)=="txt"){
+            if (files.getExtension(f) == "txt") {
                 ui.run(() => {
                     ui.评论文件位置.setText(f);
                 });
-                storage.put("评论文件位置",f)
-            }else{
+                storage.put("评论文件位置", f)
+            } else {
                 toastLog("只能选择txt文件")
             }
         }
-       
+
     });
 }
 
