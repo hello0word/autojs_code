@@ -52,6 +52,6 @@ var w = floaty.window(
   sleep(1000)
   setTimeout(()=>{
     w.close();
-  }, 3300);
+  }, 33000);
 
 

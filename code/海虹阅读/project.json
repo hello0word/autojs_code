@@ -1,0 +1,10 @@
+{
+    "name": "海虹阅读",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.haihong.reader",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}

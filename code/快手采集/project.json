@@ -1,0 +1,10 @@
+{
+    "name": "快手采集",
+    "main": "run.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.autojstool.kuaishoucaiji",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}

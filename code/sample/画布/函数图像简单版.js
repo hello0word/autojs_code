@@ -8,7 +8,7 @@ ui.layout(
 
 //要绘制的函数，这里是一个一元二次函数
 var f = function(x){
-    return x * x + 3 * x - 4;
+    return 0.07*x * x ;
 }
 
 //绘制区间

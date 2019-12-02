@@ -8,10 +8,11 @@ var yuedu_66_packagename
 var all_text = new Array() //全局评论数组
 console.setSize(350, 900)
 console.show()
+log(app.autojs.versionName)
 var pid = android.os.Process.myPid()
 const app_loading_wait_count = 30 //打开快手/抖音  所等待的计数器
 const guanzhu_x = 642, guanzhu_y = 492, guanzhu_zhongxin_x = 659, guanzhu_zhongxin_y = 496//关注的红色位置  和关注的中心白色位置
-const guanzhu_tap_x = 670, guanzhu_tap_y = 450, open_guanzhu_x = 354, open_guanzhu_y =288//这里前面是关注的中心点,后面是打开关注页后的检测位置
+const guanzhu_tap_x = 670, guanzhu_tap_y = 450, open_guanzhu_x = 354, open_guanzhu_y = 288//这里前面是关注的中心点,后面是打开关注页后的检测位置
 
 const douyin_back_x = 50, douyin_back_y = 100
 const dianzan_x = 652, dianzan_y = 610//点赞的位置
@@ -19,12 +20,12 @@ const comment_x = 652, comment_y = 740//评论的位置
 const cd_x = 652, cd_y = 1085
 var zhongxing_temp // 中性词评论
 
-var current_task=null
+var current_task = null
 
 
 var ra = new RootAutomator();
-events.on('exit', function(){
-  ra.exit();
+events.on('exit', function () {
+    ra.exit();
 });
 
 // if (device.sdkInt < 24) {
@@ -49,13 +50,15 @@ function my_click(x, y) {
     if (device.sdkInt >= 24) {
         ss = press(x, y, 50)
     } else {
-        ss= ra.press(x,y,100)
+        ss = ra.press(x, y, 100)
     }
-    
+
     // sleep(200)
     console.show()
     return ss
 }
+
+
 
 //执行一些点击操作
 function shouquan() {
@@ -66,6 +69,7 @@ function shouquan() {
             toastLog("授权失败")
             return false
         } else {
+            log("授权成功")
             return true
         }
     } else {
@@ -184,8 +188,10 @@ function closeAccesslibility() {
 function isroot() {
     var re = shell("ls", true)
     if (re.code == 0) {
+        log("有root")
         return true
     } else {
+        log("无root")
         return false
     }
 }
@@ -280,13 +286,22 @@ function start_66_yuedu(timeout) {
     log(timeout)
     timeout *= 1000
     for (let index = 0; index < 30; index++) {
-        shell("am force-stop " + yuedu_66_packagename, true)
+        // log( shell("am force-stop " + yuedu_66_packagename, true))
+        app.openAppSetting(yuedu_66_packagename)
+        text("强行停止").findOne().click()
+        let qd = text("确定").findOne(2000)
+        qd ? qd.click() : log("已关闭")
         sleep(1000)
         app.launchPackage(yuedu_66_packagename)
-        sleep(1000)
-        if (text_or_desc("开始赚钱").clickable().findOne(timeout)) {
+        sleep(4000)
+        if (currentActivity() == "com.yxcorp.gifshow.detail.PhotoDetailActivity") {
+            log("在快手页面")
+            back()
+            continue
+        }
+        if (text_or_desc("联系客服").clickable().findOne(timeout)) {
             toastLog("66阅读开启成功")
-            var re = text_or_desc("开始赚钱").clickable().findOne().click()
+            // var re = text_or_desc("开始赚钱").clickable().findOne()
             log("开始赚钱")
             // re=boundsContains((288+20)/720*device.width,(860+20)/1280*device.height ,(432-20)/720*device.width ,(1004-20)/1280*device.height ).clickable().findOne()
             // log("关闭广告")
@@ -323,14 +338,14 @@ function wait_network() {
         sleep(60 * 1000)
     }
 }
-function task_manger(){
+function task_manger() {
 
 }
 function task_managers() {
     if (current_task == "抖音") {
         douyin()
-        
-    }else if(current_task == "快手"){
+
+    } else if (current_task == "快手") {
         kuaishou()
     }
 }
@@ -357,19 +372,22 @@ function douyin() {
 }
 
 function kuaishou() {
-    re = text_or_desc("观看快手视频").findOne(8000)
+    re = text_or_desc("观看KS视频").findOne(8000)
     if (re) {
         my_click(re.bounds().centerX(), re.bounds().centerY())
         log("观看快手视频")
-        var shouquan = text_or_desc("授权并登录").clickable().findOne(3000)
-        if (shouquan) {
-            log("发现授权并登录")
-            shouquan.click()
-            sleep(4000)
-        } else {
-            log("没发现授权并登录")
+        if (current_task == "抖音") {
+            var shouquan = text_or_desc("授权并登录").clickable().findOne(3000)
+            if (shouquan) {
+                log("发现授权并登录")
+                shouquan.click()
+                sleep(4000)
+            } else {
+                log("没发现授权并登录")
 
+            }
         }
+
 
         return
     } else {
@@ -378,33 +396,81 @@ function kuaishou() {
 }
 
 /**
+ * 
+ * @param {*} arr 数组
+ * @param {*} timeout 毫秒
+ */
+function 多个状态分开检测(array, timeout) {
+    var init_time = new Date().getTime()
+    while (true) {
+        if (new Date().getTime() - init_time > timeout) {
+            return false
+        }
+        for (let index = 0; index < array.length; index++) {
+            let words = array[index];
+            let tmp = text(words).clickable().findOnce()
+            if (tmp) {
+                return { result: tmp, index: index }
+            }
+        }
+    }
+
+}
+
+
+
+/**
  * 打开66阅读后开始执行任务
  * @param {*} params 
  */
 function task_start() {
-    var re
-    re = text_or_desc("领取任务").clickable().findOne(10000)
-    if (!re) {
-        log("没找到领取任务")
-        log("等待一段时间再开始")
-        var ee = random(30, 50)
-        for (let index = 0; index < ee; index++) {
-            log("等待:" + (ee - index) + "秒")
-            sleep(1000)
+    if (current_task == "抖音") {
+        var re
+        re = text_or_desc("领取任务").clickable().findOne(10000)
+        if (!re) {
+            log("没找到领取任务")
+            log("等待一段时间再开始")
+            var ee = random(30, 50)
+            for (let index = 0; index < ee; index++) {
+                log("等待:" + (ee - index) + "秒")
+                sleep(1000)
 
+            }
+            return "没找到领取任务"
         }
-        return "没找到领取任务"
+        re = my_click(re.bounds().centerX(), re.bounds().centerY())
+
+        log("领取任务" + re)
+    } else if (current_task == "快手") {
+        log("快手任务")
+        let jieguo = 多个状态分开检测(["完成下载（领取200积分）", "领取任务"], 10000)
+        // log("多任务查找结果:"+JSON.stringify(jieguo))
+        if (jieguo.index == 1) {
+            jieguo.result.click()
+        } else if (jieguo.index == 0) {
+            jieguo.result.click()
+            text("确定").clickable().findOne().click()
+        }
+
     }
 
-    re = my_click(re.bounds().centerX(), re.bounds().centerY())
 
-    log("领取任务" + re)
+
 
 
     re = text_or_desc("任务要求：").findOne(15000)
     if (re) {
         log("任务要求：")
     } else {
+        if (text("暂时没有任务，请尝试其它任务").exists()) {
+            log("暂时没有任务，请尝试其它任务,返回")
+            back()
+            let ran = random(15, 20)
+            log("休眠:" + ran + "秒")
+            sleep(ran * 1000)
+            task_managers()
+            return 9
+        }
         toastLog("15秒内无反应，66阅读可能卡死，关闭重进")
         return "66阅读卡死"
     }
@@ -412,40 +478,46 @@ function task_start() {
     if (text_or_desc("1、关注").exists()) {
         log("关注任务")
         if (current_task == "抖音") {
-            re = text_or_desc("打开“抖音”做任务").clickable().findOne().click()
-        }else if(current_task == "快手"){
-            re = text_or_desc("打开“快手”做任务").clickable().findOne().click()
+            re = text_or_desc("打开“DY”做任务").clickable().findOne().click()
+        } else if (current_task == "快手") {
+            re = text_or_desc("打开“KS”做任务").clickable().findOne().click()
         }
-        log("打开"+current_task+"做任务")
+        log("打开" + current_task + "做任务")
         return 1
     } else if (text_or_desc("1、留言").exists()) {
+        return false
         if (current_task == "抖音") {
-            re = text_or_desc("打开“抖音”做任务").clickable().findOne().click()
-        }else if(current_task == "快手"){
-            re = text_or_desc("打开“快手”做任务").clickable().findOne().click()
+            re = text_or_desc("打开“DY”做任务").clickable().findOne().click()
+        } else if (current_task == "快手") {
+            re = text_or_desc("打开“KS”做任务").clickable().findOne().click()
         }
         log("关注加留言任务")
-        log("打开"+current_task+"做任务")
+        log("打开" + current_task + "做任务")
         return 2
     } else if (text_or_desc("1、点赞").exists()) {
         if (current_task == "抖音") {
-            re = text_or_desc("打开“抖音”做任务").clickable().findOne().click()
-        }else if(current_task == "快手"){
-            re = text_or_desc("打开“快手”做任务").clickable().findOne().click()
+            re = text_or_desc("打开“DY”做任务").clickable().findOne().click()
+        } else if (current_task == "快手") {
+            re = text_or_desc("打开“KS”做任务").clickable().findOne().click()
         }
         log("点赞任务")
-        log("打开"+current_task+"做任务")
+        log("打开" + current_task + "做任务")
         return 3
     } else if (text_or_desc("1、点赞，2、关注，3、留言").exists()) {
+        return false
+
         if (current_task == "抖音") {
-            re = text_or_desc("打开“抖音”做任务").clickable().findOne().click()
-        }else if(current_task == "快手"){
-            re = text_or_desc("打开“快手”做任务").clickable().findOne().click()
+            re = text_or_desc("打开“DY”做任务").clickable().findOne().click()
+        } else if (current_task == "快手") {
+            re = text_or_desc("打开“KS”做任务").clickable().findOne().click()
         }
         log("1、点赞，2、关注，3、留言任务")
-        log("打开"+current_task+"做任务")
+        log("打开" + current_task + "做任务")
         return 4
 
+    } else {
+        log("未知任务")
+        return false
     }
 
 }
@@ -769,7 +841,12 @@ function jietu_save() {
  */
 function up_image(result) {
     log("上传图片")
-    if (current_task =="快手") {
+    if (current_task == "快手") {
+        // for (let index = 0; index < 10; index++) {
+        //     if (condition) {
+
+        //     }
+        // }
         log("返回一下")
         back()
         sleep(1000)
@@ -909,7 +986,7 @@ function up_image(result) {
 }
 
 
-function douyin_点赞关注评论(result,image_name) {
+function douyin_点赞关注评论(result, image_name) {
     if (result == 1) {//1,点赞和关注   二进制第一位为点赞  第二位为关注
         if (!commmend(3)) {
             start_66_yuedu()
@@ -971,17 +1048,17 @@ function kuaishou_点赞关注评论(result) {
         var color_count = 0
         var color_temp = []
         for (let index = 0; index < app_loading_wait_count; index++) {
-            if (text("关注").findOne(10) && id("like_layout").desc("喜欢").findOne(10)) {
+            if (id("like_layout").clickable().findOne(10) && currentActivity() == "com.yxcorp.gifshow.detail.PhotoDetailActivity") {
                 return true
             }
-            let img  = images.captureScreen()
+            let img = images.captureScreen()
             let x = device.width / 2
-            let y= device.height /2
-            let color = images.pixel(img,x,y)
-            if (color_temp.indexOf(color ) == -1) {
+            let y = device.height / 2
+            let color = images.pixel(img, x, y)
+            if (color_temp.indexOf(color) == -1) {
                 color_temp.push(color)
             }
-            if (color_temp.length > 8 ) {
+            if (color_temp.length > 8) {
                 log("加载完成了")
                 return true
             }
@@ -993,39 +1070,59 @@ function kuaishou_点赞关注评论(result) {
      * 点赞关注,如果操作失败则返回false
      * @param {*} 
      */
-    function dianzan_guanzhu() {
-        var dianzan_flg = false,guanzhu_flg = false
+    function dianzan_guanzhu(result) {
+        var dianzan_flg = false, guanzhu_flg = false
         for (let index = 0; index < 3; index++) {
-            let dianzan = id("like_layout").desc("喜欢").findOne(10000)
-            let guanzhu=  text("关注").findOne(3000)
-            if (dianzan) {
-                if (!dianzan.selected()) {//没被选中
-                    log("点一下  点赞")
-                    dianzan.click()
-                }else{
-                    log("点赞检测通过")
-                    dianzan_flg = true
-                }
-            }else{
-                log("找不到点赞按钮")
-            }
-            if (guanzhu) {
-                let par =  guanzhu.parent().parent()
-                if (par.clickable()) {
-                    log("点一下关注")
-                    par.click()
-                } else {
-                    log("关注按钮不能点击")
-                }
+
+            if (result == 1) {
+                log("不用点赞")
+                dianzan_flg = true
             } else {
-                log("找不到关注按钮")
-                guanzhu_flg = true
+                let dianzan = id("like_layout").clickable().findOne(10000)
+
+                if (dianzan) {
+                    // log(dianzan)
+                    if (!dianzan.isSelected()) {//没被选中
+                        log("点一下  点赞")
+                        dianzan.click()
+                        sleep(1500)
+                    } else {
+                        log("点赞检测通过")
+                        dianzan_flg = true
+                    }
+                } else {
+                    log("找不到点赞按钮")
+                }
             }
-            if (dianzan_flg && guanzhu_flg ) {
+            //关注得部分
+            if (result == 3) {
+                log("不用关注")
+                guanzhu_flg = true
+            } else {
+                let guanzhu = text("关注").findOne(3000)
+                if (guanzhu) {
+                    let par = guanzhu.parent().parent()
+                    if (par.clickable()) {
+                        log("点一下关注")
+                        par.click()
+                        if (text("24小时关注人数达到上限").findOne(2000)) {
+                            log("24小时关注人数达到上限")
+                            exit()
+                        }
+                    } else {
+                        log("关注按钮不能点击")
+                    }
+                } else {
+                    log("找不到关注按钮")
+                    guanzhu_flg = true
+                }
+            }
+            if (dianzan_flg && guanzhu_flg) {
                 return true
             }
             sleep(2000)
         }
+        return false
     }
 
 
@@ -1054,7 +1151,7 @@ function kuaishou_点赞关注评论(result) {
                     // log(new_str)
                     get_comment_list.push(new_str)
                 } catch (error) {
-    
+
                 }
             })
             let a = root_element.scrollForward()
@@ -1066,36 +1163,36 @@ function kuaishou_点赞关注评论(result) {
         }
         // get_comment_list
         desc("说点什么...").findOne().click()
-        editable().findOne().setText(get_comment_list[random(0,get_comment_list.length-1)]+zhongxing_temp[random(0,zhongxing_temp.length-1)]+"[赞]")
+        editable().findOne().setText(get_comment_list[random(0, get_comment_list.length - 1)] + zhongxing_temp[random(0, zhongxing_temp.length - 1)] + "[赞]")
         text("发送").findOne().click()
-    
+
         for (let index = 0; index < 20; index++) {
-            let zan= id("number_like").findOne(1000)
+            let zan = id("number_like").findOne(1000)
             if (zan) {
-                if (zan.bounds().top > 200 && zan.bounds().top <600) {
+                if (zan.bounds().top > 200 && zan.bounds().top < 600) {
                     return true
-                }else{
+                } else {
                     if (zan.bounds().top < 200) {
-                        swipe(device.width/2,device.height/2,device.width/2,device.height/3*2,300)
+                        swipe(device.width / 2, device.height / 2, device.width / 2, device.height / 3 * 2, 300)
                         sleep(2000)
-                    }else if(zan.bounds().top>600){
-                        swipe(device.width/2,device.height/2,device.width/2,device.height/3,300)
+                    } else if (zan.bounds().top > 600) {
+                        swipe(device.width / 2, device.height / 2, device.width / 2, device.height / 3, 300)
                         sleep(2000)
                     }
                 }
-            }else{
-                let bianjikuang =  desc("说点什么...").findOne(1000)
+            } else {
+                let bianjikuang = desc("说点什么...").findOne(1000)
                 if (bianjikuang) {
-                    if (bianjikuang.bounds().top <1200) {//往上
-                        swipe(device.width/2,device.height/3,device.width/2,device.height/3*2,300)
+                    if (bianjikuang.bounds().top < 1200) {//往上
+                        swipe(device.width / 2, device.height / 3, device.width / 2, device.height / 3 * 2, 300)
                         sleep(2000)
-                    }else{
+                    } else {
                         //往下
-                        swipe(device.width/2,device.height/3*2,device.width/2,device.height/3,300)
+                        swipe(device.width / 2, device.height / 3 * 2, device.width / 2, device.height / 3, 300)
                         sleep(2000)
                     }
                 }
-                
+
             }
         }
         //// 执行到这里说明没有把评论后的页面调整到一个合适的位置,不能截图
@@ -1105,24 +1202,24 @@ function kuaishou_点赞关注评论(result) {
     //以上是函数
     /////////////////////////////////
     ///这里是功能区
-    let wait_result  = wait_kuaishou()
+    let wait_result = wait_kuaishou()
     if (!wait_result) {
         log("快手打开失败")
         return false
     }
-    let wait_dianzan_and_guanzhu = dianzan_guanzhu()
-    if(!wait_dianzan_and_guanzhu){
+    let wait_dianzan_and_guanzhu = dianzan_guanzhu(result)
+    if (!wait_dianzan_and_guanzhu) {
         log("点赞关注失败")
         return false
     }
-    if (result ==2 || result==4) {
+    if (result == 2 || result == 4) {
         let wait_comment_result = get_yuanlaide_comment()
-        if (!wait_comment_result ) {
+        if (!wait_comment_result) {
             log("评论失败")
             return false
         }
     }
-    
+
     return true// 都成功了,返回true
 }
 
@@ -1136,23 +1233,72 @@ function loop() {
             task_managers()
             continue
         }
-        threads.shutDownAll()
-        var thread = threads.start(function () {
-            // if (text_or_desc("请完成下列验证后继续").findOne()) {
-            //     log("发现验证,退出")
-            //     exit()
-            // } 
+        if (result == 9) {
+            continue
+        }
+        if (!result) {//留言任务
+            log("包含留言任务")
+            log("留言任务")
+            let a = text_or_desc("放弃任务").clickable().findOne(3500)
+            if (a) {
+                a.click()
+                let b = text_or_desc("确定").clickable().findOne(3500)
+                if (b) {
+                    b.click()
+                    log("放弃任务完成")
+                    continue
+                } else {
+                    log("没找到确定按钮")
+                    continue
+                }
+            } else {
+                log("没找到放弃任务按钮")
+                continue
+            }
+        }
+        // threads.shutDownAll()
+        // var thread = threads.start(function () {
+        //     // if (text_or_desc("请完成下列验证后继续").findOne()) {
+        //     //     log("发现验证,退出")
+        //     //     exit()
+        //     // } 
 
-        })
-        if (current_task=="抖音" ) {
-            let result= douyin_点赞关注评论(result,image_name)
+        // })
+        if (current_task == "抖音") {
+            let result = douyin_点赞关注评论(result, image_name)
             if (!result) {
                 continue
             }
-        }else if(current_task=="快手") {
-            if(!kuaishou_点赞关注评论(result)){//快手打开失败
+        } else if (current_task == "快手") {
+            if (!kuaishou_点赞关注评论(result)) {//快手打开失败
+                for (let index = 0; index < 5; index++) {
+                    log("返回")
+                    back()
+                    log("放弃任务")
+                    let a = text_or_desc("放弃任务").clickable().findOne(3500)
+                    if (a) {
+                        a.click()
+                        let b = text_or_desc("确定").clickable().findOne(3500)
+                        if (b) {
+                            b.click()
+                            log("放弃任务完成")
+                            break;
+                        } else {
+                            log("没找到确定按钮")
+                            continue
+                        }
+                    } else {
+                        log("没找到放弃任务按钮")
+                        
+                    }
+                    if (index == 4) {
+                        start_66_yuedu()
+                        task_managers()
+                        
+                    }
+                }
                 continue
-            }else{//截图保存
+            } else {//截图保存
                 image_name.push(jietu_save())
             }
         }
@@ -1206,47 +1352,79 @@ function loop() {
     }
 }
 
+function root开启无障碍() {
+    var sh = new Shell(true)
+    sh.setCallback({
+        onNewLine: function (line) {
+            //有新的一行输出时打印到控制台
+            log(line);
+        }
+    })
+    for (let index = 0; index < 10; index++) {
+        sh.exec("settings put secure enabled_accessibility_services " + context.getPackageName() + "/org.autojs.autojs.accessibility.AccessibilityService")
+        sleep(1000)
+        sh.exec("settings put secure accessibility_enabled 1")
+        sleep(2000)
+        auto.waitFor()
+        return true
+        if (auto.getService()) {
+            log("无障碍开启成功")
+            return true
+        } else {
+            log("本次失败")
+            sh.exec("settings put secure enabled_accessibility_services null")
+            sleep(1000)
+        }
+    }
+    sh.exit()
+    log("全部失败")
+    return false
+}
+
 function main() {
     //初始化值
     myself_package_name = context.getPackageName()
     log(myself_package_name)
     yuedu_66_packagename = app.getPackageName("66阅读")
     log(yuedu_66_packagename)
-    init_comment()//初始化评论
-    
+    // init_comment()//初始化评论
+
     current_task = "快手"
     // current_task = "抖音"
-    
 
-    zhongxing_temp = get_zxc() //初始化中性词评论
 
-    var jiance_threads = threads.start(function () {
-        while (true) {
-            linux文件句柄数量检测()
-            sleep(5000)
-        }
-    })
-    log("检测进程句柄的线程:" + jiance_threads)
+    // zhongxing_temp = get_zxc() //初始化中性词评论
+
+    // var jiance_threads = threads.start(function () {
+    //     while (true) {
+    //         linux文件句柄数量检测()
+    //         sleep(5000)
+    //     }
+    // })
+    // log("检测进程句柄的线程:" + jiance_threads)
 
     //授权
     if (!shouquan()) {
         toastLog("没有root权限,退出")
         exit()
     }
-    //开启无障碍
+    // root开启无障碍()
     openAccessbility()
+    log("等待无障碍")
+    auto.waitFor()
+    log("无障碍开启成功")
     device.keepScreenOn(2 * 3600 * 1000)
-    !function () {
-        for (let index = 0; index < 30; index++) {
-            if (auto.service) {
-                log("无障碍开启成功")
-                return true
-            }
-            sleep(1000)
-        }
-        toastLog("使用代码开启无障碍失败,请手动开启无障碍后再次运行本应用")
-        exit()
-    }();
+    // !function () {
+    //     for (let index = 0; index < 30; index++) {
+    //         if (auto.service) {
+    //             log("无障碍开启成功")
+    //             return true
+    //         }
+    //         sleep(1000)
+    //     }
+    //     toastLog("使用代码开启无障碍失败,请手动开启无障碍后再次运行本应用")
+    //     exit()
+    // }();
     if (!start_66_yuedu()) {
         toastLog("66阅读开启失败,退出")
         exit()
@@ -1260,33 +1438,70 @@ function main() {
 
 
 function test() {
-    zhongxing_temp = get_zxc()
-    var re
-    //657，602
-    sleep(2000)
-    //657,410  点开人物信息
-    var img = images.captureScreen()
-    // var xt = images.read(files.getSdcardPath() + "/脚本/抖音外挂/gz.png")
-    // var re = images.findImage(img, xt)
-    log(re)
-    //310,325
-    var color = images.pixel(img, 480, 325);
-    log(colors.red(color))
-    exit()
-    var color = images.pixel(img, guanzhu_x, guanzhu_y);
-    var color2 = images.pixel(img, guanzhu_zhongxin_x, guanzhu_zhongxin_y);
-    var color3 = images.pixel(img, cd_x, cd_y);
-    var color4 = images.pixel(img, dianzan_x, dianzan_y)//点赞的中心点
+    // zhongxing_temp = get_zxc()
+    // var re
+    // //657，602
+    // sleep(2000)
+    // //657,410  点开人物信息
+    // var img = images.captureScreen()
+    // // var xt = images.read(files.getSdcardPath() + "/脚本/抖音外挂/gz.png")
+    // // var re = images.findImage(img, xt)
+    // log(re)
+    // //310,325
+    // var color = images.pixel(img, 480, 325);
+    // log(colors.red(color))
+    // exit()
+    // var color = images.pixel(img, guanzhu_x, guanzhu_y);
+    // var color2 = images.pixel(img, guanzhu_zhongxin_x, guanzhu_zhongxin_y);
+    // var color3 = images.pixel(img, cd_x, cd_y);
+    // var color4 = images.pixel(img, dianzan_x, dianzan_y)//点赞的中心点
 
-    log(colors.toString(color))
-    log(colors.toString(color2))
-    log(colors.toString(color3))
-    log(colors.toString(color4))
-    log(colors.isSimilar(color, colors.parseColor("#ffff2b54")))
-    log(colors.red(color4))
+    // log(colors.toString(color))
+    // log(colors.toString(color2))
+    // log(colors.toString(color3))
+    // log(colors.toString(color4))
+    // log(colors.isSimilar(color, colors.parseColor("#ffff2b54")))
+    // log(colors.red(color4))
+    // log(多个状态分开检测(["完成下载（领取200积分）"],5000))
+    // let dianzan = desc("喜欢").findOne().click()
+    // log(desc("喜欢").findOne().selected())
+    // function dianzan_guanzhu() {
+    //     var dianzan_flg = false, guanzhu_flg = false
+    //     for (let index = 0; index < 3; index++) {
+    //         let dianzan = desc("喜欢").id("like_layout").findOne(10000)
+    //         let guanzhu = text("关注").findOne(3000)
+    //         if (dianzan) {
+    //             if (!dianzan.selected()) {//没被选中
+    //                 log("点一下  点赞")
+    //                 dianzan.click()
 
-
-
+    //             } else {
+    //                 log("点赞检测通过")
+    //                 dianzan_flg = true
+    //             }
+    //         } else {
+    //             log("找不到点赞按钮")
+    //         }
+    //         if (guanzhu) {
+    //             let par = guanzhu.parent().parent()
+    //             if (par.clickable()) {
+    //                 log("点一下关注")
+    //                 par.click()
+    //             } else {
+    //                 log("关注按钮不能点击")
+    //             }
+    //         } else {
+    //             log("找不到关注按钮")
+    //             guanzhu_flg = true
+    //         }
+    //         if (dianzan_flg && guanzhu_flg) {
+    //             return true
+    //         }
+    //         sleep(2000)
+    //     }
+    // }
+    // log(dianzan_guanzhu())
+    log(auto)
 
 
 }

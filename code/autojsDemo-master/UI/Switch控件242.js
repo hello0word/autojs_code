@@ -1,7 +1,7 @@
 "ui";
 ui.layout(
     <vertical>
-        <Switch id='cb1' />
+        <Switch id='cb1' text="评论开关:" w="auto"/>
         <button id='cb2' text="第一个按钮" />
     </vertical>
 );

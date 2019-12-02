@@ -1,0 +1,10 @@
+{
+    "name": "autojs免费测试器",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.autojs.test.mianfei",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}

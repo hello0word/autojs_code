@@ -1,0 +1,10 @@
+{
+    "name": "快手外挂",
+    "main": "run.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.tool.kuaishou",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}
