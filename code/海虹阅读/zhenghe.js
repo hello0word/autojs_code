@@ -360,8 +360,6 @@ function task_managers() {
                 log("没任务了")
                 本次没任务的标记 = false
                 current_task = 切换(current_task)
-            } else {
-                current_task = "抖音"
             }
         } else if (当前选择的交替模式 == 1) {//运行一定时间后切换(分钟)
             if (!开始任务时间) {
