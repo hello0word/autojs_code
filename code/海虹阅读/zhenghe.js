@@ -1493,6 +1493,8 @@ function main() {
         exit()
     }
     // root开启无障碍()
+    log(auto.service)
+    sleep(2000)
     if (auto.service == null) {
         log("代码开启无障碍")
         openAccessbility()
