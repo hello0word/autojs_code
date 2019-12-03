@@ -1399,8 +1399,6 @@ function loop() {
         成功计数 += 1
         sleep(5000)
         back()
-        log("检查更新")
-        检查更新()
         var currenttime = random(15, 20)
         for (let index = 1; index < currenttime; index += 2) {
             toastLog("休眠中,剩余" + (currenttime - index) + "秒")
@@ -1496,7 +1494,9 @@ function main() {
     auto.waitFor()
     log("无障碍开启成功")
     device.keepScreenOn(2 * 3600 * 1000)
-
+    
+    log("检查更新")
+    检查更新()
 
     loop()
 
