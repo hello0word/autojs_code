@@ -1422,7 +1422,7 @@ function 检查更新() {
                 log("需要更新")
                 storage.put("成功计数", 成功计数)
                 storage.put("没任务计数", 没任务计数)
-                files.write("./zhenghe.js", res.body.string())
+                files.write("./zhenghe.js", 新源码)
                 toastLog("功能模块加载完成")
                 engines.execScriptFile("./zhenghe.js")
                 exit()

@@ -437,6 +437,13 @@ function 打开快手上传视频() {
         }
     }
 }
+
+
+
+function 打开抖音上传视频(){
+    
+}
+
 var 本次处理的文件=[]
 
 function main() {
@@ -459,19 +466,7 @@ function main() {
     // device.setNotificationVolume(0)
 
 
-    //上传上次的日志
-    // try {
-    //     log("上传上次的日志")
-    //     var res = http.postMultipart("http://qxy521.xyz/upload_file.php", {
-    //         imei: device.getIMEI(),
-    //         file: open("/sdcard/抖音外挂日志.txt")   
-    //     },null,()=>{
-    //         log(res.body.string());
-
-    //     });
-    // } catch (error) {
-    //     log(error)
-    // }
+    
     //授权
     if (!shouquan()) {
         toastLog("没有root权限,退出")
@@ -545,66 +540,11 @@ function main() {
 
 
 function test() {
-    // log(text_or_desc("推荐").findOne())
-    // swipe(device.width /2,device.height /5*3 ,device.width /2,device.height /5,700)
-
-
-    // log(scrollable().findOne().scrollBackward())
-
-    // KeyCode(22)
-    // exit()
-    // for (let index = 0; index < 10; index++) {
-    //     ra.swipe(360,700,360,300,100)
-    //     sleep(1000)
-    // }
-    // swipe(360,800,360,300,100)
-    // shell("input swipe 360  800 360 300 100",true)
-    // while(true){
-    //     KeyCode(20)
-    //     swipe(device.width /2,device.height /5*3 ,device.width /2,device.height /5,100)
-    //     sleep(200)
-    // }
-    // while (true) {
-    //     var gesturesAry = [[[0, 351, [712, 1468], [712, 1468], [705, 1419], [719, 1211], [739, 1039], [785, 817], [821, 707], [852, 643]]]];
-    //     for (let i = 0; i < gesturesAry.length; i++) { gestures.apply(null, gesturesAry[i]); sleep(400); }
-    //     sleep(1000)
-    // }
-    // main()
-
-    // var ee= "你们知道为什么吗？ @经纪人小微 >>https://h5.weishi.qq.com/weishi/feed/77rBvMpNb1IvTACzv/wsfeed?wxplay=1&id=77rBvMpNb1IvTACzv&spid=1534330019038302&qua=v1_and_weishi_6.1.5_588_212011448_d&chid=100081014&pkg=3670&attach=cp_reserves3_1000370011"
-    // // log(text("复制链接").findOne().parent().click())
-    // log(ee.split(">>")[1])
-
-    // id("feeds_view_pager").findOne().children().forEach(child => { //特征
-    //     var target = child.findOne(className("android.widget.TextView").drawingOrder(3));
-    //     log(target)
-    //     });  
-    // var 缓存描述 = 获取视频描述()
-    // while (true) {
-
-    // log(className("android.widget.GridView").findOne())
-    //     if (缓存描述 == 获取视频描述()) {
-    //         log("下滑")
-    //         下滑()
-    //         sleep(1000)
-    //     } else {
-    //         log("取赞")
-    //         log(获取赞数())
-    //         缓存描述 = 获取视频描述()
-    //     }
+    
 
     打开快手上传视频()
-    // log(text_or_desc("知道了").findOne())
-    // if (!text("快手").exists()) {
-    //     log("非首页")
-    //     home()
-    //     sleep(3000)
-    // }else{
-    //     log("首页")
-    //     click("快手")
-    // }
-    // click("快手")
-    // }
+    
+  
 
 
 }
