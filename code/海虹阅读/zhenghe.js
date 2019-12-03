@@ -14,13 +14,14 @@ console.show()
 log(app.autojs.versionName)
 var pid = android.os.Process.myPid()
 const app_loading_wait_count = 30 //打开快手/抖音  所等待的计数器
-const guanzhu_x = 642, guanzhu_y = 492, guanzhu_zhongxin_x = 659, guanzhu_zhongxin_y = 496//关注的红色位置  和关注的中心白色位置
-const guanzhu_tap_x = 670, guanzhu_tap_y = 450, open_guanzhu_x = 354, open_guanzhu_y = 288//这里前面是关注的中心点,后面是打开关注页后的检测位置
+const guanzhu_x = 642 / 720 * device.width, guanzhu_y = 492 / 1280 * device.height, guanzhu_zhongxin_x = 659 / 720 * device.width, guanzhu_zhongxin_y = 496 / 1280 * device.height//关注的红色位置  和关注的中心白色位置
+const guanzhu_tap_x = 670 / 720 * device.width, guanzhu_tap_y = 450 / 1280 * device.height, open_guanzhu_x = 354 / 720 * device.width, open_guanzhu_y = 288 / 1280 * device.height//这里前面是关注的中心点,后面是打开关注页后的检测位置
 
-const douyin_back_x = 50, douyin_back_y = 100
-const dianzan_x = 652, dianzan_y = 610//点赞的位置
-const comment_x = 652, comment_y = 740//评论的位置
-const cd_x = 652, cd_y = 1085
+const douyin_back_x = 50 / 720 * device.width, douyin_back_y = 100 / 1280 * device.height
+const dianzan_x = 652 / 720 * device.width, dianzan_y = 610 / 1280 * device.height//点赞的位置
+const comment_x = 652 / 720 * device.width, comment_y = 740 / 1280 * device.height//评论的位置
+// const cd_x = 652 / 720 * device.width, cd_y = 1085 / 1280 *device.height    //这是转圈的CD位置
+const cd_x = 360 / 720 * device.width, cd_y = 700 / 1280 * device.height ///改为取视频中间位置
 var zhongxing_temp // 中性词评论
 
 
@@ -565,12 +566,12 @@ function wait_douyin() {
     if (re) {
         sleep(6000)
         var change_arr = []
-        for (let index = 0; index < app_loading_wait_count; index++) {
+        for (let index = 0; index < douyin_video_wait_count; index++) {
             var img = images.captureScreen()
             var color = images.pixel(img, guanzhu_x, guanzhu_y);
-            var color2 = images.pixel(img, guanzhu_zhongxin_x, guanzhu_zhongxin_y);
+            // var color2 = images.pixel(img, guanzhu_zhongxin_x, guanzhu_zhongxin_y);
             var color3 = images.pixel(img, cd_x, cd_y);
-            var color4 = images.pixel(img, dianzan_x, dianzan_y)//点赞的中心点
+            // var color4 = images.pixel(img, dianzan_x, dianzan_y)//点赞的中心点
             if (colors.isSimilar(color, colors.parseColor("#ffff2b54"))) {
                 log("抖音加载完成")
                 return true
@@ -579,13 +580,13 @@ function wait_douyin() {
                 log("新颜色:" + index + "颜色" + color3)
                 change_arr.push(color3)
             }
-            if (change_arr.length > 8) {
+            if (change_arr.length > 5) {
                 log("cd在转了")
                 log("抖音加载完成")
                 return true
             }
 
-            sleep(random(1700, 2300))
+            sleep(random(1300, 1900))
             log("等待抖音视频加载中" + index)
         }
         return false
