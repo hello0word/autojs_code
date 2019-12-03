@@ -396,9 +396,11 @@ function task_managers() {
         log("没有勾选任务,退出")
         exit()
     }
+    if (!current_task) {
+        current_task="抖音"
+    }
 
-
-    if (current_task == "抖音" || !current_task) {
+    if (current_task == "抖音") {
         douyin()
 
     } else if (current_task == "快手") {
