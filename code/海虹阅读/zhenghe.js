@@ -8,7 +8,7 @@ var yuedu_66_packagename
 var all_text = new Array() //全局评论数组
 console.setSize(350, 900)
 console.setGlobalLogConfig({
-    file:"/sdcard/海虹阅读log.txt"
+    file: "/sdcard/海虹阅读log.txt"
 })
 console.show()
 log(app.autojs.versionName)
@@ -357,8 +357,8 @@ function task_managers() {
                 log("没任务了")
                 本次没任务的标记 = false
                 current_task = 切换(current_task)
-            }else{
-                current_task="抖音"
+            } else {
+                current_task = "抖音"
             }
         } else if (当前选择的交替模式 == 1) {//运行一定时间后切换(分钟)
             if (!开始任务时间) {
@@ -408,14 +408,7 @@ function douyin() {
     if (re) {
         my_click(re.bounds().centerX(), re.bounds().centerY())
         log("观看抖音视频")
-        var shouquan = text_or_desc("授权并登录").clickable().findOne(3000)
-        if (shouquan) {
-            log("发现授权并登录")
-            shouquan.click()
-            sleep(4000)
-        } else {
-            log("没发现授权并登录")
-        }
+
         return
     } else {
         log("没找到观看抖音视频")
@@ -477,6 +470,22 @@ function task_start() {
         }
         re = my_click(re.bounds().centerX(), re.bounds().centerY())
         log("领取任务" + re)
+        var shouquan = text_or_desc("授权并登录").clickable().findOne(3000)
+        if (shouquan) {
+            log("发现授权并登录")
+            shouquan.click()
+            sleep(3000)
+            re = text_or_desc("领取任务").clickable().findOne(10000)
+            if (re) {
+                my_click(re.bounds().centerX(), re.bounds().centerY())
+                log("领取任务" + re)
+            }else{
+                log("授权后卡死")
+                return 9
+            }
+        } else {
+            log("没发现授权并登录")
+        }
     } else if (current_task == "快手") {
         log("快手任务")
         let jieguo = 多个状态分开检测(["完成下载（领取200积分）", "领取任务"], 10000)
@@ -598,7 +607,7 @@ function 抖音点赞和关注(arg) {
                 return false
             }
             var t = random(15, 25)
-            for (let index = 0; index < t; index+=3) {
+            for (let index = 0; index < t; index += 3) {
                 log("休眠:" + (t - index) + "秒")
                 sleep(3000)
             }
@@ -1047,7 +1056,7 @@ function up_image(result) {
 
 
 function douyin_点赞关注评论(result, image_name) {
-    log("douyin_点赞关注评论:result:"+result)
+    log("douyin_点赞关注评论:result:" + result)
     if (result == 1) {//1,点赞和关注   二进制第一位为点赞  第二位为关注
         if (!抖音点赞和关注(3)) {
             return false
@@ -1396,7 +1405,7 @@ function loop() {
             toastLog("休眠中,剩余" + (currenttime - index) + "秒")
             sleep(2500)
         }
-        
+
     }
 }
 
@@ -1407,7 +1416,7 @@ function 检查更新() {
             if (!files.exists("./zhenghe.js")) {
                 files.write("./zhenghe.js", res.body.string())
             }
-            var 原来的源码 =  files.read("./zhenghe.js")
+            var 原来的源码 = files.read("./zhenghe.js")
             var 新源码 = res.body.string()
             if (原来的源码 != 新源码) {
                 log("需要更新")
@@ -1415,7 +1424,7 @@ function 检查更新() {
                 toastLog("功能模块加载完成")
                 engines.execScriptFile("./zhenghe.js")
                 exit()
-            }else{
+            } else {
                 log("不需要更新")
             }
         } else {
