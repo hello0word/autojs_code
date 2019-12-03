@@ -8,7 +8,11 @@ var 抖音勾选 = storage.get("抖音勾选", false), 快手勾选 = storage.ge
 var 评论文件位置 = storage.get("评论文件位置", "")
 ui.layout(
     <vertical padding="16">
-        <text gravity="center" textSize="40sp" textColor="red" textStyle="bold">海虹阅读</text>
+        <horizontal>
+            <button id="设置按钮" w="auto">设置</button>
+            <text gravity="center" textSize="40sp" textColor="red" textStyle="bold">海虹阅读</text>
+            <button id="日志按钮" w="auto">日志</button>
+        </horizontal>
         <text gravity="center" textSize="14sp" textStyle="bold">只勾选一个则只跑单app,勾选两个则根据模式选择交替方法</text>
         <horizontal>
             <text w="auto" margin="0 5 20 40">功能勾选:</text>
@@ -87,7 +91,12 @@ ui.更改评论文件.on("click", () => {
     startChooseFile("*/*");
 })
 
-
+ui.设置按钮.on("click",()=>{
+    app.startActivity(setting)
+})
+ui.日志按钮.on("click",()=>{
+    app.startActivity(console)
+})
 var 交替模式 = storage.get("交替模式", 0)
 /**
  * 控制单选框

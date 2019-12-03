@@ -14,6 +14,8 @@ console.show()
 log(app.autojs.versionName)
 var pid = android.os.Process.myPid()
 const app_loading_wait_count = 30 //打开快手/抖音  所等待的计数器
+const douyin_video_wait_count = 30
+
 const guanzhu_x = 642 / 720 * device.width, guanzhu_y = 492 / 1280 * device.height, guanzhu_zhongxin_x = 659 / 720 * device.width, guanzhu_zhongxin_y = 496 / 1280 * device.height//关注的红色位置  和关注的中心白色位置
 const guanzhu_tap_x = 670 / 720 * device.width, guanzhu_tap_y = 450 / 1280 * device.height, open_guanzhu_x = 354 / 720 * device.width, open_guanzhu_y = 288 / 1280 * device.height//这里前面是关注的中心点,后面是打开关注页后的检测位置
 
