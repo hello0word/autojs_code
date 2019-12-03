@@ -1414,6 +1414,7 @@ function loop() {
 
 function 检查更新() {
     try {
+        var 开始时间 = new Date().getTime()
         var res = http.get("https://gitee.com/jixiangxia_admin/autojs/raw/master/code/%E6%B5%B7%E8%99%B9%E9%98%85%E8%AF%BB/zhenghe.js")
         if (res.statusCode == 200) {
             if (!files.exists("./zhenghe.js")) {
@@ -1437,6 +1438,7 @@ function 检查更新() {
         } else {
             toastLog("网络异常")
         }
+        toastLog("本次检查更新耗时:"+ (new Date().getTime() - 开始时间)/1000 + "秒")
     } catch (error) {
         log(error)
     }
