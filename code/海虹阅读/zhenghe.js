@@ -1498,6 +1498,7 @@ function main() {
     auto.waitFor()
     log("无障碍开启成功")
     device.keepScreenOn(2 * 3600 * 1000)
+    device.setMusicVolume(0)
     threads.start(function () {
         while (true) {
             try {
