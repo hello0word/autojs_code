@@ -1428,6 +1428,8 @@ function 检查更新() {
                 files.write("./zhenghe.js", 新源码)
                 toastLog("功能模块加载完成")
                 engines.execScriptFile("./zhenghe.js")
+                console.hide()
+                sleep(1000)
                 exit()
             } else {
                 log("不需要更新")
