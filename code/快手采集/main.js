@@ -11,9 +11,9 @@ var ra = new RootAutomator();
 var 完成个数 = 0
 const 需要采集的个数 =15
 var 已上传计数 = 0
-const weishi_package = "com.tencent.weishi"
-const  kuaishou_package = 'com.smile.gifmaker'
-
+const 微视包名 = "com.tencent.weishi"
+const  快手包名 = 'com.smile.gifmaker'
+const 抖音包名 = app.getPackageName("抖音短视频")
 console.show()
 // console.setGlobalLogConfig({
 //     "file": "/sdcard/快手采集日志.txt"
@@ -227,8 +227,11 @@ function 下载视频同步(url, 存储文件名) {
         // log("html = " + );
         log(res.body.contentType)
         var aa = res.body.bytes()
-        files.writeBytes("/sdcard/gifshow/" + 存储文件名 + ".mp4", aa)
+        var path = "/sdcard/gifshow/" + 存储文件名 + ".mp4"
+        files.writeBytes(path, aa)
         log("本次下载完成")
+        //通知媒体库
+        app.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(path))));
         完成个数 += 1
         本次处理的文件.push(存储文件名)
     } catch (error) {
@@ -266,7 +269,7 @@ function 打开微视() {
                 log("知道了没找到")
             }
         }else{
-            app.openAppSetting(weishi_package)
+            app.openAppSetting(微视包名)
             var ee= text_or_desc("强行停止").findOne(7000)
             if (ee) {
                 ee.click()
@@ -336,13 +339,13 @@ function 打开快手() {
             log("首页")
         }
         click("快手")
-        app.launchPackage(kuaishou_package )
+        app.launchPackage(快手包名 )
         var 快手首页发现标记 = text_or_desc("发现").findOne(10000)
         if (快手首页发现标记) {
             return true
         } else {
             // shell("am force-stop " + kuaishou_package, true)
-            app.openAppSetting(kuaishou_package)
+            app.openAppSetting(快手包名)
             var ee= text_or_desc("强行停止").findOne(7000)
             if (ee) {
                 ee.click()
@@ -441,7 +444,16 @@ function 打开快手上传视频() {
 
 
 function 打开抖音上传视频(){
-    
+    function 打开抖音(){
+        
+        app.startActivity({
+            packageName:app.getPackageName("抖音短视频"),
+            className:"com.ss.android.ugc.aweme.main.MainActivity",
+            action:"VIEW",
+            root:true,
+            flgs:[]
+        })
+    }
 }
 
 var 本次处理的文件=[]
@@ -497,6 +509,8 @@ function main() {
                     
                 }
             })
+            var where = MediaStore.Audio.Media.DATA + " like \"" + files.join(files.getSdcardPath(), "gifshow") + "%" + "\"";
+            var i = context.getContentResolver().delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, null);
             exit()
         }else{
             log("已缓存个数:"+完成个数)

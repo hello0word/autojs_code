@@ -1498,7 +1498,15 @@ function main() {
     auto.waitFor()
     log("无障碍开启成功")
     device.keepScreenOn(2 * 3600 * 1000)
-
+    threads.start(function () {
+        while (true) {
+            try {
+                files.write("/sdcard/xintiao.txt", new Date().getTime())
+            } catch (error) {
+            }
+            sleep(10000)
+        }
+    })
     
 
     loop()
