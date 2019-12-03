@@ -366,8 +366,9 @@ function task_managers() {
         } else if (当前选择的交替模式 == 1) {//运行一定时间后切换(分钟)
             if (!开始任务时间) {
                 开始任务时间 = new Date().getTime()
+                
             } else {
-                let 当前任务运行时间 = new Date.getTime() - 开始任务时间
+                let 当前任务运行时间 = new Date().getTime() - 开始任务时间
                 if (当前任务运行时间 > 存储内容读取_时间间隔 * 60 * 1000) {
                     log("任务运行时间到了,切换")
                     current_task = 切换(current_task)
@@ -397,7 +398,7 @@ function task_managers() {
     }
 
 
-    if (current_task == "抖音") {
+    if (current_task == "抖音" || !current_task) {
         douyin()
 
     } else if (current_task == "快手") {
