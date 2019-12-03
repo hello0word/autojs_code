@@ -1298,6 +1298,8 @@ function kuaishou_点赞关注评论(result) {
 function loop() {
     var image_name = []
     while (true) {
+        log("检查更新")
+        检查更新()
         if (!start_66_yuedu()) {
             toastLog("66阅读开启失败,退出")
             exit()
@@ -1494,9 +1496,8 @@ function main() {
     auto.waitFor()
     log("无障碍开启成功")
     device.keepScreenOn(2 * 3600 * 1000)
+
     
-    log("检查更新")
-    检查更新()
 
     loop()
 
