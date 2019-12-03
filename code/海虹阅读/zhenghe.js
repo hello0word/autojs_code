@@ -1420,6 +1420,8 @@ function 检查更新() {
             var 新源码 = res.body.string()
             if (原来的源码 != 新源码) {
                 log("需要更新")
+                storage.put("成功计数", 成功计数)
+                storage.put("没任务计数", 没任务计数)
                 files.write("./zhenghe.js", res.body.string())
                 toastLog("功能模块加载完成")
                 engines.execScriptFile("./zhenghe.js")
