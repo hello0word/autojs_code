@@ -46,9 +46,7 @@ ui.layout(
     </vertical>
 );
 
-
-var 上次点击时间 = 0
-ui.立即开始.on("click", () => {
+function main() {
     var 输入内容读取 = ui.配置输入框.text()
     var 当前选择的交替模式 = storage.get("交替模式", 0)
     switch (当前选择的交替模式) {
@@ -77,7 +75,12 @@ ui.立即开始.on("click", () => {
     } else {
         toastLog("请等待")
     }
+}
 
+
+var 上次点击时间 = 0
+ui.立即开始.on("click", () => {
+    main()
 })
 
 ui.更改评论文件.on("click", () => {
@@ -295,8 +298,7 @@ function startChooseFile(mimeType, callback) {
 setInterval(() => {
     倒计时 -= 1
     if (倒计时 <= 0) {
-        execution = engines.execScriptFile("./zhenghe.js");
-        ui.finish()
+        main()
     }
     ui.立即开始.setText("立即开始(" + 倒计时 + ")")
 }, 1000)
