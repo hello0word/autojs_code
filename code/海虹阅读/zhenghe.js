@@ -1048,11 +1048,16 @@ function up_image(result) {
     }
     if (!up()) {
         log("第一次尝试上传失败，再试一次")
-        text_or_desc("确定").clickable().findOne().click()
+        var 确定= text_or_desc("确定").clickable().findOne(5000)
+        if (确定) {
+            log("确定")
+            确定.click()
+        }
         if (up()) {
             log("第二次成功")
         } else {
             log("第二次失败")
+            return 0
         }
     }
 
@@ -1409,7 +1414,13 @@ function loop() {
             toastLog("休眠中,剩余" + (currenttime - index) + "秒")
             sleep(2500)
         }
-
+        var rootPath = "/sdcard/dliao/"
+        if (files.exists(rootPath)) {
+            files.listDir(rootPath).forEach((fileName) => {
+                log(fileName)
+                files.remove(rootPath + fileName)
+            })
+        }
     }
 }
 

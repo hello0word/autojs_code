@@ -928,7 +928,13 @@ function up_image(result) {
     }
     function up() {
         log("开始找上传截图按钮")
-        text("上传截图").findOne()
+        var 上传截图= text("上传截图").findOne(2000)
+        if (上传截图) {
+            log("找到上传截图")
+        }else{
+            log("错误")
+            return false
+        }
         var shangchuan_arr = text("上传截图").clickable().find()
         for (let index = 0; index < shangchuan_arr.length; index++) {
             if (shangchuan_arr.length == 1) {
@@ -975,11 +981,16 @@ function up_image(result) {
     }
     if (!up()) {
         log("第一次尝试上传失败，再试一次")
-        text_or_desc("确定").clickable().findOne().click()
+        var 确定= text_or_desc("确定").clickable().findOne(5000)
+        if (确定) {
+            log("确定")
+            确定.click()
+        }
         if (up()) {
             log("第二次成功")
         } else {
             log("第二次失败")
+            return 0
         }
     }
 

@@ -4,22 +4,37 @@
  * 
  * 
  */
+importClass(android.content.Intent)
+importClass(android.net.Uri)
+importClass(java.io.File)
+importClass(android.provider.MediaStore)
+
 var myself_package_name
 myself_package_name = context.getPackageName()
 
 var ra = new RootAutomator();
 var 完成个数 = 0
-const 需要采集的个数 =15
+const 需要采集的个数 = 2
 var 已上传计数 = 0
 const 微视包名 = "com.tencent.weishi"
-const  快手包名 = 'com.smile.gifmaker'
+const 快手包名 = 'com.smile.gifmaker'
 const 抖音包名 = app.getPackageName("抖音短视频")
-console.show()
+// console.show()
 // console.setGlobalLogConfig({
 //     "file": "/sdcard/快手采集日志.txt"
 // })
 // log(ra)
 // exit()
+var 解析失败 = false//抖音上传视频可能解析失败
+events.observeToast();
+events.onToast(function (toast) {
+    log("Toast内容: " + toast.getText() + " 包名: " + toast.getPackageName());
+    if (toast.getText() == "解析失败，选择其他视频试试吧") {
+        log("解析失败")
+        解析失败 = true
+    }
+});
+
 events.on('exit', function () {
     device.cancelKeepingAwake()
     ra.exit()
@@ -126,7 +141,7 @@ function text_or_desc(str) {
             return false
         }
     }
-    this.findOne = function (timeout,间隔) {
+    this.findOne = function (timeout, 间隔) {
         timeout = timeout || 24 * 60 * 60 * 1000
         var start_time = new Date().getTime()
         var time_flag = start_time
@@ -135,7 +150,7 @@ function text_or_desc(str) {
             if (new Date().getTime() - time_flag > 间隔) {
                 toastLog("查找:" + this.str)
                 time_flag = new Date().getTime()
-            }else{
+            } else {
                 sleep(500)
                 continue
             }
@@ -234,8 +249,9 @@ function 下载视频同步(url, 存储文件名) {
         app.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(path))));
         完成个数 += 1
         本次处理的文件.push(存储文件名)
+        log("文件名已保存")
     } catch (error) {
-
+        log(error)
     }
 
 
@@ -253,27 +269,27 @@ function 打开微视() {
             log("非首页")
             home()
             sleep(3000)
-        }else{
+        } else {
             log("首页")
         }
         click("微视")
         if (text_or_desc("推荐").findOne(10000)) {
             return true
-        }else if (text_or_desc("知道了").findOne(7000)) {
+        } else if (text_or_desc("知道了").findOne(7000)) {
             var ff = text_or_desc("知道了").findOne(1000)
             if (ff) {
                 log("知道了")
                 ff.click()
                 return true
-            }else{
+            } else {
                 log("知道了没找到")
             }
-        }else{
+        } else {
             app.openAppSetting(微视包名)
-            var ee= text_or_desc("强行停止").findOne(7000)
+            var ee = text_or_desc("强行停止").findOne(7000)
             if (ee) {
                 ee.click()
-                var ff= text_or_desc("确定").findOne(5000)
+                var ff = text_or_desc("确定").findOne(5000)
                 if (ff) {
                     ff.click()
                 }
@@ -323,7 +339,7 @@ function 下滑() {
     // shell("input swipe 360  800 360 300 100", true)
     console.hide()
     sleep(1000)
-    ra.swipe(360,800,360,300,10)
+    swipe(500 / 720 * device.width, 700 / 1280 * device.height, 500 / 720 * device.width, 660 / 1280 * device.height, 10)
     console.show()
     // KeyCode(20)
 
@@ -335,21 +351,21 @@ function 打开快手() {
             log("非首页")
             home()
             sleep(3000)
-        }else{
+        } else {
             log("首页")
         }
         click("快手")
-        app.launchPackage(快手包名 )
+        app.launchPackage(快手包名)
         var 快手首页发现标记 = text_or_desc("发现").findOne(10000)
         if (快手首页发现标记) {
             return true
         } else {
             // shell("am force-stop " + kuaishou_package, true)
             app.openAppSetting(快手包名)
-            var ee= text_or_desc("强行停止").findOne(7000)
+            var ee = text_or_desc("强行停止").findOne(7000)
             if (ee) {
                 ee.click()
-                var ff= text_or_desc("确定").findOne(5000)
+                var ff = text_or_desc("确定").findOne(5000)
                 if (ff) {
                     ff.click()
                     sleep(1000)
@@ -374,7 +390,7 @@ function 上传本地作品集视频() {
         log("已上传完成")
         return false
     }
-    log("已上传计数:"+已上传计数)
+    log("已上传计数:" + 已上传计数)
     try {
         var 当前处理 = 本地作品集根.child(已上传计数)//这里直接用
         log("本次无异常")
@@ -395,9 +411,9 @@ function 上传本地作品集视频() {
             var 发布成功标记 = textStartsWith("发布成功").findOne(90 * 1000)
             if (发布成功标记) {
                 log("本次发布成功")
-                已上传计数+=1
+                已上传计数 += 1
                 return true
-            }else{
+            } else {
                 log("本次发布失败")
                 return false
             }
@@ -417,8 +433,8 @@ function 打开快手上传视频() {
     log("打开快手上传视频")
     打开快手()
     while (true) {
-        if (已上传计数 >=需要采集的个数 ) {
-            toastLog("任务完成,本次上传个数:"+需要采集的个数)
+        if (已上传计数 >= 需要采集的个数) {
+            toastLog("任务完成,本次上传个数:" + 需要采集的个数)
             return true
         }
         var 菜单 = text_or_desc("菜单").findOne(8000)
@@ -429,7 +445,7 @@ function 打开快手上传视频() {
                 本地作品集.click()
                 if (!上传本地作品集视频()) {//没了
                     return false
-                }else{
+                } else {
                     log("本次上传成功")
                 }
             } else {
@@ -443,22 +459,265 @@ function 打开快手上传视频() {
 
 
 
-function 打开抖音上传视频(){
-    function 打开抖音(){
-        
-        app.startActivity({
-            packageName:app.getPackageName("抖音短视频"),
-            className:"com.ss.android.ugc.aweme.main.MainActivity",
-            action:"VIEW",
-            root:true,
-            flgs:[]
-        })
+function 打开抖音上传视频() {
+    threads.start(function(){
+        var list= ["取消","允许","跳过","我知道了"]
+        while(true){
+            for (let index = 0; index < list.length; index++) {
+                var element = list[index];
+                var 按钮 =  text(element).clickable().findOne(1)
+                if (按钮) {
+                    log(element)
+                    按钮.click()
+                    break;
+                }
+            }
+            sleep(2000)
+        }
+    })
+    function 打开抖音() {
+        for (let index = 0; index < 5; index++) {
+            app.startActivity({
+                packageName: 抖音包名,
+                className: "com.ss.android.ugc.aweme.main.MainActivity",
+                action: "android.intent.action.VIEW",
+                root: true,
+                flags: ["activity_new_task"],
+            })
+            var 拍摄按钮 = desc("拍摄，按钮").findOne(10000)
+            if (拍摄按钮) {
+                log("抖音打开成功")
+                return true
+            } else {
+                app.openAppSetting(抖音包名)
+                text("强行停止").findOne().click()
+                let qd = text("确定").findOne(2000)
+                qd ? qd.click() : log("已关闭")
+                sleep(2000)
+            }
+
+        }
+        return false
     }
+
+    function 有多段视频的按钮的视频选择(现在处理的视频序号) {
+        var 视频列表 = className("android.support.v7.widget.RecyclerView").depth(9).findOne(15000)
+        if (视频列表) {
+            let 现有视频个数 = 视频列表.childCount()
+            if (现有视频个数 <= 现在处理的视频序号) {
+                log("处理完了")
+                return 3
+            } else {
+                log("处理第" + (现在处理的视频序号 + 1) + "个视频")
+                视频列表.child(现在处理的视频序号).click()
+                return 1
+            }
+        } else {
+            log("找不到视频列表")
+            return 4
+        }
+    }
+
+
+    function 有可同时选择视频与图片和下一步按钮的视频选择(现在处理的视频序号) {
+        var 视频列表 = className("android.support.v7.widget.RecyclerView").depth(9).findOne(15000)
+        if (视频列表) {
+            let 现有视频个数 = 视频列表.childCount()
+            if (现有视频个数 <= 现在处理的视频序号) {
+                log("处理完了")
+                return 3
+            } else {
+                var 选中按钮 = 视频列表.child(现在处理的视频序号).findOne(className("android.widget.FrameLayout"))
+                if (选中按钮) {
+                    选中按钮.click()
+                    sleep(2000)
+                    var 下一步 = text("下一步").findOne()
+                    if (下一步 && 下一步.clickable()) {
+                        下一步.click()
+                        return 1
+                    } else {
+                        return 4//返回4 代表本次错误
+                    }
+                } else {
+                    return 4
+                }
+            }
+        }
+    }
+
+    //
+    function 视频选择(现在处理的视频序号) {
+        var 拍摄按钮 = desc("拍摄，按钮").findOne(10000)
+        if (拍摄按钮) {
+            拍摄按钮.parent().parent().parent().click()
+        } else {
+            log("找不到拍摄按钮")
+            return 1
+        }
+        sleep(2000)
+        var 上传按钮 = text("上传").findOne(15000)
+        if (上传按钮) {
+            上传按钮.parent().parent().click()
+        } else {
+            log("找不到上传按钮")
+            return 2
+        }
+        sleep(8000)
+        var 视频列表 = className("android.support.v7.widget.RecyclerView").depth(9).findOne(15000)
+        if (视频列表) {
+            log("找到视频列表")
+            if (text("多段视频").exists()) {
+                log("多段视频视频选择")
+                var 返回 = 有多段视频的按钮的视频选择(现在处理的视频序号)
+                if (返回 == 3) {
+                    return 3// 视频处理完成
+                } else if (返回 == 1) {
+                    log("本次选择视频ok")
+
+                } else {
+                    // log()
+                }
+            } else if (text("可同时选视频与图片").exists()) {
+                log("可同时选视频与图片")
+                var 返回 = 有可同时选择视频与图片和下一步按钮的视频选择(现在处理的视频序号)
+                if (返回 == 3) {
+                    return 3// 视频处理完成
+                } else if (返回 == 1) {
+                    log("本次ok")
+
+                } else {
+                    log("本次错误")
+                }
+            } else {
+                log("设备未匹配")
+            }
+        } else {
+            log("找不到视频列表")
+
+        }
+        sleep(2000)
+        for (let index = 0; index < 3; index++) {
+            var 剪切页下一步 = text("下一步").clickable().findOne(10000)
+            if (剪切页下一步) {
+                log("剪切页已点击")
+                剪切页下一步.click()
+                if( text("正在合成中").findOne(2000) || text("选配乐").exists()){
+                    break;
+                }
+            } else {
+                log("找不到剪切页下一步")
+                return 5
+            }
+            
+        }
+        
+
+        sleep(2000)
+        var 计数器 = 0 ,合成检测 =false
+        for (let index = 0; index < 1000; index++) {
+            if (!text("正在合成中").exists()) {
+                计数器 += 1
+                log("计数器+1")
+            } else {
+                
+                计数器 = 0
+                log("计数器归0")
+            }
+            sleep(1000)
+            if (计数器 > 7) {
+                log("合成检测通过")
+                合成检测 = true
+                break;
+            }
+            if (text("选配乐").exists()) {
+                log("已到达美化页")
+                合成检测= true
+                break;
+            }
+        }
+        if (!合成检测) {
+            log("合成失败")
+            return 11
+        }
+        var 美化页下一步 = text("下一步").clickable().findOne(10000)
+        if (美化页下一步) {
+            美化页下一步.click()
+        } else {
+            log("找不到美化页下一步")
+            return 6
+        }
+        sleep(2000)
+
+        var 发布 = desc("发布").clickable().findOne(10000)
+        if (发布) {
+            var 保存本地按钮 = text("保存本地").className("android.widget.CheckBox").findOne(1000)
+            if (保存本地按钮.checked()) {
+                log("取消保存到本地")
+                保存本地按钮.click()
+                sleep(1000)
+            }
+            发布.click()
+        } else {
+            log("找不到发布")
+            return 7
+        }
+        sleep(2000)
+        var 拍摄按钮 = desc("拍摄，按钮").findOne(10000)//检测回到主页
+        if (拍摄按钮) {
+            log("本次上传成功")
+            return 8//成功
+        } else {
+            log("本次上传失败")
+            return 9
+        }
+
+
+
+
+    }
+
+    //////////////以上为函数,下为功能
+    if (!打开抖音()) {
+        log("无法打开抖音,退出")
+        exit()
+    }
+
+    for (let index = 0; index < 需要采集的个数; index++) {
+        var 视频选择结果 = 视频选择(index)
+        log("视频选择结果" + 视频选择结果)
+        if (视频选择结果 == 3) {
+            log("所有视频上传完成")
+            log("上传个数:" + index)
+            return true
+        }
+        var 计数器 = 0 ,上传检测 =false
+        for (let index = 0; index < 1000; index++) {
+            if (!textEndsWith("%").exists()) {
+                计数器 += 1
+                log("计数器+1")
+            } else {
+                计数器 = 0
+                log("计数器归0")
+            }
+            sleep(1000)
+            if (计数器 > 7) {
+                log("上传检测通过")
+                上传检测 = true
+                break;
+            }
+        }
+        if (!上传检测) {
+            log("上传失败")
+        }
+    }
+
 }
 
-var 本次处理的文件=[]
+var 本次处理的文件 = []
 
 function main() {
+    // var 上传位置= dialogs.select("上传到哪",["快手","抖音"])
+    var 上传位置 = 1
     threads.start(function () {
         while (true) {
 
@@ -478,7 +737,7 @@ function main() {
     // device.setNotificationVolume(0)
 
 
-    
+
     //授权
     if (!shouquan()) {
         toastLog("没有root权限,退出")
@@ -491,29 +750,34 @@ function main() {
     var 缓存描述 = 获取视频描述()
     while (true) {
         if (完成个数 >= 需要采集的个数) {
-            打开快手上传视频()
+            if (上传位置 == 0) {
+                打开快手上传视频()
+
+            } else if (上传位置 == 1) {
+                打开抖音上传视频()
+            }
             log("上传完成")
             log("删除文件")
             // /sdcard/gifshow/" + 存储文件名 + ".mp4"
             log(本次处理的文件)
-            
-            本次处理的文件.forEach((存储文件名)=>{
+
+            本次处理的文件.forEach((存储文件名) => {
                 var path = "/sdcard/gifshow/" + 存储文件名 + ".mp4";
-                if (files.exists(path) ) {
-                    log("删除:"+ path)
+                if (files.exists(path)) {
+                    log("删除:" + path)
                     try {
-                        log("删除:"+ path +":"+files.remove(path))
+                        log("删除:" + path + ":" + files.remove(path))
                     } catch (error) {
                         log(error)
                     }
-                    
+
                 }
             })
             var where = MediaStore.Audio.Media.DATA + " like \"" + files.join(files.getSdcardPath(), "gifshow") + "%" + "\"";
             var i = context.getContentResolver().delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, where, null);
             exit()
-        }else{
-            log("已缓存个数:"+完成个数)
+        } else {
+            log("已缓存个数:" + 完成个数)
         }
         if (缓存描述 == 获取视频描述()) {
             log("下滑")
@@ -552,19 +816,16 @@ function main() {
 
 }
 
-
 function test() {
-    
 
-    打开快手上传视频()
-    
-  
+    打开抖音上传视频()
+
 
 
 }
 
 // var task_selectds=dialogs.select("功能选择",["开始","测试"])
-var task_selectds = 0
+var task_selectds = 1
 if (task_selectds == 0) {
     main()
 } else if (task_selectds == 1) {

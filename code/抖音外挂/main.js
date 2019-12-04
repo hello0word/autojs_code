@@ -24,7 +24,7 @@ const cd_x = 360 / 720 * device.width, cd_y = 700 / 1280 * device.height ///改�
 
 var zhongxing_temp // 中性词评论
 
-var run_count= 0 
+var run_count = 0
 
 
 
@@ -305,12 +305,12 @@ function start_66_yuedu(timeout) {
     for (let index = 0; index < 30; index++) {
         shell("am force-stop " + yuedu_66_packagename, true)
         sleep(1000)
-        if (run_count >1 && run()) {
+        if (run_count > 1 && run()) {
             toastLog("本脚本退出,开始新的")
             sleep(1000)
             console.hide()
             exit()
-        }else{
+        } else {
             log("更新失败,继续本脚本")
         }
         app.launchPackage(yuedu_66_packagename)
@@ -1070,7 +1070,15 @@ function loop() {
             toastLog("休眠中,剩余" + (currenttime - index) + "秒")
             sleep(5000)
         }
-        run_count+=1
+        run_count += 1
+        log('删除66阅读缓存')
+        var rootPath = "/sdcard/dliao/"
+        if (files.exists(rootPath)) {
+            files.listDir(rootPath).forEach((fileName) => {
+                log(fileName)
+                files.remove(rootPath + fileName)
+            })
+        }
     }
 }
 
