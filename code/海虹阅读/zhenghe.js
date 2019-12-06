@@ -12,6 +12,7 @@ console.setGlobalLogConfig({
 })
 console.show()
 log(app.autojs.versionName)
+log("测试信息")
 var pid = android.os.Process.myPid()
 const app_loading_wait_count = 30 //打开快手/抖音  所等待的计数器
 const douyin_video_wait_count = 30

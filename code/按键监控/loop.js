@@ -4,10 +4,10 @@ var 进程勾选 = storage.get("进程勾选",false)
 var 状态勾选 = storage.get("状态勾选",false)
 var 包名 = storage.get("包名","")
 //com.com.aj.cheshi.soft
-if (!requestScreenCapture()) {
-    toastLog("请求截图失败");
-    exit()
-}
+// if (!requestScreenCapture()) {
+//     toastLog("请求截图失败");
+//     exit()
+// }
 
 auto.waitFor()
 
@@ -80,10 +80,12 @@ while (true) {
             log(包名)
             app.launchPackage(包名)
             toastLog("等待启动功能按钮")
-            var 启动功能= text("启动功能").clickable().findOne()
+            var 启动功能= text("启动功能").clickable().findOne(20000)
             if (启动功能) {
                 启动功能.click()
                 sleep(2000)
+            }else{
+                toastLog('中不到启动功能按钮')
             }
         }else{
             toast("进程存在")
