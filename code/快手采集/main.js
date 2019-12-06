@@ -14,7 +14,7 @@ myself_package_name = context.getPackageName()
 
 var ra = new RootAutomator();
 var 完成个数 = 0
-const 需要采集的个数 = 2
+const 需要采集的个数 = 15
 var 已上传计数 = 0
 const 微视包名 = "com.tencent.weishi"
 const 快手包名 = 'com.smile.gifmaker'
@@ -26,14 +26,14 @@ const 抖音包名 = app.getPackageName("抖音短视频")
 // log(ra)
 // exit()
 var 解析失败 = false//抖音上传视频可能解析失败
-events.observeToast();
-events.onToast(function (toast) {
-    log("Toast内容: " + toast.getText() + " 包名: " + toast.getPackageName());
-    if (toast.getText() == "解析失败，选择其他视频试试吧") {
-        log("解析失败")
-        解析失败 = true
-    }
-});
+// events.observeToast();
+// events.onToast(function (toast) {
+//     log("Toast内容: " + toast.getText() + " 包名: " + toast.getPackageName());
+//     if (toast.getText() == "解析失败，选择其他视频试试吧") {
+//         log("解析失败")
+//         解析失败 = true
+//     }
+// });
 
 events.on('exit', function () {
     device.cancelKeepingAwake()
@@ -460,21 +460,7 @@ function 打开快手上传视频() {
 
 
 function 打开抖音上传视频() {
-    threads.start(function(){
-        var list= ["取消","允许","跳过","我知道了"]
-        while(true){
-            for (let index = 0; index < list.length; index++) {
-                var element = list[index];
-                var 按钮 =  text(element).clickable().findOne(1)
-                if (按钮) {
-                    log(element)
-                    按钮.click()
-                    break;
-                }
-            }
-            sleep(2000)
-        }
-    })
+    
     function 打开抖音() {
         for (let index = 0; index < 5; index++) {
             app.startActivity({
@@ -490,6 +476,7 @@ function 打开抖音上传视频() {
                 return true
             } else {
                 app.openAppSetting(抖音包名)
+                log("查找强行停止")
                 text("强行停止").findOne().click()
                 let qd = text("确定").findOne(2000)
                 qd ? qd.click() : log("已关闭")
@@ -531,6 +518,7 @@ function 打开抖音上传视频() {
                 if (选中按钮) {
                     选中按钮.click()
                     sleep(2000)
+                    log("查找下一步")
                     var 下一步 = text("下一步").findOne()
                     if (下一步 && 下一步.clickable()) {
                         下一步.click()
@@ -549,6 +537,8 @@ function 打开抖音上传视频() {
     function 视频选择(现在处理的视频序号) {
         var 拍摄按钮 = desc("拍摄，按钮").findOne(10000)
         if (拍摄按钮) {
+            log("找到拍摄按钮")
+
             拍摄按钮.parent().parent().parent().click()
         } else {
             log("找不到拍摄按钮")
@@ -557,6 +547,8 @@ function 打开抖音上传视频() {
         sleep(2000)
         var 上传按钮 = text("上传").findOne(15000)
         if (上传按钮) {
+            log("找到上传按钮")
+
             上传按钮.parent().parent().click()
         } else {
             log("找不到上传按钮")
@@ -632,6 +624,7 @@ function 打开抖音上传视频() {
             if (text("选配乐").exists()) {
                 log("已到达美化页")
                 合成检测= true
+
                 break;
             }
         }
@@ -708,9 +701,12 @@ function 打开抖音上传视频() {
         }
         if (!上传检测) {
             log("上传失败")
+        }else{
+            log("上传成功")
+            
         }
     }
-
+    log("达到需要采集的个数:"+需要采集的个数)
 }
 
 var 本次处理的文件 = []
@@ -720,17 +716,26 @@ function main() {
     var 上传位置 = 1
     threads.start(function () {
         while (true) {
-
+            var list= ["取消","允许","跳过","我知道了","知道了"]
+            for (let index = 0; index < list.length; index++) {
+                var element = list[index];
+                var 按钮 =  text(element).clickable().findOne(1)
+                if (按钮) {
+                    log(element)
+                    按钮.click()
+                    break;
+                }
+            }
             try {
                 files.write("/sdcard/kuaishoucaiji.txt", new Date().getTime())
             } catch (error) {
 
             }
 
-            sleep(6000)
+            sleep(3000)
         }
     })
-
+    
 
 
     device.setMusicVolume(0)
@@ -825,7 +830,7 @@ function test() {
 }
 
 // var task_selectds=dialogs.select("功能选择",["开始","测试"])
-var task_selectds = 1
+var task_selectds = 0
 if (task_selectds == 0) {
     main()
 } else if (task_selectds == 1) {
