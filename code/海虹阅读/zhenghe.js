@@ -491,6 +491,14 @@ function task_start() {
         } else {
             log("没发现授权并登录")
         }
+        if(text_or_desc("请复制下面的内容到DY里留言").exists()){
+            log("发现留言任务")
+            var ss= text_or_desc("复制").clickable().fiidOne(1000)
+            if (ss) {
+                log("已复制")
+                ss.click()
+            }
+        }
     } else if (current_task == "快手") {
         log("快手任务")
         let jieguo = 多个状态分开检测(["完成下载（领取200积分）", "领取任务"], 10000)
@@ -1524,6 +1532,7 @@ function main() {
                 files.write("/sdcard/xintiao.txt", new Date().getTime())
             } catch (error) {
             }
+
             sleep(10000)
         }
     })
