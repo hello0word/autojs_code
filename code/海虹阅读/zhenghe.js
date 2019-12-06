@@ -308,7 +308,7 @@ function start_66_yuedu(timeout) {
             back()
             continue
         }
-        if (text_or_desc("联系客服").clickable().findOne(8000) && text("任务中心").exists()) {
+        if (text_or_desc("联系客服").clickable().findOne(6000) && text("任务中心").finOne(6000)) {
             toastLog("66阅读开启成功")
             return true
         }
