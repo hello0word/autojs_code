@@ -384,7 +384,7 @@ function task_managers() {
             }
         } else if (当前选择的交替模式 == 3) {
             if (没任务计数 >= 存储内容读取_每没任务) {
-                log("已没任务" + 存储内容读取_每成功 + "次,切换")
+                log("已没任务" + 存储内容读取_每没任务 + "次,切换")
                 current_task = 切换(current_task)
                 没任务计数 = 0
             }
