@@ -467,6 +467,16 @@ function task_start() {
         re = text_or_desc("领取任务").clickable().findOne(10000)
         if (!re) {
             log("没找到领取任务")
+            if(textContains("下一波任务到达时间").exists()){
+                本次没任务的标记 = true
+                没任务计数 += 1
+                log("下一波任务到达时间")
+                back()
+                let ran = random(15, 20)
+                log("休眠:" + ran + "秒")
+                sleep(ran * 1000)
+                return 9
+            }
             log("等待一段时间再开始")
             var ee = random(30, 50)
             for (let index = 0; index < ee; index++) {
@@ -503,12 +513,23 @@ function task_start() {
         }
     } else if (current_task == "快手") {
         log("快手任务")
+        
         let jieguo = 多个状态分开检测(["完成下载（领取200积分）", "领取任务"], 10000)
         if (jieguo.index == 1) {
             jieguo.result.click()
         } else if (jieguo.index == 0) {
             jieguo.result.click()
             text("确定").clickable().findOne().click()
+        }
+        if(textContains("下一波任务到达时间").exists()){
+            本次没任务的标记 = true
+            没任务计数 += 1
+            log("下一波任务到达时间")
+            back()
+            let ran = random(15, 20)
+            log("休眠:" + ran + "秒")
+            sleep(ran * 1000)
+            return 9
         }
 
     }
@@ -520,24 +541,6 @@ function task_start() {
             本次没任务的标记 = true
             没任务计数 += 1
             log("暂时没有任务，请尝试其它任务,返回")
-            back()
-            let ran = random(15, 20)
-            log("休眠:" + ran + "秒")
-            sleep(ran * 1000)
-            return 9
-        }else if(textContains("下一波").exists()){
-            本次没任务的标记 = true
-            没任务计数 += 1
-            log("下一波任务到达时间")
-            back()
-            let ran = random(15, 20)
-            log("休眠:" + ran + "秒")
-            sleep(ran * 1000)
-            return 9
-        }else if(descContains("下一波").exists()){
-            本次没任务的标记 = true
-            没任务计数 += 1
-            log("下一波任务到达时间")
             back()
             let ran = random(15, 20)
             log("休眠:" + ran + "秒")
