@@ -14,7 +14,7 @@ myself_package_name = context.getPackageName()
 
 var ra = new RootAutomator();
 var 完成个数 = 0
-const 需要采集的个数 = 15
+const 需要采集的个数 = 1
 var 已上传计数 = 0
 const 微视包名 = "com.tencent.weishi"
 const 快手包名 = 'com.smile.gifmaker'
