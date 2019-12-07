@@ -534,6 +534,15 @@ function task_start() {
             log("休眠:" + ran + "秒")
             sleep(ran * 1000)
             return 9
+        }else if(descContains("下一波").exists()){
+            本次没任务的标记 = true
+            没任务计数 += 1
+            log("下一波任务到达时间")
+            back()
+            let ran = random(15, 20)
+            log("休眠:" + ran + "秒")
+            sleep(ran * 1000)
+            return 9
         }
         toastLog("15秒内无反应，66阅读可能卡死，关闭重进")
         return "66阅读卡死"
