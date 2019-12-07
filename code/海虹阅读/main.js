@@ -1,7 +1,7 @@
 "ui";
 
 var 默认配置 = "默认配置,运行到没任务了立即切换"
-var 倒计时 = 60
+var 倒计时 = 30
 var storage = storages.create("海虹阅读")
 
 var 抖音勾选 = storage.get("抖音勾选", false), 快手勾选 = storage.get("快手勾选", false)
