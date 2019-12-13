@@ -19,7 +19,7 @@ var 已上传计数 = 0
 const 微视包名 = "com.tencent.weishi"
 const 快手包名 = 'com.smile.gifmaker'
 const 抖音包名 = app.getPackageName("抖音短视频")
-// console.show()
+console.show()
 // console.setGlobalLogConfig({
 //     "file": "/sdcard/快手采集日志.txt"
 // })
@@ -250,8 +250,10 @@ function 下载视频同步(url, 存储文件名) {
         完成个数 += 1
         本次处理的文件.push(存储文件名)
         log("文件名已保存")
+        return true
     } catch (error) {
         log(error)
+        return false
     }
 
 
@@ -490,7 +492,12 @@ function 打开抖音上传视频() {
     function 有多段视频的按钮的视频选择(现在处理的视频序号) {
         var 视频列表 = className("android.support.v7.widget.RecyclerView").depth(9).findOne(15000)
         if (视频列表) {
+            log("等待8秒视频列表加载完")
+            sleep(8000)
+            var 视频列表 = className("android.support.v7.widget.RecyclerView").depth(9).findOne(15000)
             let 现有视频个数 = 视频列表.childCount()
+            log("现有视频个数:"+现有视频个数)
+            log("现在处理的视频序号:"+现在处理的视频序号)
             if (现有视频个数 <= 现在处理的视频序号) {
                 log("处理完了")
                 return 3
@@ -519,7 +526,7 @@ function 打开抖音上传视频() {
                     选中按钮.click()
                     sleep(2000)
                     log("查找下一步")
-                    var 下一步 = text("下一步").findOne()
+                    var 下一步 = text("下一步").findOne(5000)
                     if (下一步 && 下一步.clickable()) {
                         下一步.click()
                         return 1
@@ -578,7 +585,13 @@ function 打开抖音上传视频() {
                     log("本次ok")
 
                 } else {
-                    log("本次错误")
+                    log("本次错误,重启本脚本")
+                    let path = engines.myEngine().source.toString();
+                    engines.execScriptFile(path)
+                    toast("重新运行,当前悬浮窗关闭")
+                    console.hide()
+                    exit()
+                    return 40
                 }
             } else {
                 log("设备未匹配")
@@ -598,6 +611,12 @@ function 打开抖音上传视频() {
                 }
             } else {
                 log("找不到剪切页下一步")
+                log("本次错误,重启本脚本")
+                let path = engines.myEngine().source.toString();
+                engines.execScriptFile(path)
+                toast("重新运行,当前悬浮窗关闭")
+                console.hide()
+                exit()
                 return 5
             }
             
@@ -682,6 +701,13 @@ function 打开抖音上传视频() {
             log("所有视频上传完成")
             log("上传个数:" + index)
             return true
+        }else if(视频选择结果==40){
+
+            需要采集的个数+=1
+            back()
+            sleep(2000)
+            back()
+            continue
         }
         var 计数器 = 0 ,上传检测 =false
         for (let index = 0; index < 1000; index++) {
@@ -712,16 +738,38 @@ function 打开抖音上传视频() {
 var 本次处理的文件 = []
 
 function main() {
-    // var 上传位置= dialogs.select("上传到哪",["快手","抖音"])
-    var 上传位置 = 1
+    var 上传位置= dialogs.select("上传到哪",["快手","抖音"])
+    if (上传位置==-1) {
+        exit()
+    }
+    // var 上传位置
+    // var d=dialogs.build({
+    //     title: "上传到哪",
+    //     items: ["快手", "抖音"],
+    //     itemsSelectMode: "single",
+    //     itemsSelectedIndex: 3
+    // }).on("single_choice", (index, item)=>{
+    //     toast("您选择的是" + item);
+    //     上传位置=index
+    // }).show();
+    // var timeout=2000
+    // setTimeout(()=>{
+    //     d.cancel();
+    //     上传位置 = 1
+    //     toast("您选择的是" + 1);
+
+    // }, timeout);
+    // sleep(timeout)
+    // var 上传位置 = 1
     threads.start(function () {
         while (true) {
+            log("异常检测线程工作中")
             var list= ["取消","允许","跳过","我知道了","知道了"]
             for (let index = 0; index < list.length; index++) {
                 var element = list[index];
                 var 按钮 =  text(element).clickable().findOne(1)
                 if (按钮) {
-                    log(element)
+                    log(按钮.text())
                     按钮.click()
                     break;
                 }
@@ -731,7 +779,10 @@ function main() {
             } catch (error) {
 
             }
-
+            if (idContains("close_btn").clickable().exists()) {
+                log("发现登录页")
+                id("close_btn").clickable().click()
+            }
             sleep(3000)
         }
     })
@@ -799,17 +850,39 @@ function main() {
                 sleep(1000)
                 let cc = text("复制链接").findOne(3000)
                 if (cc) {
-                    cc.parent().click()
+                    cc.parent().parent().click()
                     sleep(1000)
-                    let lianjie = getClip().split(">>")
+                    let lianjie = getClip()
+                    if (lianjie=="") {
+                        swipe(device.width /5 *4,device.height /10 *9,device.width /5 *3,device.height /10 *9,10)
+                        sleep(1000)
+                        click("复制链接")
+                        sleep(1000)
+                    }
+                    lianjie = getClip()
+                    if (!lianjie) {
+                        log("复制出错,可能是微视版本问题")
+                        exit()
+                    }
+                    lianjie= lianjie.split(">>")
                     log(lianjie)
                     var 文件名 = lianjie[0]
                     var 复制的链接 = lianjie[1]
-
+                    if (!复制的链接){
+                        log("复制的链接为空")
+                        exit()
+                    }
                     var 解析结果 = iiiLab通用视频解析接口(复制的链接)
                     if (解析结果 && 解析结果.retCode == 200) {
                         var 视频地址 = 解析结果.data.video
-                        下载视频同步(视频地址, 文件名)
+                        for (let index = 0; index < 3; index++) {
+                            if (下载视频同步(视频地址, 文件名)) {
+                                break;
+                            }else{
+                                log("本次下载出错")
+                            }
+                            
+                        }
 
                     }
                 }

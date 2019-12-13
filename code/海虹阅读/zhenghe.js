@@ -5,6 +5,7 @@ importClass(java.io.File)
 importClass(android.provider.MediaStore)
 var myself_package_name
 var yuedu_66_packagename
+var douyin_packagename
 var all_text = new Array() //全局评论数组
 console.setSize(350, 900)
 console.setGlobalLogConfig({
@@ -52,7 +53,9 @@ var 成功计数 = storage.get("成功计数", 0)
 var 没任务计数 = storage.get("没任务计数", 0)
 var 开始任务时间 = storage.get("开始任务时间", null)
 
+var 抖音快手都没任务计数=storage.get("抖音快手都没任务计数", 0)
 
+var 今日看抖音视频总时间 = storage.get("今日看抖音视频总时间",{日期:null,看视频时间:0})
 
 var ra = new RootAutomator();
 events.on('exit', function () {
@@ -470,6 +473,7 @@ function task_start() {
             if(textContains("下一波任务到达时间").exists()){
                 本次没任务的标记 = true
                 没任务计数 += 1
+                抖音快手都没任务计数+=1
                 log("下一波任务到达时间")
                 back()
                 let ran = random(15, 20)
@@ -524,6 +528,7 @@ function task_start() {
         if(textContains("下一波任务到达时间").exists()){
             本次没任务的标记 = true
             没任务计数 += 1
+            抖音快手都没任务计数+=1
             log("下一波任务到达时间")
             back()
             let ran = random(15, 20)
@@ -540,6 +545,7 @@ function task_start() {
         if (text("暂时没有任务，请尝试其它任务").exists()) {
             本次没任务的标记 = true
             没任务计数 += 1
+            抖音快手都没任务计数+=1
             log("暂时没有任务，请尝试其它任务,返回")
             back()
             let ran = random(15, 20)
@@ -1334,16 +1340,63 @@ function kuaishou_点赞关注评论(result) {
     return true// 都成功了,返回true
 }
 
+function 打开抖音看视频10分钟(){
+    function 等待抖音打开(){
+        for (let index = 0; index < 3; index++) {
+            app.launchApp("抖音短视频")
+            if (text("关注").findOne(8000)) {
+                log("抖音开启成功")
+                return true
+            }else{
+                shell("am force-stop "+douyin_packagename, true)
+                sleep(2000)
+            }
+        }
+        return false
+    }
+    
+    if (!等待抖音打开()) {
+        log("打开抖音看视频开启失败")
+        return false
+    }
+    var 开始看视频时间 = new Date().getTime()
+    while (true) {
+        if (new Date().getTime() - 开始看视频时间 >= 10 * 60 * 1000) {
+            log("已看完10分钟视频,切换回66阅读")
+
+            var 今日看抖音视频总时间 = storage.get("今日看抖音视频总时间",{日期:null,看视频时间:0})
+            if (今日看抖音视频总时间.日期 ) {
+                //TODO
+            }
+            new Date().getDate()
+            return true
+        }
+        let  本次看视频时间  = random(10,30)
+        log("本次看视频时间:"+本次看视频时间+"秒")
+        sleep( 本次看视频时间 * 1000)
+        swipe(device.width * 3/ 5,device.height *7/10,device.width * 3/ 5,device.height *5/10,10)
+    }
+
+}
+
+
 
 function loop() {
     var image_name = []
     while (true) {
         log("检查更新")
         检查更新()
+        // 这里检查是否两边无任务计数过大
+        log("总共无任务计数 :"+抖音快手都没任务计数)
+        if (抖音快手都没任务计数 > 5) {
+            //打开抖音看视频10分钟
+            打开抖音看视频10分钟()
+        }
         if (!start_66_yuedu()) {
             toastLog("66阅读开启失败,退出")
             exit()
         }
+        
         task_managers()
         var 接任务结果 = task_start()
         if (接任务结果 == "66阅读卡死" || 接任务结果 == "没找到领取任务") {
@@ -1372,6 +1425,7 @@ function loop() {
                 continue
             }
         }
+        抖音快手都没任务计数=0//这里开始具体做任务
         if (current_task == "抖音") {
             let 抖音点赞关注评论结果 = douyin_点赞关注评论(接任务结果, image_name)
             if (!抖音点赞关注评论结果) {
@@ -1470,6 +1524,7 @@ function 检查更新() {
                 log("需要更新")
                 storage.put("成功计数", 成功计数)
                 storage.put("没任务计数", 没任务计数)
+                storage.put("抖音快手都没任务计数", 抖音快手都没任务计数)
                 files.write("./zhenghe.js", 新源码)
                 toastLog("功能模块加载完成")
                 engines.execScriptFile("./zhenghe.js")
@@ -1516,6 +1571,7 @@ function main() {
     myself_package_name = context.getPackageName()
     log(myself_package_name)
     yuedu_66_packagename = app.getPackageName("66阅读")
+    douyin_packagename = app.getPackageName("抖音短视频")
     if (yuedu_66_packagename) {
         log(yuedu_66_packagename)
 
@@ -1523,7 +1579,7 @@ function main() {
         toastLog("未安装66阅读")
         exit()
     }
-    if (!app.getPackageName("抖音短视频") && 抖音勾选) {
+    if (!douyin_packagename && 抖音勾选) {
         toastLog("未安装抖音短视频")
         exit()
     }

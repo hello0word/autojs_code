@@ -141,6 +141,7 @@ function openAccessbility() {
         由于Android的一些bug，有时候实际没有开启的服务仍会出现在已启用的里面，所有没办法通过判断得知服务是否开启
         像当前这样子会导致已开启服务里面有很多重复项目，所有建议直接写死不再每次重新获取
         */
+       var myself_package_name=context.getPackageName()
         if (!myself_package_name) {
             log("包名获取失败")
         }
