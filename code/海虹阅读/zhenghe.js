@@ -1039,7 +1039,11 @@ function up_image(result) {
     }
     function up() {
         log("开始找上传截图按钮")
-        text("上传截图").findOne()
+        let 上传截图= text("上传截图").findOne(5000)
+        if (!上传截图) {
+            log("找不到上传截图按钮")
+            return false
+        }
         var shangchuan_arr = text("上传截图").clickable().find()
         for (let index = 0; index < shangchuan_arr.length; index++) {
             if (shangchuan_arr.length == 1) {
