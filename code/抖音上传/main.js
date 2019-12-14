@@ -58,6 +58,7 @@ function 打开抖音上传视频() {
     }
 
     function 选择PIC文件夹(){
+        log("正在选择PIC文件夹")
         var 所有照片 = text("所有照片").findOne(1000)
         if (所有照片) {
             log("找到所有照片")
