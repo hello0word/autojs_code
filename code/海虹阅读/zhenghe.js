@@ -405,10 +405,10 @@ function task_managers() {
     }
 
     if (current_task == "抖音") {
-        douyin()
+        return douyin()
 
     } else if (current_task == "快手") {
-        kuaishou()
+        return kuaishou()
     }
 
 }
@@ -419,9 +419,10 @@ function douyin() {
         my_click(re.bounds().centerX(), re.bounds().centerY())
         log("观看抖音视频")
 
-        return
+        return true
     } else {
         log("没找到观看抖音视频")
+        return false
     }
 }
 
@@ -430,9 +431,10 @@ function kuaishou() {
     if (re) {
         my_click(re.bounds().centerX(), re.bounds().centerY())
         log("观看快手视频")
-        return
+        return true
     } else {
         log("没找到观看快手视频")
+        return false 
     }
 }
 
@@ -1401,7 +1403,10 @@ function loop() {
             exit()
         }
         
-        task_managers()
+        var 任务选择结果= task_managers()
+        if (!任务选择结果) {
+            continue
+        }
         var 接任务结果 = task_start()
         if (接任务结果 == "66阅读卡死" || 接任务结果 == "没找到领取任务") {
             continue
