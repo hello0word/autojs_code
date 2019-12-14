@@ -1,0 +1,10 @@
+{
+    "name": "保活测试",
+    "main": "websocket.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.example.asidhasdhdshsa",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}
