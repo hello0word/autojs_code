@@ -348,7 +348,9 @@ function 打开抖音上传视频() {
 
 }
 function isroot() {
+    log("检查")
     var re = shell("ls", true)
+    log(re)
     if (re.code == 0) {
         log("有root")
         return true
