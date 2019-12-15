@@ -426,6 +426,7 @@ function 刷新图库() {
 }
 
 function main() {
+    log("开始")
     if (!shouquan()) {
         toastLog("没有root权限,退出")
         exit()
