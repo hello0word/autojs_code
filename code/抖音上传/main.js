@@ -442,7 +442,7 @@ function main() {
     files.ensureDir("/sdcard/PIC/")
     var 已下载图片= files.listDir("/sdcard/PIC/")
     已下载图片.forEach((path)=>{
-        log(path +"--删除:"+files.remove(path))
+        log(path +"--删除:"+files.remove("/sdcard/PIC/"+path))
     })
     var 已下载图片 = []
     while(true){
@@ -458,7 +458,6 @@ function main() {
             log("本次下载失败")
         }
     }
-    刷新图库()
     打开抖音上传视频()
 }
 
@@ -473,6 +472,7 @@ function 获取图片() {
                 img.saveTo(name)
                 log('保存为'+name)
                 img.recycle()
+                media.scanFile(name)
                 return name
             } else {
                 log("解析失败")

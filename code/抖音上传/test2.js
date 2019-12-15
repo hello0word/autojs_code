@@ -38,7 +38,9 @@ function 选择PIC文件夹(){
 }
 
 
-log( 选择PIC文件夹())
+// log( 选择PIC文件夹())
+// files.ensureDir("/sdcard/PIC/")
+log(media.scanFile("/sdcard/PIC/"))
 
 // var 视频列表 = className("android.support.v7.widget.RecyclerView").depth(9).findOne(15000)
 // if (视频列表) {
