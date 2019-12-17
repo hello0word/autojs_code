@@ -6,12 +6,16 @@ var storage = storages.create("海虹阅读")
 
 var 抖音勾选 = storage.get("抖音勾选", false), 快手勾选 = storage.get("快手勾选", false)
 var 评论文件位置 = storage.get("评论文件位置", "")
+var 配置_抖音完成次数 = storage.get("抖音完成次数",10)
+var 配置_抖音养号时间 = storage.get("抖音养号时间",10)
+var 配置_快手完成次数 = storage.get("快手完成次数",10)
+var 配置_快手养号时间 = storage.get("快手养号时间",10)
 ui.layout(
     <vertical padding="16">
         <horizontal>
             <button id="设置按钮" w="auto" style="Widget.AppCompat.Button.Colored">设置</button>
             <text gravity="center" textSize="40sp" textColor="red" textStyle="bold">海虹阅读</text>
-            <button id="日志按钮" w="auto"style="Widget.AppCompat.Button.Colored">日志</button>
+            <button id="日志按钮" w="auto" style="Widget.AppCompat.Button.Colored">日志</button>
         </horizontal>
         <text gravity="center" textSize="14sp" textStyle="bold">只勾选一个则只跑单app,勾选两个则根据模式选择交替方法</text>
         <horizontal>
@@ -46,6 +50,22 @@ ui.layout(
             <text id="评论文件位置" text={"评论文件位置:" + 评论文件位置}></text>
         </horizontal>
 
+        <vertical>
+            <horizontal>
+                <text>抖音完成次数:</text>
+                <input id="抖音完成次数" w="50" text={配置_抖音完成次数}></input>
+                <text>养号时间(分钟):</text>
+                <input id="抖音养号时间" hint="分钟" text={配置_抖音养号时间}></input>
+            </horizontal>
+        </vertical>
+        <vertical>
+            <horizontal>
+                <text>快手完成次数:</text>
+                <input id="快手完成次数" w="50" text={配置_快手完成次数}></input>
+                <text>养号时间(分钟):</text>
+                <input id="快手养号时间" hint="分钟"text={配置_快手养号时间}></input>
+            </horizontal>
+        </vertical>
         <button id="立即开始" text={"立即开始(" + 倒计时 + ")"} w="*" gravity="center" style="Widget.AppCompat.Button.Colored" />
     </vertical>
 );
@@ -72,6 +92,10 @@ function main() {
 
     }
     //log(输入内容读取)
+    storage.put("抖音完成次数",ui.抖音完成次数.text())
+    storage.put("抖音养号时间",ui.抖音养号时间.text())
+    storage.put("快手完成次数",ui.快手完成次数.text())
+    storage.put("快手养号时间",ui.快手养号时间.text())
     if (new Date().getTime() - 上次点击时间 > 5000) {
         上次点击时间 = new Date().getTime()
         execution = engines.execScriptFile("./zhenghe.js");
@@ -91,10 +115,10 @@ ui.更改评论文件.on("click", () => {
     startChooseFile("*/*");
 })
 
-ui.设置按钮.on("click",()=>{
+ui.设置按钮.on("click", () => {
     app.startActivity("settings")
 })
-ui.日志按钮.on("click",()=>{
+ui.日志按钮.on("click", () => {
     app.startActivity("console")
 })
 var 交替模式 = storage.get("交替模式", 0)

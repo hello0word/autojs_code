@@ -46,20 +46,55 @@ var 当前选择的交替模式 = storage.get("交替模式", 0)
 var 存储内容读取_时间间隔 = storage.get("时间间隔", "5")
 var 存储内容读取_每成功 = storage.get("每成功", "3")
 var 存储内容读取_每没任务 = storage.get("每没任务", "2")
+var 配置_抖音完成次数 = storage.get("抖音完成次数", 10)
+var 配置_抖音养号时间 = storage.get("抖音养号时间", 10)
+var 配置_快手完成次数 = storage.get("快手完成次数", 10)
+var 配置_快手养号时间 = storage.get("快手养号时间", 10)
+
+////临时记录
+var 临时记录_抖音完成次数 = storage.get("临时记录_抖音完成次数", 0)
+var 临时记录_快手完成次数 = storage.get("临时记录_快手完成次数", 0)
 
 
+////
+
+
+var 今日记录器 = storage.get("今日记录器", {
+    当日日期: 0,
+    抖音完成数: 0,
+    抖音养号时间: 0,
+    快手完成数: 0,
+    快手养号时间: 0,
+})
+
+if (今日记录器.当日日期 != new Date().getDate()) {
+    storage.put("今日记录器", {
+        当日日期: new Date().getDate(),
+        抖音完成数: 0,
+        抖音养号时间: 0,
+        快手完成数: 0,
+        快手养号时间: 0,
+    })
+}
+
+
+var 今日记录器 = storage.get("今日记录器")
 //切换模式记录
 var 成功计数 = storage.get("成功计数", 0)
 var 没任务计数 = storage.get("没任务计数", 0)
 var 开始任务时间 = storage.get("开始任务时间", null)
 
-var 抖音快手都没任务计数=storage.get("抖音快手都没任务计数", 0)
+var 抖音快手都没任务计数 = storage.get("抖音快手都没任务计数", 0)
 
-var 今日看抖音视频总时间 = storage.get("今日看抖音视频总时间",{日期:null,看视频时间:0})
+
+
+
 
 var ra = new RootAutomator();
 events.on('exit', function () {
+    log("退出")
     ra.exit();
+    storage.put("今日记录器",今日记录器)
 });
 
 
@@ -86,6 +121,8 @@ function my_click(x, y) {
 
     // sleep(200)
     console.show()
+
+
     return ss
 }
 
@@ -314,7 +351,7 @@ function start_66_yuedu(timeout) {
         if (text_or_desc("联系客服").clickable().findOne(8000) && text("任务中心").findOne(8000)) {
             toastLog("66阅读开启成功")
             return true
-        }else{
+        } else {
             log("规定时间没找到")
         }
         if (text_or_desc("重试").clickable().findOne(2000)) {
@@ -370,7 +407,7 @@ function task_managers() {
         } else if (当前选择的交替模式 == 1) {//运行一定时间后切换(分钟)
             if (!开始任务时间) {
                 开始任务时间 = new Date().getTime()
-                
+
             } else {
                 let 当前任务运行时间 = new Date().getTime() - 开始任务时间
                 if (当前任务运行时间 > 存储内容读取_时间间隔 * 60 * 1000) {
@@ -401,7 +438,7 @@ function task_managers() {
         exit()
     }
     if (!current_task) {
-        current_task="抖音"
+        current_task = "抖音"
     }
 
     if (current_task == "抖音") {
@@ -434,7 +471,7 @@ function kuaishou() {
         return true
     } else {
         log("没找到观看快手视频")
-        return false 
+        return false
     }
 }
 
@@ -472,10 +509,10 @@ function task_start() {
         re = text_or_desc("领取任务").clickable().findOne(10000)
         if (!re) {
             log("没找到领取任务")
-            if(textContains("下一波任务到达时间").exists()){
+            if (textContains("下一波任务到达时间").exists()) {
                 本次没任务的标记 = true
                 没任务计数 += 1
-                抖音快手都没任务计数+=1
+                抖音快手都没任务计数 += 1
                 log("下一波任务到达时间")
                 back()
                 let ran = random(15, 20)
@@ -502,16 +539,16 @@ function task_start() {
             if (re) {
                 my_click(re.bounds().centerX(), re.bounds().centerY())
                 log("领取任务" + re)
-            }else{
+            } else {
                 log("授权后卡死")
                 return 9
             }
         } else {
             log("没发现授权并登录")
         }
-        if(text_or_desc("请复制下面的内容到DY里留言").exists()){
+        if (text_or_desc("请复制下面的内容到DY里留言").exists()) {
             log("发现留言任务")
-            var ss= text_or_desc("复制").clickable().fiidOne(1000)
+            var ss = text_or_desc("复制").clickable().fiidOne(1000)
             if (ss) {
                 log("已复制")
                 ss.click()
@@ -519,7 +556,7 @@ function task_start() {
         }
     } else if (current_task == "快手") {
         log("快手任务")
-        
+
         let jieguo = 多个状态分开检测(["完成下载（领取200积分）", "领取任务"], 10000)
         if (jieguo.index == 1) {
             jieguo.result.click()
@@ -527,10 +564,10 @@ function task_start() {
             jieguo.result.click()
             text("确定").clickable().findOne().click()
         }
-        if(textContains("下一波任务到达时间").exists()){
+        if (textContains("下一波任务到达时间").exists()) {
             本次没任务的标记 = true
             没任务计数 += 1
-            抖音快手都没任务计数+=1
+            抖音快手都没任务计数 += 1
             log("下一波任务到达时间")
             back()
             let ran = random(15, 20)
@@ -547,7 +584,7 @@ function task_start() {
         if (text("暂时没有任务，请尝试其它任务").exists()) {
             本次没任务的标记 = true
             没任务计数 += 1
-            抖音快手都没任务计数+=1
+            抖音快手都没任务计数 += 1
             log("暂时没有任务，请尝试其它任务,返回")
             back()
             let ran = random(15, 20)
@@ -854,6 +891,7 @@ function 抖音_点赞关注() {
     function open_guanzhu() {
         my_click(guanzhu_tap_x, guanzhu_tap_y)
         console.hide()
+        files.write("./flg",0)
         sleep(6000)
         var count = 0
         for (let index = 0; index < 6; index++) {
@@ -1041,7 +1079,7 @@ function up_image(result) {
     }
     function up() {
         log("开始找上传截图按钮")
-        let 上传截图= text("上传截图").findOne(5000)
+        let 上传截图 = text("上传截图").findOne(5000)
         if (!上传截图) {
             log("找不到上传截图按钮")
             return false
@@ -1092,7 +1130,7 @@ function up_image(result) {
     }
     if (!up()) {
         log("第一次尝试上传失败，再试一次")
-        var 确定= text_or_desc("确定").clickable().findOne(5000)
+        var 确定 = text_or_desc("确定").clickable().findOne(5000)
         if (确定) {
             log("确定")
             确定.click()
@@ -1346,64 +1384,102 @@ function kuaishou_点赞关注评论(result) {
     return true// 都成功了,返回true
 }
 
-function 打开抖音看视频10分钟(){
-    function 等待抖音打开(){
+function 打开抖音看视频(时间) {
+    时间 = 时间 || 10
+    log("本次看视频时间:"+时间)
+    function 等待抖音打开() {
         for (let index = 0; index < 3; index++) {
             app.launchApp("抖音短视频")
             if (text("关注").findOne(8000)) {
                 log("抖音开启成功")
                 return true
-            }else{
-                shell("am force-stop "+douyin_packagename, true)
+            } else {
+                shell("am force-stop " + douyin_packagename, true)
                 sleep(2000)
             }
         }
         return false
     }
-    
+
     if (!等待抖音打开()) {
         log("打开抖音看视频开启失败")
         return false
     }
     var 开始看视频时间 = new Date().getTime()
     while (true) {
-        if (new Date().getTime() - 开始看视频时间 >= 10 * 60 * 1000) {
-            log("已看完10分钟视频,切换回66阅读")
-
-            var 今日看抖音视频总时间 = storage.get("今日看抖音视频总时间",{日期:null,看视频时间:0})
-            if (今日看抖音视频总时间.日期 ) {
-                //TODO
-            }
-            new Date().getDate()
+        if (new Date().getTime() - 开始看视频时间 >= 时间 * 60 * 1000) {
+            log("已看完"+时间+"分钟视频,切换回66阅读")
+            今日记录器.抖音养号时间 += 时间
             return true
+        }else{
+            log("剩余看视频时间:"+(开始看视频时间 + 时间 * 60 * 1000 - new Date().getTime())/1000 +"秒")
         }
-        let  本次看视频时间  = random(10,30)
-        log("本次看视频时间:"+本次看视频时间+"秒")
-        sleep( 本次看视频时间 * 1000)
-        swipe(device.width * 3/ 5,device.height *7/10,device.width * 3/ 5,device.height *5/10,10)
+        let 本次看视频时间 = random(10, 30)
+        log("本次看视频时间:" + 本次看视频时间 + "秒")
+        sleep(本次看视频时间 * 1000)
+        swipe(device.width * 3 / 5, device.height * 7 / 10, device.width * 3 / 5, device.height * 5 / 10, 10)
     }
 
 }
 
+function 打开快手看视频(时间) {
+    时间 = 时间 || 10
+    function 等待快手打开() {
+        for (let index = 0; index < 3; index++) {
+            app.launchApp("快手")
+            if (text("关注").findOne(8000)) {
+                log("快手开启成功")
+                return true
+            } else {
+                shell("am force-stop " + app.getPackageName("快手"), true)
+                sleep(2000)
+            }
+        }
+        return false
+    }
 
+    if (!等待快手打开()) {
+        log("打开快手看视频开启失败")
+        return false
+    }
+    var 开始看视频时间 = new Date().getTime()
+    while (true) {
+        if (new Date().getTime() - 开始看视频时间 >= 时间 * 60 * 1000) {
+            log("已看完"+时间+"分钟视频,切换回66阅读")
+            今日记录器.快手养号时间 += 时间
+            return true
+        }else{
+            log("剩余看视频时间:"+(开始看视频时间 + 时间 * 60 * 1000 - new Date().getTime())/1000 +"秒")
+        }
+        let 本次看视频时间 = random(10, 30)
+        log("本次看视频时间:" + 本次看视频时间 + "秒")
+        click(device.width /3*2,device.height /2)
+        sleep(本次看视频时间 * 1000)
+        back()
+        sleep(2000)
+        swipe(device.width * 3 / 5, device.height * 7 / 10, device.width * 3 / 5, device.height * 5 / 10, 10)
+        sleep(2000)
+    }
+
+}
 
 function loop() {
     var image_name = []
     while (true) {
         log("检查更新")
-        检查更新()
+        // 检查更新()
         // 这里检查是否两边无任务计数过大
-        log("总共无任务计数 :"+抖音快手都没任务计数)
+        log("总共无任务计数 :" + 抖音快手都没任务计数)
         if (抖音快手都没任务计数 > 5) {
             //打开抖音看视频10分钟
-            打开抖音看视频10分钟()
+            打开抖音看视频()
         }
         if (!start_66_yuedu()) {
             toastLog("66阅读开启失败,退出")
             exit()
         }
-        
-        var 任务选择结果= task_managers()
+
+        var 任务选择结果 = task_managers()
         if (!任务选择结果) {
             continue
         }
@@ -1434,7 +1510,7 @@ function loop() {
                 continue
             }
         }
-        抖音快手都没任务计数=0//这里开始具体做任务
+        抖音快手都没任务计数 = 0//这里开始具体做任务
         if (current_task == "抖音") {
             let 抖音点赞关注评论结果 = douyin_点赞关注评论(接任务结果, image_name)
             if (!抖音点赞关注评论结果) {
@@ -1502,6 +1578,24 @@ function loop() {
         }
         delete_image()
         成功计数 += 1
+        if (current_task == "抖音") {
+            今日记录器.抖音完成数 += 1
+            临时记录_抖音完成次数 +=1
+            if (临时记录_抖音完成次数 >=配置_抖音完成次数) {
+                打开抖音看视频(parseInt(配置_抖音养号时间))
+                临时记录_抖音完成次数=0
+            }
+        }else if(current_task == "快手"){
+            今日记录器.快手完成数 += 1
+            临时记录_快手完成次数 +=1
+
+            if (临时记录_快手完成次数 >=配置_快手完成次数) {
+                打开快手看视频(parseInt(配置_快手养号时间))
+                临时记录_快手完成次数=0
+            }
+        }
+        
+
         sleep(5000)
         back()
         var currenttime = random(15, 20)
@@ -1538,6 +1632,7 @@ function 检查更新() {
                 toastLog("功能模块加载完成")
                 engines.execScriptFile("./zhenghe.js")
                 console.hide()
+                files.write("./flg",0)
                 sleep(1000)
                 exit()
             } else {
@@ -1546,7 +1641,7 @@ function 检查更新() {
         } else {
             toastLog("网络异常")
         }
-        toastLog("本次检查更新耗时:"+ (new Date().getTime() - 开始时间)/1000 + "秒")
+        toastLog("本次检查更新耗时:" + (new Date().getTime() - 开始时间) / 1000 + "秒")
     } catch (error) {
         log(error)
     }
@@ -1574,6 +1669,13 @@ function root开启无障碍() {
     log("全部失败")
     return false
 }
+
+function 显示今日进度(){
+    
+    var  内容= "日期:" + 今日记录器.当日日期 + ",抖音完成数:" + 今日记录器.抖音完成数 + ",抖音养号时间:" + 今日记录器.抖音养号时间 + ",快手完成数:" + 今日记录器.快手完成数 + ",快手养号时间:" + 今日记录器.快手养号时间
+    console.info(内容)
+}
+
 
 function main() {
     //初始化值
@@ -1620,11 +1722,11 @@ function main() {
                 files.write("/sdcard/xintiao.txt", new Date().getTime())
             } catch (error) {
             }
-
+            显示今日进度()
             sleep(10000)
         }
     })
-    
+
 
     loop()
 

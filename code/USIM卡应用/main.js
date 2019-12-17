@@ -224,7 +224,7 @@ function printNotification(notification) {
         "通知时间: " + new Date(notification.when) +
         "通知数: " + notification.number +
         "通知摘要: " + notification.tickerText
-    log(msg)
+    // log(msg)
     threads.start(function () {
         try {
 
