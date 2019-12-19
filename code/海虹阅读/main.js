@@ -6,77 +6,84 @@ var storage = storages.create("海虹阅读")
 
 var 抖音勾选 = storage.get("抖音勾选", false), 快手勾选 = storage.get("快手勾选", false)
 var 评论文件位置 = storage.get("评论文件位置", "")
-var 配置_抖音完成次数 = storage.get("抖音完成次数",10)
-var 配置_抖音养号时间 = storage.get("抖音养号时间",10)
-var 配置_快手完成次数 = storage.get("快手完成次数",10)
-var 配置_快手养号时间 = storage.get("快手养号时间",10)
-var 配置_抖音没任务次数 = storage.get("配置_抖音没任务次数",3)
-var 配置_快手没任务次数 = storage.get("配置_快手没任务次数",3)
+var 配置_抖音完成次数 = storage.get("抖音完成次数", 10)
+var 配置_抖音养号时间 = storage.get("抖音养号时间", 10)
+var 配置_快手完成次数 = storage.get("快手完成次数", 10)
+var 配置_快手养号时间 = storage.get("快手养号时间", 10)
+var 配置_抖音没任务次数 = storage.get("配置_抖音没任务次数", 3)
+var 配置_快手没任务次数 = storage.get("配置_快手没任务次数", 3)
+var 卡密 = storage.get("卡密", "")
 
 ui.layout(
-    <vertical padding="16">
-        <horizontal>
-            <button id="设置按钮" w="auto" style="Widget.AppCompat.Button.Colored">设置</button>
-            <text gravity="center" textSize="40sp" textColor="red" textStyle="bold">海虹阅读</text>
-            <button id="日志按钮" w="auto" style="Widget.AppCompat.Button.Colored">日志</button>
-        </horizontal>
-        <text gravity="center" textSize="14sp" textStyle="bold">只勾选一个则只跑单app,勾选两个则根据模式选择交替方法</text>
-        <horizontal>
-            <text w="auto" margin="0 5 20 40">功能勾选:</text>
+    <ScrollView>
+        <vertical padding="16" h="3000">
+            <horizontal>
+                <button id="设置按钮" w="auto" style="Widget.AppCompat.Button.Colored">设置</button>
+                <text gravity="center" textSize="40sp" textColor="red" textStyle="bold">海虹阅读</text>
+                <button id="日志按钮" w="auto" style="Widget.AppCompat.Button.Colored">日志</button>
+            </horizontal>
+            <text gravity="center" textSize="14sp" textStyle="bold">只勾选一个则只跑单app,勾选两个则根据模式选择交替方法</text>
+            <horizontal>
+                <text w="auto" margin="0 5 20 40">功能勾选:</text>
+                <vertical>
+                    <checkbox id="抖音勾选框" text="抖音" checked={抖音勾选}></checkbox>
+                    <checkbox id="快手勾选框" text="快手" checked={快手勾选}></checkbox>
+                </vertical>
+                <vertical>
+                    <Switch margin="30 5 20 0" id='评论开关' text="评论开关:" w="auto" />
+                    <button margin="25 0 20 0" text="更改评论文件" id="更改评论文件" w="auto"  ></button>
+                </vertical>
+
+
+            </horizontal>
+            <horizontal>
+                <text w="auto" margin="0 5 20 40">交替模式:</text>
+                <radiogroup mariginTop="16" id="交替模式">
+                    <radio text="自动交替执行" checked="true" />
+                    <radio text="定时交替执行" />
+                    <radio text="成功计次交替执行" />
+                    <radio text="没任务计次交替执行" />
+                </radiogroup>
+            </horizontal>
+
+            <horizontal >
+                <text id="config_name" margin="0 5 0 0" textSize="14sp" textStyle="bold" text={默认配置} w="auto"></text>
+                <input id="配置输入框" text="" w="80" textSize="14sp" />
+                <text id="config_danwei" margin="0 5 0 0" textSize="14sp" textStyle="bold" text="" w="50"></text>
+            </horizontal>
+            <horizontal>
+                <text id="评论文件位置" text={"评论文件位置:" + 评论文件位置}></text>
+            </horizontal>
+
             <vertical>
-                <checkbox id="抖音勾选框" text="抖音" checked={抖音勾选}></checkbox>
-                <checkbox id="快手勾选框" text="快手" checked={快手勾选}></checkbox>
+                <horizontal>
+                    <text>抖音完成次数:</text>
+                    <input id="抖音完成次数" w="50" text={配置_抖音完成次数}></input>
+                    <text>养号时间(分钟):</text>
+                    <input id="抖音养号时间" hint="分钟" text={配置_抖音养号时间}></input>
+                </horizontal>
             </vertical>
             <vertical>
-                <Switch margin="30 5 20 0" id='评论开关' text="评论开关:" w="auto" />
-                <button margin="25 0 20 0" text="更改评论文件" id="更改评论文件" w="auto"  ></button>
+                <horizontal>
+                    <text>快手完成次数:</text>
+                    <input id="快手完成次数" w="50" text={配置_快手完成次数}></input>
+                    <text>养号时间(分钟):</text>
+                    <input id="快手养号时间" hint="分钟" text={配置_快手养号时间}></input>
+                </horizontal>
             </vertical>
-
-
-        </horizontal>
-        <horizontal>
-            <text w="auto" margin="0 5 20 40">交替模式:</text>
-            <radiogroup mariginTop="16" id="交替模式">
-                <radio text="自动交替执行" checked="true" />
-                <radio text="定时交替执行" />
-                <radio text="成功计次交替执行" />
-                <radio text="没任务计次交替执行" />
-            </radiogroup>
-        </horizontal>
-
-        <horizontal >
-            <text id="config_name" margin="0 5 0 0" textSize="14sp" textStyle="bold" text={默认配置} w="auto"></text>
-            <input id="配置输入框" text="" w="80" textSize="14sp" />
-            <text id="config_danwei" margin="0 5 0 0" textSize="14sp" textStyle="bold" text="" w="50"></text>
-        </horizontal>
-        <horizontal>
-            <text id="评论文件位置" text={"评论文件位置:" + 评论文件位置}></text>
-        </horizontal>
-
-        <vertical>
             <horizontal>
-                <text>抖音完成次数:</text>
-                <input id="抖音完成次数" w="50" text={配置_抖音完成次数}></input>
-                <text>养号时间(分钟):</text>
-                <input id="抖音养号时间" hint="分钟" text={配置_抖音养号时间}></input>
-            </horizontal>
-        </vertical>
-        <vertical>
-            <horizontal>
-                <text>快手完成次数:</text>
-                <input id="快手完成次数" w="50" text={配置_快手完成次数}></input>
-                <text>养号时间(分钟):</text>
-                <input id="快手养号时间" hint="分钟"text={配置_快手养号时间}></input>
-            </horizontal>
-        </vertical>
-        <horizontal>
                 <text>抖音没任务次数:</text>
                 <input id="配置_抖音没任务次数" w="50" text={配置_抖音没任务次数}></input>
                 <text>快手没任务次数:</text>
                 <input id="配置_快手没任务次数" w="50" text={配置_快手没任务次数}></input>
             </horizontal>
-        <button id="立即开始" text={"立即开始(" + 倒计时 + ")"} w="*" gravity="center" style="Widget.AppCompat.Button.Colored" />
-    </vertical>
+            <horizontal>
+                <text>卡密:</text>
+                <input id="卡密" w="500" text={卡密}></input>
+            </horizontal>
+            <button id="立即开始" text={"立即开始(" + 倒计时 + ")"} w="*" gravity="center" style="Widget.AppCompat.Button.Colored" />
+        </vertical>
+    </ScrollView>
 );
 
 function main() {
@@ -101,12 +108,13 @@ function main() {
 
     }
     //log(输入内容读取)
-    storage.put("抖音完成次数",ui.抖音完成次数.text())
-    storage.put("抖音养号时间",ui.抖音养号时间.text())
-    storage.put("快手完成次数",ui.快手完成次数.text())
-    storage.put("快手养号时间",ui.快手养号时间.text())
-    storage.put("配置_抖音没任务次数",ui.配置_抖音没任务次数.text())
-    storage.put("配置_快手没任务次数",ui.配置_快手没任务次数.text())
+    storage.put("抖音完成次数", ui.抖音完成次数.text())
+    storage.put("抖音养号时间", ui.抖音养号时间.text())
+    storage.put("快手完成次数", ui.快手完成次数.text())
+    storage.put("快手养号时间", ui.快手养号时间.text())
+    storage.put("配置_抖音没任务次数", ui.配置_抖音没任务次数.text())
+    storage.put("配置_快手没任务次数", ui.配置_快手没任务次数.text())
+    storage.put("卡密", ui.卡密.text())
     if (new Date().getTime() - 上次点击时间 > 5000) {
         上次点击时间 = new Date().getTime()
         app.startActivity("console")
