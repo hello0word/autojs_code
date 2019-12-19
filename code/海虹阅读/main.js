@@ -98,6 +98,7 @@ function main() {
     storage.put("快手养号时间",ui.快手养号时间.text())
     if (new Date().getTime() - 上次点击时间 > 5000) {
         上次点击时间 = new Date().getTime()
+        app.startActivity("console")
         execution = engines.execScriptFile("./zhenghe.js");
         ui.finish()
     } else {
