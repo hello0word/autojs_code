@@ -10,6 +10,9 @@ var 配置_抖音完成次数 = storage.get("抖音完成次数",10)
 var 配置_抖音养号时间 = storage.get("抖音养号时间",10)
 var 配置_快手完成次数 = storage.get("快手完成次数",10)
 var 配置_快手养号时间 = storage.get("快手养号时间",10)
+var 配置_抖音没任务次数 = storage.get("配置_抖音没任务次数",3)
+var 配置_快手没任务次数 = storage.get("配置_快手没任务次数",3)
+
 ui.layout(
     <vertical padding="16">
         <horizontal>
@@ -66,6 +69,12 @@ ui.layout(
                 <input id="快手养号时间" hint="分钟"text={配置_快手养号时间}></input>
             </horizontal>
         </vertical>
+        <horizontal>
+                <text>抖音没任务次数:</text>
+                <input id="配置_抖音没任务次数" w="50" text={配置_抖音没任务次数}></input>
+                <text>快手没任务次数:</text>
+                <input id="配置_快手没任务次数" w="50" text={配置_快手没任务次数}></input>
+            </horizontal>
         <button id="立即开始" text={"立即开始(" + 倒计时 + ")"} w="*" gravity="center" style="Widget.AppCompat.Button.Colored" />
     </vertical>
 );
@@ -96,6 +105,8 @@ function main() {
     storage.put("抖音养号时间",ui.抖音养号时间.text())
     storage.put("快手完成次数",ui.快手完成次数.text())
     storage.put("快手养号时间",ui.快手养号时间.text())
+    storage.put("配置_抖音没任务次数",ui.配置_抖音没任务次数.text())
+    storage.put("配置_快手没任务次数",ui.配置_快手没任务次数.text())
     if (new Date().getTime() - 上次点击时间 > 5000) {
         上次点击时间 = new Date().getTime()
         app.startActivity("console")
