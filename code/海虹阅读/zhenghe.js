@@ -331,21 +331,21 @@ function start_66_yuedu(timeout) {
 
     timeout = timeout || 30
     for (let index = 0; index < timeout; index++) {
-        if (!text("联系客服").exists()) {
-            app.openAppSetting(yuedu_66_packagename)
-            let 强行停止 = text("强行停止").findOne(5000)
-            if (强行停止) {
-                强行停止.click()
-                let qd = text("确定").findOne(2000)
-                qd ? qd.click() : log("已关闭")
-                sleep(1000)
-                back()
-            } else {
-                shell("am force-stop " + app.getPackageName("66阅读"), true)
-                sleep(2000)
-            }
 
+        app.openAppSetting(yuedu_66_packagename)
+        let 强行停止 = text("强行停止").findOne(5000)
+        if (强行停止) {
+            强行停止.click()
+            let qd = text("确定").findOne(2000)
+            qd ? qd.click() : log("已关闭")
+            sleep(1000)
+            back()
+        } else {
+            shell("am force-stop " + app.getPackageName("66阅读"), true)
+            sleep(2000)
         }
+
+
         log("发送意图")
         app.startActivity({
             action: "android.intent.action.VIEW",
@@ -1027,7 +1027,7 @@ function up_image(result) {
     }
     function start_66() {
         for (let index = 0; index < 5; index++) {
-           
+
             app.launchApp("66阅读")
             var re = text("提交任务").findOne(30 * 1000)
             var open_66 = text_or_desc("打开“抖音”做任务").clickable().findOne(10)
@@ -1474,12 +1474,12 @@ function 打开快手看视频(时间) {
     function 等待快手打开() {
         for (let index = 0; index < 3; index++) {
             app.openAppSetting(app.getPackageName("快手"))
-            let ddd= text("强行停止").findOne(5000)
+            let ddd = text("强行停止").findOne(5000)
             if (ddd) {
                 ddd.click()
                 let qd = text("确定").findOne(2000)
                 qd ? qd.click() : log("已关闭")
-            }else{
+            } else {
                 shell("am force-stop " + app.getPackageName("快手"), true)
                 sleep(2000)
             }
