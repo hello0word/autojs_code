@@ -57,6 +57,8 @@ var 临时记录_快手完成次数 = storage.get("临时记录_快手完成次�
 
 
 ////
+var 验证标记 = ""
+
 
 
 var 今日记录器 = storage.get("今日记录器", {
@@ -600,9 +602,9 @@ function task_start() {
         if (text("暂时没有任务，请尝试其它任务").exists()) {
             本次没任务的标记 = true
             没任务计数 += 1
-            if (current_task == "快手"){
+            if (current_task == "快手") {
                 快手没任务计数 += 1
-            }else if (current_task == "抖音"){
+            } else if (current_task == "抖音") {
                 抖音没任务计数 += 1
             }
             抖音快手都没任务计数 += 1
@@ -1491,7 +1493,7 @@ function 打开快手看视频(时间) {
                 sleep(2000)
             }
             sleep(1000)
-            bakc()
+            back()
             app.launchApp("快手")
             if (text("关注").findOne(8000)) {
                 log("快手开启成功")
@@ -1813,11 +1815,117 @@ function main() {
 
 
 }
+var md5 = (string) => java.math.BigInteger(1, java.security.MessageDigest.getInstance("MD5").digest(java.lang.String(string).getBytes())).toString(16);
+
+function 卡密登录() {
+    var kami = storage.get("卡密")
+    if (kami == "") {
+        //这里alert  提示后退出
+    }
+    var id = 11515
+    var 域名 = "http://api3.2cccc.cc/apiv3/card_login"
+    var timec = "http://api3.2cccc.cc/time"
+    var apipassword = 363482
+
+    var res = http.get(timec)
+    if (res.statusCode == 200) {
+        let timestamp = res.body.string()
+        let sign = md5(timestamp + apipassword)
+        log(sign)
+        res = http.post(域名, {
+            center_id: id,
+            card: "Y8RRRC35Q4KUWQGXSLMR7BKABFSDR6PJUBLX6K5V",
+            software: "haihong",
+            timestamp: timestamp,
+            sign: sign
+        })
+        if (res.statusCode == 200) {
+            try {
+                let re = res.body.json()
+                log(re)
+                if (re.code != 1) {
+                    exit()
+                }
+
+                let ss = new Date(re.endtime_timestamp * 1000)
+                if (ss - new Date() <= 0) {
+                    //时间没了
+                    dialogs.build("卡密到期")
+                    exit()
+                } else {
+                    //通过
+                    //把验证标记设置未true
+                    验证标记 = re.data.needle
+                }
+
+            } catch (error) {
+                //出错
+                log(error)
+            }
+
+        }
+    } else {
+        toastLog("获取时间戳失败")
+    }
+
+}
+
+function 卡密心跳() {
+    var kami = storage.get("卡密")
+    if (kami == "") {
+        //这里alert  提示后退出
+        dialogs.alert("卡密为空")
+    }
+    var id = 11515
+    var 域名 = "http://api3.2cccc.cc/apiv3/card_ping"
+    var timec = "http://api3.2cccc.cc/time"
+    var apipassword = 363482
+    try {
+        var res = http.get(timec)
+        if (res.statusCode == 200) {
+            let timestamp = res.body.string()
+            let sign = md5(timestamp + apipassword)
+            log(sign)
+            res = http.post(域名, {
+                center_id: id,
+                card: "Y8RRRC35Q4KUWQGXSLMR7BKABFSDR6PJUBLX6K5V",
+                software: "haihong",
+                timestamp: timestamp,
+                needle: 验证标记,
+                sign: sign
+            })
+            if (res.statusCode == 200) {
+                try {
+                    let re = res.body.json()
+                    log(re)
+                    if (re.code != 1) {
+                        exit()
+                    }
+
+                    let ss = new Date(re.endtime_timestamp * 1000)
+                    if (ss - new Date() <= 0) {
+                        //时间没了
+                        dialogs.build("卡密到期")
+                        exit()
+                    } else {
+                        //通过
+                    }
+                } catch (error) {
+                    //出错
+                    log(error)
+                }
+            }
+        }
+    } catch (error) {
+        log(error)
+    }
+
+}
 
 
 
 function test() {
-
+    卡密登录()
 
 
 }
