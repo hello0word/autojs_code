@@ -467,7 +467,7 @@ function task_managers() {
 }
 
 function douyin() {
-    re = text_or_desc("观看DY视频").findOne(8000)
+    re = text_or_desc("观看爆音视频").findOne(8000)
     if (re) {
         my_click(re.bounds().centerX(), re.bounds().centerY())
         log("观看抖音视频")
