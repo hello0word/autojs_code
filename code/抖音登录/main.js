@@ -185,7 +185,7 @@ function text_or_desc(str) {
 }
 
 function 等待抖音打开() {
-    for (let index = 0; index < 3; index++) {
+    for (let index = 0; index < 5; index++) {
 
         app.openAppSetting(app.getPackageName("抖音短视频"))
         let ddd = text("强行停止").findOne(5000)
@@ -194,7 +194,7 @@ function 等待抖音打开() {
             let qd = text("确定").findOne(2000)
             qd ? qd.click() : log("已关闭")
         } else {
-            shell("am force-stop " + douyin_packagename, true)
+            shell("am force-stop " + app.getPackageName("抖音短视频"), true)
             sleep(2000)
         }
         sleep(1000)
@@ -204,7 +204,7 @@ function 等待抖音打开() {
             log("抖音开启成功")
             return true
         } else {
-            shell("am force-stop " + douyin_packagename, true)
+            shell("am force-stop " + app.getPackageName("抖音短视频"), true)
             sleep(2000)
         }
     }
