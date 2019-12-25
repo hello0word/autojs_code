@@ -4,6 +4,8 @@
     "ignore": [
         "build"
     ],
+    "encryptLevel": 1,
+    "icon":"res/icon.png",
     "packageName": "com.douyin.login",
     "versionName": "1.0.0",
     "versionCode": 1
