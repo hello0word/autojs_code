@@ -28,7 +28,7 @@ function my_click(x, y) {
 //执行一些点击操作
 function shouquan() {
     if (isroot()) {
-        var dd = shell("pm grant " + myself_package_name + " android.permission.WRITE_SECURE_SETTINGS", true)
+        var dd = shell("pm grant " + context.getPackageName() + " android.permission.WRITE_SECURE_SETTINGS", true)
         // log(dd)
         if (dd.code != 0) {
             toastLog("授权失败")
@@ -106,10 +106,8 @@ function openAccessbility() {
         由于Android的一些bug，有时候实际没有开启的服务仍会出现在已启用的里面，所有没办法通过判断得知服务是否开启
         像当前这样子会导致已开启服务里面有很多重复项目，所有建议直接写死不再每次重新获取
         */
-        if (!myself_package_name) {
-            log("包名获取失败")
-        }
-        var Services = enabledServices + ":" + myself_package_name + "/com.stardust.autojs.core.accessibility.AccessibilityService";
+        
+        var Services = enabledServices + ":" + context.getPackageName() + "/com.stardust.autojs.core.accessibility.AccessibilityService";
         Settings.Secure.putString(context.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, Services);
         Settings.Secure.putString(context.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, '1');
         log("代码执行完毕")
@@ -215,7 +213,7 @@ function 等待抖音打开() {
 
 
 function 获取任务() {
-    let path = filse.join(files.getSdcardPath(), "login.txt")
+    let path = files.join(files.getSdcardPath(), "login.txt")
     if (files.exists(path) && files.isFile(path)) {
         let con = files.read(path)
         let zhanghao = con.split("|")
@@ -296,7 +294,8 @@ function main() {
     }
     let 抖音号 = 进入设置()
     if (信息.账号 == 抖音号) {
-        toastLog("正确")
+        toastLog("账号正确")
+        exit()
     }
     toastLog("退出登录")
     back()
@@ -313,7 +312,7 @@ function main() {
                 log("确定退出")
                 确定退出按钮.click()
             }
-            break;
+            exit();
         }
     }
     toastLog("找不到退出登录按钮")
@@ -322,19 +321,7 @@ function main() {
 function test() {
 
     // 进入设置()
-    let 退出登录按钮 = text("退出登录").findOne(500)
-    if (!退出登录按钮) {
-        swipe(device.width / 2, device.height / 10 * 6, device.width / 2, device.height / 10 * 5, 10)
-        sleep(1000)
-    } else {
-        退出登录按钮.parent().parent().click()
-        let 确定退出按钮 = text("退出").clickable().findOne(2000)
-        if (确定退出按钮) {
-            log("确定退出")
-            确定退出按钮.click()
-        }
-        ;
-    }
+    log(files.write("/sdcard/login.txt","dyv1fne0vclf|123"))
 
 }
 
