@@ -13,6 +13,7 @@ var 配置_快手养号时间 = storage.get("快手养号时间", 10)
 var 配置_抖音没任务次数 = storage.get("配置_抖音没任务次数", 3)
 var 配置_快手没任务次数 = storage.get("配置_快手没任务次数", 3)
 var 卡密 = storage.get("卡密", "")
+var 目标APP = storage.get("目标APP",0)
 
 ui.layout(
     <ScrollView>
@@ -23,6 +24,14 @@ ui.layout(
                 <button id="日志按钮" w="auto" style="Widget.AppCompat.Button.Colored">日志</button>
             </horizontal>
             <text gravity="center" textSize="14sp" textStyle="bold">只勾选一个则只跑单app,勾选两个则根据模式选择交替方法</text>
+            <horizontal>
+                <text gravity="center" textSize="14sp" textStyle="bold" margin="0 5 20 40">目标APP:</text>
+                <radiogroup mariginTop="16" id="目标APP" >
+                    <radio text="66阅读" checked="true" />
+                    <radio text="99阅读" />
+                </radiogroup>
+            </horizontal>
+
             <horizontal>
                 <text w="auto" margin="0 5 20 40">功能勾选:</text>
                 <vertical>
@@ -115,6 +124,13 @@ function main() {
     storage.put("配置_抖音没任务次数", ui.配置_抖音没任务次数.text())
     storage.put("配置_快手没任务次数", ui.配置_快手没任务次数.text())
     storage.put("卡密", ui.卡密.text())
+    var count = ui.目标APP.getChildCount()
+    for (let index = 0; index < count; index++) {
+        let view = ui.目标APP.getChildAt(index)
+        if(view.isChecked()){
+            storage.put("目标APP",index)
+        }
+    }
     if (new Date().getTime() - 上次点击时间 > 5000) {
         上次点击时间 = new Date().getTime()
         app.startActivity("console")
@@ -167,7 +183,13 @@ ui.post(
                 content: content,
             })
         }
-        //log(单选按钮集合)
+        var count = ui.目标APP.getChildCount()
+        for (var i = 0; i < count; i++) {
+            var view = ui.目标APP.getChildAt(i)
+            if (i == 目标APP) {
+                view.checked = true
+            }
+        }
 
     }
 )
