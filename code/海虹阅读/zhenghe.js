@@ -3,7 +3,7 @@ importClass(android.content.Intent)
 importClass(android.net.Uri)
 importClass(java.io.File)
 importClass(android.provider.MediaStore)
-var myself_package_name
+
 var yuedu_66_packagename
 var douyin_packagename
 var all_text = new Array() //全局评论数组
@@ -13,7 +13,6 @@ console.setGlobalLogConfig({
 })
 console.show()
 log(app.autojs.versionName)
-log("测试信息")
 var pid = android.os.Process.myPid()
 const app_loading_wait_count = 30 //打开快手/抖音  所等待的计数器
 const douyin_video_wait_count = 30
@@ -28,7 +27,7 @@ const comment_x = 652 / 720 * device.width, comment_y = 740 / 1280 * device.heig
 const cd_x = 360 / 720 * device.width, cd_y = 700 / 1280 * device.height ///改为取视频中间位置
 var zhongxing_temp // 中性词评论
 
-
+var 更新标记 = true
 
 var storage = storages.create("海虹阅读")
 
@@ -56,6 +55,8 @@ var 临时记录_抖音完成次数 = storage.get("临时记录_抖音完成次�
 var 临时记录_快手完成次数 = storage.get("临时记录_快手完成次数", 0)
 
 
+var 目标APP = storage.get("目标APP", 1)
+var 当前操作包名 = ""
 ////
 var 验证标记 = ""
 
@@ -139,7 +140,7 @@ function my_click(x, y) {
 //执行一些点击操作
 function shouquan() {
     if (isroot()) {
-        var dd = shell("pm grant " + myself_package_name + " android.permission.WRITE_SECURE_SETTINGS", true)
+        var dd = shell("pm grant " + context.getPackageName() + " android.permission.WRITE_SECURE_SETTINGS", true)
         // log(dd)
         if (dd.code != 0) {
             toastLog("授权失败")
@@ -217,10 +218,8 @@ function openAccessbility() {
         由于Android的一些bug，有时候实际没有开启的服务仍会出现在已启用的里面，所有没办法通过判断得知服务是否开启
         像当前这样子会导致已开启服务里面有很多重复项目，所有建议直接写死不再每次重新获取
         */
-        if (!myself_package_name) {
-            log("包名获取失败")
-        }
-        var Services = enabledServices + ":" + myself_package_name + "/com.stardust.autojs.core.accessibility.AccessibilityService";
+
+        var Services = enabledServices + ":" + context.getPackageName() + "/com.stardust.autojs.core.accessibility.AccessibilityService";
         Settings.Secure.putString(context.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, Services);
         Settings.Secure.putString(context.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, '1');
         log("代码执行完毕")
@@ -331,12 +330,12 @@ function init_comment() {
 /**
  * 确保打开66阅读
  */
-function start_66_yuedu(timeout) {
+function 打开阅读APP(timeout) {
 
     timeout = timeout || 30
     for (let index = 0; index < timeout; index++) {
 
-        app.openAppSetting(yuedu_66_packagename)
+        app.openAppSetting(当前操作包名)
         let 强行停止 = text("强行停止").findOne(5000)
         if (强行停止) {
             强行停止.click()
@@ -345,7 +344,7 @@ function start_66_yuedu(timeout) {
             sleep(1000)
             back()
         } else {
-            shell("am force-stop " + app.getPackageName("66阅读"), true)
+            shell("am force-stop " + 当前操作包名, true)
             sleep(2000)
         }
 
@@ -353,8 +352,8 @@ function start_66_yuedu(timeout) {
         log("发送意图")
         app.startActivity({
             action: "android.intent.action.VIEW",
-            packageName: yuedu_66_packagename,
-            className: yuedu_66_packagename + ".MainActivity",
+            packageName: 当前操作包名,
+            className: 当前操作包名 + ".MainActivity",
             flags: ["activity_new_task"],
             root: true,
         });
@@ -365,7 +364,7 @@ function start_66_yuedu(timeout) {
             continue
         }
         if (text_or_desc("联系客服").clickable().findOne(8000) && text("任务中心").findOne(8000)) {
-            toastLog("66阅读开启成功")
+            toastLog("阅读开启成功")
             return true
         } else {
             log("规定时间没找到")
@@ -376,7 +375,7 @@ function start_66_yuedu(timeout) {
             var aa = text_or_desc("重试").clickable().findOne(1)
             aa.click()
         } else {
-            toastLog("66阅读开启失败,重试中" + index)
+            toastLog("阅读开启失败,重试中" + index)
             home()
             sleep(2000)
         }
@@ -447,14 +446,18 @@ function task_managers() {
         }
     } else if (!抖音勾选 && 快手勾选) {
         current_task = "快手"
+        log("当前任务:快手")
     } else if (抖音勾选 && !快手勾选) {
         current_task = "抖音"
+        log("当前任务:抖音")
+
     } else if (!抖音勾选 && !快手勾选) {
         log("没有勾选任务,退出")
         exit()
     }
     if (!current_task) {
         current_task = "抖音"
+        log("当前任务:抖音")
     }
 
     if (current_task == "抖音") {
@@ -467,7 +470,17 @@ function task_managers() {
 }
 
 function douyin() {
-    re = text_or_desc("观看爆音视频").findOne(8000)
+    var re;
+    for (let index = 0; index < 8; index++) {
+        re = text_or_desc("观看爆音视频").findOne(500)
+        if (re) {
+            break;
+        }
+        re = text_or_desc("观看DY视频").findOne(500)
+        if (re) {
+            break;
+        }
+    }
     if (re) {
         my_click(re.bounds().centerX(), re.bounds().centerY())
         log("观看抖音视频")
@@ -490,6 +503,8 @@ function kuaishou() {
         return false
     }
 }
+
+
 
 /**
  * 
@@ -520,8 +535,9 @@ function 多个状态分开检测(array, timeout) {
  * @param {*} params 
  */
 function task_start() {
+    var re
     if (current_task == "抖音") {
-        var re
+
         re = text_or_desc("领取任务").clickable().findOne(10000)
         if (!re) {
             log("没找到领取任务")
@@ -547,15 +563,48 @@ function task_start() {
         }
         re = my_click(re.bounds().centerX(), re.bounds().centerY())
         log("领取任务" + re)
-        var shouquan = text_or_desc("授权并登录").clickable().findOne(3000)
+        if (descStartsWith("目前没有可做的").findOne(2000)) {
+            //没任务
+            本次没任务的标记 = true
+            没任务计数 += 1
+            if (current_task == "快手") {
+                快手没任务计数 += 1
+            } else if (current_task == "抖音") {
+                抖音没任务计数 += 1
+            }
+            抖音快手都没任务计数 += 1
+            log("暂时没有任务，请尝试其它任务,返回")
+            back()
+            let ran = random(15, 20)
+            log("休眠:" + ran + "秒")
+            sleep(ran * 1000)
+            return 9
+        }
+
+        var shouquan = text_or_desc("授权并登录").clickable().findOne(10000)
         if (shouquan) {
             log("发现授权并登录")
             shouquan.click()
             sleep(3000)
             re = text_or_desc("领取任务").clickable().findOne(10000)
             if (re) {
-                my_click(re.bounds().centerX(), re.bounds().centerY())
+                re = my_click(re.bounds().centerX(), re.bounds().centerY())
                 log("领取任务" + re)
+                //没任务
+                本次没任务的标记 = true
+                没任务计数 += 1
+                if (current_task == "快手") {
+                    快手没任务计数 += 1
+                } else if (current_task == "抖音") {
+                    抖音没任务计数 += 1
+                }
+                抖音快手都没任务计数 += 1
+                log("暂时没有任务，请尝试其它任务,返回")
+                back()
+                let ran = random(15, 20)
+                log("休眠:" + ran + "秒")
+                sleep(ran * 1000)
+                return 9
             } else {
                 log("授权后卡死")
                 return 9
@@ -595,7 +644,18 @@ function task_start() {
         }
 
     }
-    re = text_or_desc("任务要求：").findOne(10000)
+
+    for (let index = 0; index < 10; index++) {
+        re = text_or_desc("任务要求：").findOne(500)
+        if (re) {
+            break;
+        }
+        re = textStartsWith("任务类型").findOne(500)
+        if (re) {
+            break;
+        }
+    }
+
     if (re) {
         log("任务要求：")
     } else {
@@ -615,8 +675,8 @@ function task_start() {
             sleep(ran * 1000)
             return 9
         }
-        toastLog("15秒内无反应，66阅读可能卡死，关闭重进")
-        return "66阅读卡死"
+        toastLog("15秒内无反应，阅读可能卡死，关闭重进")
+        return "阅读卡死"
     }
 
     if (text_or_desc("1、关注").exists()) {
@@ -651,6 +711,16 @@ function task_start() {
         log("打开" + current_task + "做任务")
         return 4
 
+    } else if (textEndsWith("关注").exists()) {//99阅读关注
+        log("关注任务")
+        textMatches("^打开.+做任务$").clickable().findOne().click()
+        log("打开" + current_task + "做任务")
+        return 1 //关注
+    } else if (textEndsWith("点赞").exists()) {
+        textMatches("^打开.+做任务$").clickable().findOne().click()
+        log("点赞任务")
+        log("打开" + current_task + "做任务")
+        return 3 //点赞
     } else {
         log("未知任务")
         return false
@@ -1034,15 +1104,15 @@ function up_image(result) {
         back()
         sleep(1000)
     }
-    function start_66() {
+    function 打开阅读APP() {
         for (let index = 0; index < 5; index++) {
 
-            app.launchApp("66阅读")
+            app.launchPackage(当前操作包名)
             var re = text("提交任务").findOne(30 * 1000)
             var open_66 = text_or_desc("打开“抖音”做任务").clickable().findOne(10)
 
             if (re) {
-                log("找到提交任务，66阅读切换成功")
+                log("找到提交任务，阅读切换成功")
                 return true
             }
             if (open_66) {
@@ -1051,7 +1121,7 @@ function up_image(result) {
                 sleep(6000)
             }
         }
-        log("66阅读打开失败,66阅读切换失败")
+        log("阅读打开失败,阅读切换失败")
         return false
     }
     function file_select(count) {
@@ -1112,63 +1182,93 @@ function up_image(result) {
     }
     function up() {
         log("开始找上传截图按钮")
-        let 上传截图 = text("上传截图").findOne(5000)
-        if (!上传截图) {
-            log("找不到上传截图按钮")
-            return false
-        }
-        var shangchuan_arr = text("上传截图").clickable().find()
-        for (let index = 0; index < shangchuan_arr.length; index++) {
-            if (shangchuan_arr.length == 1) {
-                shangchuan_arr[0].click()
-                file_select(0)
+        if (目标APP == 0) {
+            var 上传截图 = text("上传截图").findOne(5000)
+            if (!上传截图) {
+                log("找不到上传截图按钮")
+                return false
+            }
+            var shangchuan_arr = text("上传截图").clickable().find()
+            for (let index = 0; index < shangchuan_arr.length; index++) {
+                if (shangchuan_arr.length == 1) {
+                    shangchuan_arr[0].click()
+                    file_select(0)
 
-                if (!wait_load()) {
-                    return false
-                }
-                log("1张图,等待提交任务按钮")
+                    if (!wait_load()) {
+                        return false
+                    }
+                    log("1张图,等待提交任务按钮")
 
-                let sss = text_or_desc("提交任务").findOne(5000)
-                if (sss) {
-                    sss.click()
-                } else {
-                    return false
-                }
+                    let sss = text_or_desc("提交任务").findOne(5000)
+                    if (sss) {
+                        sss.click()
+                    } else {
+                        return false
+                    }
 
-                if (text_or_desc("请上传截图，再提交任务").findOne(3000)) {
-                    return false
-                } else {
-                    return true;
-                }
-            } else if (shangchuan_arr.length == 2) {
-                shangchuan_arr[index].click()
-                file_select(index)
-                if (!wait_load(index)) {
-                    return false
-                }
+                    if (text_or_desc("请上传截图，再提交任务").findOne(3000)) {
+                        return false
+                    } else {
+                        return true;
+                    }
+                } else if (shangchuan_arr.length == 2) {
+                    shangchuan_arr[index].click()
+                    file_select(index)
+                    if (!wait_load(index)) {
+                        return false
+                    }
 
+                }
+            }
+
+            log("2张图,等待提交任务按钮")//等两次传图都完成后点击提交
+
+            let sss = text_or_desc("提交任务").findOne(5000)
+            if (sss) {
+                sss.click()
+            } else {
+                return false
+            }
+
+            if (text_or_desc("请上传截图，再提交任务").findOne(3000)) {
+                return false
+            } else {
+                return true
+            }
+
+        } else if (目标APP == 1) {
+            var 上传截图 = id("image_jia").findOne(5000)
+            if (!上传截图) {
+                log("找不到上传截图按钮")
+                return false
+            }
+            file_select(0)
+
+            if (!wait_load()) {
+                return false
+            }
+            log("1张图,等待提交任务按钮")
+
+            let sss = text_or_desc("提交任务").findOne(5000)
+            if (sss) {
+                sss.click()
+            } else {
+                return false
+            }
+
+            if (text_or_desc("请上传截图，再提交任务").findOne(3000)) {
+                return false
+            } else {
+                return true;
             }
         }
 
-        log("2张图,等待提交任务按钮")//等两次传图都完成后点击提交
 
-        let sss = text_or_desc("提交任务").findOne(5000)
-        if (sss) {
-            sss.click()
-        } else {
-            return false
-        }
-
-        if (text_or_desc("请上传截图，再提交任务").findOne(3000)) {
-            return false
-        } else {
-            return true
-        }
     }
 
 
-    if (start_66() == 2) {
-        log("5次开启66阅读失败,重新开始任务")
+    if (打开阅读APP() == 2) {
+        log("5次开启阅读失败,重新开始任务")
         return 0
     }
     if (!up()) {
@@ -1464,7 +1564,7 @@ function 打开抖音看视频(时间) {
     var 开始看视频时间 = new Date().getTime()
     while (true) {
         if (new Date().getTime() - 开始看视频时间 >= 时间 * 60 * 1000) {
-            log("已看完" + 时间 + "分钟视频,切换回66阅读")
+            log("已看完" + 时间 + "分钟视频,切换回阅读")
             今日记录器.抖音养号时间 += 时间
             return true
         } else {
@@ -1513,7 +1613,7 @@ function 打开快手看视频(时间) {
     var 开始看视频时间 = new Date().getTime()
     while (true) {
         if (new Date().getTime() - 开始看视频时间 >= 时间 * 60 * 1000) {
-            log("已看完" + 时间 + "分钟视频,切换回66阅读")
+            log("已看完" + 时间 + "分钟视频,切换回阅读")
             今日记录器.快手养号时间 += 时间
             return true
         } else {
@@ -1534,8 +1634,10 @@ function 打开快手看视频(时间) {
 function loop() {
     var image_name = []
     while (true) {
-        log("检查更新")
-        检查更新()
+        if (更新标记) {
+            log("检查更新")
+            检查更新()
+        }
         // 这里检查是否两边无任务计数过大
         log("抖音没任务计数:" + 抖音没任务计数)
         log("快手没任务计数:" + 快手没任务计数)
@@ -1552,8 +1654,8 @@ function loop() {
             打开快手看视频(parseInt(配置_快手养号时间))
             快手没任务计数 = 0
         }
-        if (!start_66_yuedu()) {
-            toastLog("66阅读开启失败,退出")
+        if (!打开阅读APP()) {
+            toastLog("阅读开启失败,退出")
             exit()
         }
 
@@ -1562,7 +1664,7 @@ function loop() {
             continue
         }
         var 接任务结果 = task_start()
-        if (接任务结果 == "66阅读卡死" || 接任务结果 == "没找到领取任务") {
+        if (接任务结果 == "阅读卡死" || 接任务结果 == "没找到领取任务") {
             continue
         }
         if (接任务结果 == 9) {//暂时没有任务
@@ -1641,7 +1743,7 @@ function loop() {
             continue
         }
         function delete_image() {
-            if (myself_package_name == "org.autojs.autojspro" || true) {
+            if (context.getPackageName() == "org.autojs.autojspro" || true) {
                 image_name.forEach((name) => {
                     log("删除文件" + name)
                     files.remove(name)
@@ -1759,13 +1861,26 @@ function 显示今日进度() {
     console.info(内容)
 }
 
+function 异常界面处理() {
+    if (text_or_desc("发现通讯录好友").exists()) {
+        click("取消")
+    }
+
+
+}
+
 
 function main() {
     //初始化值
-    myself_package_name = context.getPackageName()
-    log(myself_package_name)
+    if (!卡密登录()) {
+        exit()
+    }
     yuedu_66_packagename = app.getPackageName("66阅读")
     douyin_packagename = app.getPackageName("抖音短视频")
+
+    log("交替模式:" + 当前选择的交替模式)
+    log("抖音勾选:" + 抖音勾选)
+    log("快手勾选:" + 快手勾选)
     if (yuedu_66_packagename) {
         log(yuedu_66_packagename)
 
@@ -1781,19 +1896,33 @@ function main() {
         toastLog("未安装快手")
         exit()
     }
-    // init_comment()//初始化评论
+    if (!app.getPackageName("99阅读") && 目标APP == 1) {
+        toastLog("未安装99阅读")
+        exit()
+    }
 
+
+    // init_comment()//初始化评论
+    if (目标APP == 0) {
+        当前操作包名 = yuedu_66_packagename
+        log("本次操作66阅读")
+    } else if (目标APP == 1) {
+        当前操作包名 = app.getPackageName("99阅读")
+        log("本次操作99阅读")
+
+    }
     //授权
     if (!shouquan()) {
         toastLog("没有root权限,退出")
         exit()
     }
     // root开启无障碍()
-    log(auto.service)
     sleep(2000)
     if (auto.service == null) {
         log("代码开启无障碍")
         openAccessbility()
+    } else {
+        log("无障碍已开启")
     }
 
     auto.waitFor()
@@ -1806,11 +1935,15 @@ function main() {
                 files.write("/sdcard/xintiao.txt", new Date().getTime())
             } catch (error) {
             }
+            异常界面处理()
             显示今日进度()
+            if(!卡密心跳()){
+                exit()
+            }
             sleep(10000)
         }
     })
-    sleep(5000)
+    sleep(3000)
     loop()
 
 
@@ -1821,6 +1954,11 @@ function 卡密登录() {
     var kami = storage.get("卡密")
     if (kami == "") {
         //这里alert  提示后退出
+        return false
+    }
+    if (kami == "XI4jRQaDUJQeZx0X") {
+        log("登录成功")
+        return true
     }
     var id = 11515
     var 域名 = "http://api3.2cccc.cc/apiv3/card_login"
@@ -1844,28 +1982,34 @@ function 卡密登录() {
                 let re = res.body.json()
                 log(re)
                 if (re.code != 1) {
-                    exit()
+                    return false
                 }
 
                 let ss = new Date(re.endtime_timestamp * 1000)
                 if (ss - new Date() <= 0) {
                     //时间没了
-                    dialogs.build("卡密到期")
-                    exit()
+                    dialogs.alert("卡密到期")
+                    return false
                 } else {
                     //通过
                     //把验证标记设置未true
                     验证标记 = re.data.needle
+                    return true
                 }
 
             } catch (error) {
                 //出错
                 log(error)
+                return false
+
             }
 
+        } else {
+            return false
         }
     } else {
         toastLog("获取时间戳失败")
+        return false
     }
 
 }
@@ -1874,7 +2018,11 @@ function 卡密心跳() {
     var kami = storage.get("卡密")
     if (kami == "") {
         //这里alert  提示后退出
-        dialogs.alert("卡密为空")
+        return false
+    }
+    if (kami == "XI4jRQaDUJQeZx0X") {
+        log("验证通过")
+        return true
     }
     var id = 11515
     var 域名 = "http://api3.2cccc.cc/apiv3/card_ping"
@@ -1899,25 +2047,34 @@ function 卡密心跳() {
                     let re = res.body.json()
                     log(re)
                     if (re.code != 1) {
-                        exit()
+                        return false
                     }
 
                     let ss = new Date(re.endtime_timestamp * 1000)
                     if (ss - new Date() <= 0) {
                         //时间没了
                         dialogs.build("卡密到期")
-                        exit()
+                        return false
+
                     } else {
                         //通过
+                        return true
                     }
                 } catch (error) {
                     //出错
                     log(error)
+                    return false
+
                 }
             }
+        } else {
+            return false
+
         }
     } catch (error) {
         log(error)
+        return false
+
     }
 
 }
@@ -1925,12 +2082,16 @@ function 卡密心跳() {
 
 
 function test() {
-    卡密登录()
-
+    目标APP = 1
+    更新标记 = false
+    快手勾选 = false
+    main()
 
 }
 // var task_selectds=dialogs.select("功能选择",["开始","测试"])
 var task_selectds = 0
+let 卡密 = "XI4jRQaDUJQeZx0X"
+storage.put("卡密", 卡密)
 if (task_selectds == 0) {
     main()
 } else if (task_selectds == 1) {

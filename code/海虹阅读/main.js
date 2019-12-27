@@ -124,13 +124,8 @@ function main() {
     storage.put("配置_抖音没任务次数", ui.配置_抖音没任务次数.text())
     storage.put("配置_快手没任务次数", ui.配置_快手没任务次数.text())
     storage.put("卡密", ui.卡密.text())
-    var count = ui.目标APP.getChildCount()
-    for (let index = 0; index < count; index++) {
-        let view = ui.目标APP.getChildAt(index)
-        if(view.isChecked()){
-            storage.put("目标APP",index)
-        }
-    }
+   
+    
     if (new Date().getTime() - 上次点击时间 > 5000) {
         上次点击时间 = new Date().getTime()
         app.startActivity("console")
@@ -246,22 +241,45 @@ ui.交替模式.setOnCheckedChangeListener(//单选框选择
         // toastLog(msg)
     }
 )
+ui.目标APP.setOnCheckedChangeListener(//单选框选择
+    function (radioGroup, id) {
+        var count = ui.目标APP.getChildCount()
+        for (let index = 0; index < count; index++) {
+            let view = ui.目标APP.getChildAt(index)
+            if(view.isChecked()){
+                storage.put("目标APP",index)
+                if (index==1) {
+                    log("选择了99阅读")
+                    if(ui.快手勾选框.isChecked()){
+                        ui.快手勾选框.checked = false
+                        
+                    }
+                }
+            }
+        }
+    }
+)
 /////////////////////////////////////////////////////
 /**
  * 功能区监听
  */
 ui.抖音勾选框.on("check", (checked) => {
     if (checked) {
+        log("抖音已勾选")
         storage.put("抖音勾选", true)
     } else {
+        log("抖音已取消勾选")
+
         storage.put("抖音勾选", false)
     }
 });
 
 ui.快手勾选框.on("check", (checked) => {
     if (checked) {
+        log("快手已勾选")
         storage.put("快手勾选", true)
     } else {
+        log("快手已取消勾选")
         storage.put("快手勾选", false)
     }
 });
