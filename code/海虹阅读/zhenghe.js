@@ -275,7 +275,7 @@ function text_or_desc(str) {
                 if (this.result) {
                     return this.result
                 }
-                this.result = desc(this.str).clickable(this.bool).findOne(1)
+                this.result = desc(this.str).clickable().findOne(1)
                 if (this.result) {
                     return this.result
                 }
