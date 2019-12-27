@@ -250,7 +250,7 @@ function text_or_desc(str) {
     this.str = str || ""
     this.bool = undefined
     this.clickable = function (bool) {
-        if (bool == undefined) {
+        if (typeof(bool) == "undefined") {
             bool = true
         }
         this.bool = bool
@@ -270,7 +270,7 @@ function text_or_desc(str) {
             if (new Date().getTime() - start_time > timeout) {
                 return null
             }
-            if (this.bool != undefined) {
+            if (typeof(this.bool) != "undefined") {
                 this.result = text(this.str).clickable(this.bool).findOne(1)
                 if (this.result) {
                     return this.result
