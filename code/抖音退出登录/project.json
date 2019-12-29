@@ -1,10 +1,12 @@
 {
     "name": "抖音登录",
-    "main": "main.js",
+    "main": "run.js",
     "ignore": [
         "build"
     ],
-    "packageName": "com.douyin.login.new",
+    "encryptLevel": 1,
+    "icon":"res/icon.png",
+    "packageName": "com.douyin.login",
     "versionName": "1.0.0",
     "versionCode": 1
 }
