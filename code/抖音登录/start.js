@@ -219,6 +219,11 @@ function 清除数据无障碍(packagename) {
 
 function 获取任务() {
     let path = files.join(files.getSdcardPath(), "login.txt")
+    if (!files.exists(path)) {
+        toastLog("无账号文件")
+        exit()
+    }
+    
     if (files.exists(path) && files.isFile(path)) {
         let con = files.read(path)
         let zhanghao = con.split("|")

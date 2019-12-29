@@ -1,6 +1,6 @@
 {
     "name": "抖音登录",
-    "main": "main.js",
+    "main": "run.js",
     "ignore": [
         "build"
     ],
