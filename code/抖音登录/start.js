@@ -129,12 +129,19 @@ function isroot() {
 
 function text_or_desc(str) {
     this.str = str || ""
-    this.bool = undefined
+    this.text_selector = selector()
+    this.text_selector.text(this.str)
+    this.desc_selector = selector()
+    this.desc_selector.desc(this.str)
+
     this.clickable = function (bool) {
-        if (bool == undefined) {
-            bool = true
-        }
-        this.bool = bool
+        this.text_selector.clickable(bool)
+        this.desc_selector.clickable(bool)
+        return this
+    }
+    this.id = function (id) {
+        this.text_selector.id(id)
+        this.desc_selector.id(id)
         return this
     }
     this.exists = function () {
@@ -151,25 +158,13 @@ function text_or_desc(str) {
             if (new Date().getTime() - start_time > timeout) {
                 return null
             }
-            if (this.bool != undefined) {
-                this.result = text(this.str).clickable(this.bool).findOne(1)
-                if (this.result) {
-                    return this.result
-                }
-                this.result = desc(this.str).clickable(this.bool).findOne(1)
-                if (this.result) {
-                    return this.result
-                }
-            } else {
-                this.result = text(this.str).findOne(1)
-                if (this.result) {
-                    return this.result
-
-                }
-                this.result = desc(this.str).findOne(1)
-                if (this.result) {
-                    return this.result
-                }
+            let re= this.text_selector.findOnce()
+            if (re) {
+                return re
+            }
+            re= this.desc_selector.findOnce()
+            if (re) {
+                return re
             }
             sleep(200)
         }
@@ -415,7 +410,7 @@ function 登录今日头条(数据) {
                 let re = className("ImageView").depth(13).find()
                 if (re.length >= 0 && index < re.length) {
                     re[index].click()
-                    let 天翼登录按钮 = desc("登录").id("j-login").findOne(45000)
+                    let 天翼登录按钮 = text_or_desc("登录").id("j-login").findOne(45000)
                     if (!天翼登录按钮) {
                         log("找不到天翼登录按钮")
                         back()
