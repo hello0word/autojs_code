@@ -1,9 +1,6 @@
 // console.show()
 sleep(500)
-if (!requestScreenCapture()) {
-    toastLog("请求截图失败");
-    exit()
-}
+
 
 function my_click(x, y) {
     console.hide()
