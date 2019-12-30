@@ -243,18 +243,18 @@ function 登录抖音(方式, 数据) {
                 sleep(3000)
                 log("抖音开启成功")
                 for (let index = 0; index < 3; index++) {
-                    let 允许 = text("允许").clickable().findOne(2000)
+                    let 允许 = text("允许").clickable().findOne(6000)
                     if (允许) {
                         允许.click()
                     }
                 }
                 sleep(4000)
-                let re = textStartsWith("滑动查看更多").findOne(2000)
+                let re = textStartsWith("滑动查看更多").findOne(10000)
                 if (re) {
                     log("滑动查看更多")
                     back()
                 }
-                let 我按钮 = text("我").findOne(3000)
+                let 我按钮 = text("我").findOne(8000)
                 if (!我按钮) {
                     log("找不到我按钮")
                     return false
