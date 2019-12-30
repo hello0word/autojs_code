@@ -8,6 +8,7 @@ requiresAutojsVersion(8000001);
 IntentFilter = android.content.IntentFilter;
 
 let receiver = new BroadcastReceiver(function (ctx, intent) {
+    log("收到intent")
     let path = intent.getStringExtra("path");
     let type = intent.getStringExtra("type");
     if (type == "img") {
