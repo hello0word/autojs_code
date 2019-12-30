@@ -11,19 +11,22 @@ let receiver = new BroadcastReceiver(function (ctx, intent) {
     log("收到intent")
     let path = intent.getStringExtra("path");
     let type = intent.getStringExtra("type");
+    let random_ss = intent.getStringExtra("random_ss");
     if (type == "img") {
-        var intent = new Intent();
-        intent.setAction("captureok");
+        // var intent = new Intent();
+        // intent.setAction("captureok");
         if (path) {
             captureScreen(path)
             log("已保存到:" + path)
-            intent.putExtra("path",path );
+            // intent.putExtra("path",path );
         } else {
             captureScreen("/sdcard/current.png")
             log("保存到:/sdcard/current.png")
-            intent.putExtra("path","/sdcard/current.png" );
+            // intent.putExtra("path","/sdcard/current.png" );
         }
-        context.sendBroadcast(intent);
+        // context.sendBroadcast(intent);
+        var ee = {random_ss:random_ss}
+        setClip(JSON.stringify(ee))
     } else if (type == "base64") {
         let img = base
     }
