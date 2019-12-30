@@ -1,0 +1,10 @@
+{
+    "name": "截图提供者",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "packageName": "com.getcauptre.tool",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}
