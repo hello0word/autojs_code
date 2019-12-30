@@ -27,6 +27,7 @@ let receiver = new BroadcastReceiver(function (ctx, intent) {
         // context.sendBroadcast(intent);
         var ee = {random_ss:random_ss}
         setClip(JSON.stringify(ee))
+        log("设置剪切板为:"+getClip())
     } else if (type == "base64") {
         let img = base
     }
