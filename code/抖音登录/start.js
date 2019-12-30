@@ -428,11 +428,19 @@ function 登录今日头条(数据) {
         //     return false
         // }
         var 天翼登录 = className("ImageView").depth(13).id("cw").findOne(10000)
-        if( !天翼登录){
+        if (!天翼登录) {
             log("选择天翼登录失败")
             return false
         }
         天翼登录.click()
+        let 天翼登录按钮 = desc("登录").id("j-login").findOne(45000)
+        if (!天翼登录按钮) {
+            log("找不到天翼登录按钮")
+            return false
+        } else {
+            log("找到天翼登录按钮")
+            
+        }
         //设置账号密码
         let 账号输入框 = className("EditText").id("userName").findOne(5000)
         if (账号输入框) {
