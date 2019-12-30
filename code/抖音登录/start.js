@@ -23,7 +23,7 @@ function my_click(x, y) {
 
 //执行一些点击操作
 function shouquan() {
-    
+
     var dd = shell("pm grant " + context.getPackageName() + " android.permission.WRITE_SECURE_SETTINGS", true)
     // log(dd)
     if (dd.code != 0) {
@@ -33,7 +33,7 @@ function shouquan() {
         log("授权成功")
         return true
     }
-   
+
 
 }
 function strcount(str, flg) {
@@ -177,10 +177,10 @@ function text_or_desc(str) {
     return this
 }
 
-function 清理数据root(packagename){
+function 清理数据root(packagename) {
     清理后台(packagename)
-    let re= shell("pm clear "+ packagename,true)
-    if (re.code==0) {
+    let re = shell("pm clear " + packagename, true)
+    if (re.code == 0) {
         return true
     }
 }
@@ -220,7 +220,7 @@ function 获取任务() {
         toastLog("无账号文件")
         exit()
     }
-    
+
     if (files.exists(path) && files.isFile(path)) {
         let con = files.read(path)
         let zhanghao = con.split("|")
@@ -282,23 +282,23 @@ function 登录抖音(方式, 数据) {
         }
         密码登录.click()
         let 输入框合集 = className("EditText").find()
-        if (输入框合集.length<2) {
+        if (输入框合集.length < 2) {
             log('无足够输入框')
             return false
         }
         输入框合集[0].setText("15369323275")
         输入框合集[1].setText("xia031425")
-        let 同意协议= className("CheckBox").findOne(3000)
+        let 同意协议 = className("CheckBox").findOne(3000)
         if (!同意协议) {
             log("无同意协议按钮")
             return false
         }
-        if(!同意协议.checked()){
+        if (!同意协议.checked()) {
             同意协议.click()
         }
         let 登录按钮 = text("登录").findOne(5000)
         if (!登录按钮) {
-            
+
             return false
         }
         登录按钮.parent().parent().click()
@@ -359,8 +359,8 @@ function 登录抖音(方式, 数据) {
         登录抖音_天翼登录()
     }
 }
-function 清理后台(packagename){
-    log(shell("am force-stop "+packagename,true))
+function 清理后台(packagename) {
+    log(shell("am force-stop " + packagename, true))
 }
 
 
@@ -407,18 +407,31 @@ function 登录今日头条(数据) {
             return false
         }
         手机登录.click()
-        sleep(4000)
-        let re = className("ImageView").depth(13).find()
-        if (re.length > 1) {
-            re[1].click()
-        } else {
+        sleep(5000)
+        //这里可能有好多个登录方式
+        function 选择天翼登录() {
+            for (let index = 1; index < 4; index++) {
+                let re = className("ImageView").depth(13).find()
+                if (re.length > 0 && index < re.length) {
+                    re[index].click()
+                    let 天翼登录按钮 = desc("登录").id("j-login").findOne(25000)
+                    if (!天翼登录按钮) {
+                        log("找不到天翼登录按钮")
+                        back()
+                        sleep(2000)
+                    }else{
+                        log("找到天翼登录按钮")
+                        return true
+                    }
+                }
+            }
             return false
         }
-        let 天翼登录按钮 = desc("登录").id("j-login").findOne(15000)
-        if (!天翼登录按钮) {
-            log("找不到天翼登录按钮")
+        if( !选择天翼登录()){
+            log("选择天翼登录失败")
             return false
         }
+
         //设置账号密码
         let 账号输入框 = className("EditText").id("userName").findOne(5000)
         if (账号输入框) {
@@ -463,13 +476,13 @@ function 登录今日头条(数据) {
 }
 
 function main() {
-    
+
     let 信息 = 获取任务()
     if (!isroot()) {
         toastLog("没有root权限,退出")
         exit()
     }
-    log("无障碍服务:"+auto.service)
+    log("无障碍服务:" + auto.service)
     sleep(2000)
     if (auto.service == null) {
         shouquan()
@@ -488,16 +501,16 @@ function main() {
                 break;
             }
         }
-        
+
     } else if (信息.类型 == 1) {//天翼账号登录
-        var bj=false
+        var bj = false
         for (let index = 0; index < 5; index++) {
             log("清除今日头条数据")
             清理数据root(app.getPackageName("今日头条"))
             log("开始登录今日头条")
             sleep(2000)
-            if(登录今日头条(信息)){
-                bj =  true
+            if (登录今日头条(信息)) {
+                bj = true
                 break;
             }
         }
@@ -513,7 +526,7 @@ function main() {
                 break;
             }
         }
-        
+
     }
 
 }
