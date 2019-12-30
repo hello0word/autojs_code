@@ -457,7 +457,7 @@ function 登录今日头条(数据) {
             return false
 
         }
-        let 天翼登录按钮 = desc("登录").id("j-login").findOne(45000)
+        天翼登录按钮 = desc("登录").id("j-login").findOne(45000)
         天翼登录按钮.click()
         let 我的 = text("我的").findOne(25000)
         if (我的) {
