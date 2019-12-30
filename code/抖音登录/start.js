@@ -409,29 +409,30 @@ function 登录今日头条(数据) {
         手机登录.click()
         sleep(5000)
         //这里可能有好多个登录方式
-        function 选择天翼登录() {
-            for (let index = 1; index < 4; index++) {
-                let re = className("ImageView").depth(13).find()
-                if (re.length > 0 && index < re.length) {
-                    re[index].click()
-                    let 天翼登录按钮 = desc("登录").id("j-login").findOne(45000)
-                    if (!天翼登录按钮) {
-                        log("找不到天翼登录按钮")
-                        back()
-                        sleep(2000)
-                    }else{
-                        log("找到天翼登录按钮")
-                        return true
-                    }
-                }
-            }
-            return false
-        }
-        if( !选择天翼登录()){
+        // function 选择天翼登录() {
+        //     for (let index = 1; index < 4; index++) {
+        //         let re = className("ImageView").depth(13).find()
+        //         if (re.length > 0 && index < re.length) {
+        //             re[index].click()
+        //             let 天翼登录按钮 = desc("登录").id("j-login").findOne(45000)
+        //             if (!天翼登录按钮) {
+        //                 log("找不到天翼登录按钮")
+        //                 back()
+        //                 sleep(2000)
+        //             }else{
+        //                 log("找到天翼登录按钮")
+        //                 return true
+        //             }
+        //         }
+        //     }
+        //     return false
+        // }
+        var 天翼登录 = className("ImageView").depth(13).id("cw").findOne(10000)
+        if( !天翼登录){
             log("选择天翼登录失败")
             return false
         }
-
+        天翼登录.click()
         //设置账号密码
         let 账号输入框 = className("EditText").id("userName").findOne(5000)
         if (账号输入框) {
