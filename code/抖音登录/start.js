@@ -408,7 +408,7 @@ function 登录今日头条(数据) {
         }
         手机登录.click()
         sleep(5000)
-        这里可能有好多个登录方式
+        //这里可能有好多个登录方式
         function 选择天翼登录() {
             var 所有图片个数 = className("ImageView").depth(13).find().length
             for (let index = 所有图片个数-1; index >=0 ; index--) {
