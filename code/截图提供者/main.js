@@ -11,7 +11,7 @@ let receiver = new BroadcastReceiver(function (ctx, intent) {
     log("收到intent")
     let path = intent.getStringExtra("path");
     let type = intent.getStringExtra("type");
-    let random_ss = intent.getStringExtra("random_ss");
+    let random_ss = intent.getStringExtra("random");
     if (type == "img") {
         // var intent = new Intent();
         // intent.setAction("captureok");
