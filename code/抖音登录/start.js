@@ -326,7 +326,7 @@ function 登录抖音(方式, 数据) {
             return false
         }
         今日头条登录.parent().click()
-        let 授权并登录 = text("授权并登录").clickable().findOne(12000)
+        let 授权并登录 = text("授权并登录").clickable().findOne(22000)
         if (!授权并登录) {
             log("找不到授权并登录按钮")
             return false
