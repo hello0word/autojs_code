@@ -321,24 +321,25 @@ function 登录抖音(方式, 数据) {
             return false
         }
         今日头条登录.parent().click()
-        let 授权并登录 = text("授权并登录").clickable().findOne(22000)
+        let 授权并登录 = text("授权并登录").clickable().findOne(28000)
         if (!授权并登录) {
             log("找不到授权并登录按钮")
             return false
         }
         授权并登录.click()
         let 跳过 = text("跳过").clickable().findOne(15000)
-        if (!跳过) {
+        if (跳过) {
+            跳过.click()
+        }else{
             log("找不到填手机号跳过按钮")
-            return false
         }
-        跳过.click()
         跳过 = text("跳过").clickable().findOne(8000)
-        if (!跳过) {
+        if (跳过) {
+            跳过.click()
+
+        }else{
             log("找不到通讯录好友跳过按钮")
-            return false
         }
-        跳过.click()
         return true
     }
     let 打开结果 = 等待抖音打开()
