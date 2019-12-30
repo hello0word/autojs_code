@@ -1,4 +1,4 @@
-// console.show()
+console.show()
 sleep(500)
 
 
