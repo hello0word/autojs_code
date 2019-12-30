@@ -489,7 +489,7 @@ function main() {
         log("代码开启无障碍")
         openAccessbility()
     }
-
+    sleep(3000)
     auto.waitFor()
     log("无障碍开启成功")
     device.keepScreenOn(2 * 3600 * 1000)
