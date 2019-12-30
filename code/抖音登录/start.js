@@ -414,7 +414,7 @@ function 登录今日头条(数据) {
                 let re = className("ImageView").depth(13).find()
                 if (re.length > 0 && index < re.length) {
                     re[index].click()
-                    let 天翼登录按钮 = desc("登录").id("j-login").findOne(25000)
+                    let 天翼登录按钮 = desc("登录").id("j-login").findOne(45000)
                     if (!天翼登录按钮) {
                         log("找不到天翼登录按钮")
                         back()
