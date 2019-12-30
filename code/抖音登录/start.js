@@ -326,15 +326,19 @@ function 登录抖音(方式, 数据) {
             log("找不到授权并登录按钮")
             return false
         }
+        log("授权并登录")
         授权并登录.click()
         let 跳过 = text("跳过").clickable().findOne(15000)
         if (跳过) {
+            log("跳过填手机号")
             跳过.click()
         }else{
             log("找不到填手机号跳过按钮")
         }
         跳过 = text("跳过").clickable().findOne(8000)
         if (跳过) {
+            log("跳过填通讯录好友")
+
             跳过.click()
 
         }else{
@@ -349,10 +353,10 @@ function 登录抖音(方式, 数据) {
     if (方式 == 0) {
         log("方式0")
 
-        登录抖音_账号密码(数据)
+        return 登录抖音_账号密码(数据)
     } else if (方式 == 1) {
         log("方式1")
-        登录抖音_天翼登录()
+        return 登录抖音_天翼登录()
     }
 }
 function 清理后台(packagename) {
