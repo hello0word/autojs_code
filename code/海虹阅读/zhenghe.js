@@ -121,7 +121,7 @@ if (!截图提供者是否存在) {
         toastLog("请求截图失败");
         exit()
     }
-}else{
+} else {
     log("截图由截图提供者提供")
 }
 
@@ -258,7 +258,7 @@ function text_or_desc(str) {
     this.str = str || ""
     this.bool = undefined
     this.clickable = function (bool) {
-        if (typeof(bool) == "undefined") {
+        if (typeof (bool) == "undefined") {
             bool = true
         }
         this.bool = bool
@@ -278,7 +278,7 @@ function text_or_desc(str) {
             if (new Date().getTime() - start_time > timeout) {
                 return null
             }
-            if (typeof(this.bool) != "undefined") {
+            if (typeof (this.bool) != "undefined") {
                 this.result = text(this.str).clickable(this.bool).findOne(1)
                 if (this.result) {
                     return this.result
@@ -736,10 +736,10 @@ function task_start() {
 
 }
 
-function 截图(){
+function 截图() {
     if (!截图提供者是否存在) {//截图提供者不存在
         return images.captureScreen()
-    }else{
+    } else {
         return 截图提供者截图()
     }
 }
@@ -765,7 +765,7 @@ function 截图提供者截图() {
         return false
 
     }
-    while(true){
+    while (true) {
         if (new Date().getTime() - 上次发送截图请求时间 > 500) {
             log("发送截图请求")
             var random_ss = random(1000, 9999)
@@ -774,11 +774,11 @@ function 截图提供者截图() {
             intent.putExtra("path", "/sdcard/360/mm.png");
             intent.putExtra("type", "img");
             log(random_ss)
-            intent.putExtra("random", ""+random_ss);
+            intent.putExtra("random", "" + random_ss);
             context.sendBroadcast(intent);
             上次发送截图请求时间 = new Date().getTime()
-            var img= 等待截图()
-            if(img){
+            var img = 等待截图()
+            if (img) {
                 return img
             }
         } else {
@@ -791,12 +791,21 @@ function 截图提供者截图() {
 /**
  * 等待抖音打开
  */
-function wait_douyin() {
+function wait_douyin(arg) {
     var re
     // re = text("留下你的精彩评论吧").findOne(1000 * 30)// 这个可能不行
     re = true
     if (re) {
         sleep(6000)
+        if (arg == 1) {
+            let 关注按钮 = text("关注").clickable().findOne(20000)
+            if (关注按钮) {
+                log("已进入关注页面")
+                return true
+            }else{
+                return false
+            }
+        }
         var change_arr = []
         for (let index = 0; index < douyin_video_wait_count; index++) {
             // var img = images.captureScreen()
@@ -838,7 +847,8 @@ function wait_douyin() {
 function 抖音点赞和关注(arg) {//1关注   3点赞
 
     try {
-        if (wait_douyin()) {
+
+        if (wait_douyin(arg)) {
             if (!抖音_点赞关注(arg)) {
                 return false
             }
@@ -1043,7 +1053,17 @@ function 抖音_点赞关注(arg) { //1关注   3点赞
         log("可能卡死")
         return false
     }
-    function open_guanzhu() {
+    function open_guanzhu(arg) {
+        let 关注按钮 = text("关注").clickable().findOne(4000)
+        if (关注按钮) {
+            关注按钮.click()
+            let 取消关注 = text("取消关注").clickable().findOne(4000)
+            if (取消关注) {
+                log("关注成功")
+                return true
+            }
+
+        }
         my_click(guanzhu_tap_x, guanzhu_tap_y)
         console.hide()
         files.write("./flg", 0)
@@ -1087,7 +1107,7 @@ function 抖音_点赞关注(arg) { //1关注   3点赞
                 log("不需要关注")
                 guanzhu_flg = true
             }
-            if (!guanzhu_flg && open_guanzhu()) {//判断关注否
+            if (!guanzhu_flg && open_guanzhu(arg)) {//判断关注否
                 log("关注检测通过")
                 guanzhu_flg = true
                 sleep(5000)
@@ -2007,7 +2027,7 @@ function main() {
             }
             异常界面处理()
             显示今日进度()
-            if(!卡密心跳()){
+            if (!卡密心跳()) {
                 exit()
             }
             sleep(10000)
