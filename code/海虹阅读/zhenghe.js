@@ -758,7 +758,7 @@ function 截图提供者截图() {
                     return ss
                 }
             } catch (error) {
-                log(error)
+                // log(error)
             }
             sleep(10)
         }
