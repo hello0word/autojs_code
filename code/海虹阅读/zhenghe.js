@@ -759,10 +759,11 @@ function 截图提供者截图() {
                 }
             } catch (error) {
                 log(error)
-                return false
             }
             sleep(10)
         }
+        return false
+
     }
     while(true){
         if (new Date().getTime() - 上次发送截图请求时间 > 500) {
