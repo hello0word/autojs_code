@@ -748,6 +748,7 @@ function 截图(){
 var 上次发送截图请求时间 = 0
 function 截图提供者截图() {
     function 等待截图() {
+        log("等待截图")
         for (let index = 0; index < 300; index++) {
             try {
                 var info = JSON.parse(getClip())
@@ -757,6 +758,7 @@ function 截图提供者截图() {
                     return ss
                 }
             } catch (error) {
+                log(error)
                 return false
             }
             sleep(10)
@@ -780,6 +782,7 @@ function 截图提供者截图() {
             }
         } else {
             log("频繁发送")
+            sleep(500)
         }
     }
 }
