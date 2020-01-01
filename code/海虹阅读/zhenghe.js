@@ -113,10 +113,18 @@ events.on('exit', function () {
     device.cancelKeepingAwake()
     log("退出")
 });
-if (!requestScreenCapture()) {
-    toastLog("请求截图失败");
-    exit()
+
+var 截图提供者是否存在 = app.getPackageName("截图提供者")
+if (!截图提供者是否存在) {
+    log("截图由内置截图提供")
+    if (!requestScreenCapture()) {
+        toastLog("请求截图失败");
+        exit()
+    }
+}else{
+    log("截图由截图提供者提供")
 }
+
 
 function my_click(x, y) {
     console.hide()
@@ -728,6 +736,53 @@ function task_start() {
 
 }
 
+function 截图(){
+    if (!截图提供者是否存在) {//截图提供者不存在
+        return images.captureScreen()
+    }else{
+        return 截图提供者截图()
+    }
+}
+
+
+var 上次发送截图请求时间 = 0
+function 截图提供者截图() {
+    function 等待截图() {
+        for (let index = 0; index < 300; index++) {
+            try {
+                var info = JSON.parse(getClip())
+                if (info.random_ss == random_ss) {
+                    let ss = images.read("/sdcard/360/mm.png")
+                    log("图片读取完成")
+                    return ss
+                }
+            } catch (error) {
+                return false
+            }
+            sleep(10)
+        }
+    }
+    while(true){
+        if (new Date().getTime() - 上次发送截图请求时间 > 500) {
+            log("发送截图请求")
+            var random_ss = random(1000, 9999)
+            var intent = new Intent();
+            intent.setAction("getcapture");
+            intent.putExtra("path", "/sdcard/360/mm.png");
+            intent.putExtra("type", "img");
+            log(random_ss)
+            intent.putExtra("random", ""+random_ss);
+            context.sendBroadcast(intent);
+            上次发送截图请求时间 = new Date().getTime()
+            var img= 等待截图()
+            if(img){
+                return img
+            }
+        } else {
+            log("频繁发送")
+        }
+    }
+}
 
 /**
  * 等待抖音打开
@@ -740,13 +795,15 @@ function wait_douyin() {
         sleep(6000)
         var change_arr = []
         for (let index = 0; index < douyin_video_wait_count; index++) {
-            var img = images.captureScreen()
+            // var img = images.captureScreen()
+            var img = 截图()
             var color = images.pixel(img, guanzhu_x, guanzhu_y);
             // var color2 = images.pixel(img, guanzhu_zhongxin_x, guanzhu_zhongxin_y);
             var color3 = images.pixel(img, cd_x, cd_y);
             // var color4 = images.pixel(img, dianzan_x, dianzan_y)//点赞的中心点
             if (colors.isSimilar(color, colors.parseColor("#ffff2b54"))) {
                 log("抖音加载完成")
+                img.recycle()
                 return true
             }
             if (change_arr.indexOf(color3) == -1) {
@@ -756,9 +813,10 @@ function wait_douyin() {
             if (change_arr.length > 5) {
                 log("cd在转了")
                 log("抖音加载完成")
+                img.recycle()
                 return true
             }
-
+            img.recycle()
             sleep(random(1300, 1900))
             log("等待抖音视频加载中" + index)
         }
@@ -988,14 +1046,15 @@ function 抖音_点赞关注(arg) { //1关注   3点赞
         sleep(6000)
         var count = 0
         for (let index = 0; index < 6; index++) {
-            var img = images.captureScreen()
+            // var img = images.captureScreen()
+            var img = 截图()
             var color = colors.red(img.pixel(open_guanzhu_x, open_guanzhu_y))
             log("颜色值:" + color)
             if (color < 150) {//已关注
                 log("已关注")
                 // my_click(douyin_back_x, douyin_back_y)//返回到抖音页面
 
-
+                img.recycle()
                 return 返回到抖音首页()
             } else {
                 log("点击关注")
@@ -1011,6 +1070,7 @@ function 抖音_点赞关注(arg) { //1关注   3点赞
                 // sleep(2000)
                 // return 返回到抖音首页()
             }
+            img.recycle()
         }
         return false
     }
@@ -1033,7 +1093,8 @@ function 抖音_点赞关注(arg) { //1关注   3点赞
                 dianzan_flg = true
             }
             if (!dianzan_flg) {
-                img = images.captureScreen()
+                // img = images.captureScreen()
+                img = 截图()
                 if (colors.green(img.pixel(dianzan_x, dianzan_y)) < 150 && colors.red(img.pixel(dianzan_x, dianzan_y)) > 150) {//判断点赞否
                     log("点赞检测通过")
                     dianzan_flg = true
@@ -1044,10 +1105,11 @@ function 抖音_点赞关注(arg) { //1关注   3点赞
                         my_click(dianzan_x, dianzan_y)
                     } else {
                         log("抖音卡住")
+                        img.recycle()
                         return false
                     }
-
                 }
+                img.recycle()
             }
 
             if (guanzhu_flg && dianzan_flg) {
@@ -1080,8 +1142,10 @@ function jietu_save() {
     var path = files.join(files.getSdcardPath() + "/temp/", new Date().getTime() + ".jpg")
     console.hide()
     sleep(500)
-    var img = images.captureScreen()
+    // var img = images.captureScreen()
+    var img = 截图()
     img.saveTo(path)
+    img.recycle()
     console.show()
     app.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(path))));
     return path
@@ -1355,10 +1419,12 @@ function kuaishou_点赞关注评论(result) {
             if (id("like_layout").clickable().findOne(10) && currentActivity() == "com.yxcorp.gifshow.detail.PhotoDetailActivity") {
                 return true
             }
-            let img = images.captureScreen()
+            // let img = images.captureScreen()
+            let img = 截图()
             let x = device.width / 2
             let y = device.height / 2
             let color = images.pixel(img, x, y)
+            img.recycle()
             if (color_temp.indexOf(color) == -1) {
                 color_temp.push(color)
             }

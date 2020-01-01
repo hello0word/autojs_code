@@ -217,7 +217,7 @@ function 获取任务() {
     }
 
     if (files.exists(path) && files.isFile(path)) {
-        let con = files.read(path)
+        let con = files.read(path)//files.read(path[, encoding = "utf-8"
         let zhanghao = con.split("|")
         if (zhanghao.length < 2) {
             log("文件格式错误")
