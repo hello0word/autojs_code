@@ -158,11 +158,11 @@ function text_or_desc(str) {
             if (new Date().getTime() - start_time > timeout) {
                 return null
             }
-            let re= this.text_selector.findOnce()
+            let re = this.text_selector.findOnce()
             if (re) {
                 return re
             }
-            re= this.desc_selector.findOnce()
+            re = this.desc_selector.findOnce()
             if (re) {
                 return re
             }
@@ -332,7 +332,7 @@ function 登录抖音(方式, 数据) {
         if (跳过) {
             log("跳过填手机号")
             跳过.click()
-        }else{
+        } else {
             log("找不到填手机号跳过按钮")
         }
         跳过 = text("跳过").clickable().findOne(8000)
@@ -341,7 +341,7 @@ function 登录抖音(方式, 数据) {
 
             跳过.click()
 
-        }else{
+        } else {
             log("找不到通讯录好友跳过按钮")
         }
         return true
@@ -410,8 +410,24 @@ function 登录今日头条(数据) {
         sleep(5000)
         //这里可能有好多个登录方式
         function 选择天翼登录() {
+            let cy = className("ImageView").id("cy").findOne(2000)
+            if (cy) {
+                log("找到cy")
+                cy.click()
+                return true
+            }
+            let cw = className("ImageView").id("cw").findOne(2000)
+            if (cw) {
+                cw.click()
+                log("找到cw")
+                return true
+            }
+            log('cy与cw都没有')
+            return false
+        }
+        function 选择天翼登录_bak() {
             var 所有图片个数 = className("ImageView").depth(13).find().length
-            for (let index = 所有图片个数-1; index >=0 ; index--) {
+            for (let index = 所有图片个数 - 1; index >= 0; index--) {
                 let re = className("ImageView").depth(13).find()
                 if (re.length >= 0 && index < re.length) {
                     re[index].click()
@@ -420,7 +436,7 @@ function 登录今日头条(数据) {
                         log("找不到天翼登录按钮")
                         back()
                         sleep(2000)
-                    }else{
+                    } else {
                         log("找到天翼登录按钮")
                         return true
                     }
@@ -431,6 +447,13 @@ function 登录今日头条(数据) {
         if (!选择天翼登录()) {
             log("最终找不到天翼登录")
             return false
+        }
+        let 天翼登录按钮 = text_or_desc("登录").id("j-login").findOne(45000)
+        if (!天翼登录按钮) {
+            log("找不到天翼登录按钮")
+            return false            
+        } else {
+            log("找到天翼登录按钮")
         }
         //设置账号密码
         let 账号输入框 = className("EditText").id("userName").findOne(5000)
