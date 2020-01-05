@@ -747,7 +747,7 @@ function 截图() {
 
 var 上次发送截图请求时间 = 0
 function 截图提供者截图() {
-    function 等待截图() {
+    function 等待截图(random_ss) {
         log("等待截图")
         for (let index = 0; index < 600; index++) {
             try {
@@ -777,7 +777,7 @@ function 截图提供者截图() {
             intent.putExtra("random", "" + random_ss);
             context.sendBroadcast(intent);
             上次发送截图请求时间 = new Date().getTime()
-            var img = 等待截图()
+            var img = 等待截图(random_ss)
             if (img) {
                 return img
             }
