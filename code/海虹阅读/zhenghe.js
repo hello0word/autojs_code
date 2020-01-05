@@ -749,7 +749,7 @@ var 上次发送截图请求时间 = 0
 function 截图提供者截图() {
     function 等待截图() {
         log("等待截图")
-        for (let index = 0; index < 300; index++) {
+        for (let index = 0; index < 600; index++) {
             try {
                 var info = JSON.parse(getClip())
                 if (info.random_ss == random_ss) {
@@ -1949,6 +1949,7 @@ function 显示今日进度() {
 
     var 内容 = "日期:" + 今日记录器.当日日期 + ",抖音完成数:" + 今日记录器.抖音完成数 + ",抖音养号时间:" + 今日记录器.抖音养号时间 + ",快手完成数:" + 今日记录器.快手完成数 + ",快手养号时间:" + 今日记录器.快手养号时间
     console.info(内容)
+    files.write("/sdcard/66阅读数据.txt",info)
 }
 
 function 异常界面处理() {

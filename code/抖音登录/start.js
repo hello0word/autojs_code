@@ -346,6 +346,46 @@ function 登录抖音(方式, 数据) {
         }
         return true
     }
+    function 登录抖音_微博登录(数据){
+        var 其他方式登录_成功标记 = false
+        for (let index = 0; index < 4; index++) {
+            let 其他方式登录 = text("其他方式登录").clickable().findOne(8000)
+            if (其他方式登录) {
+                其他方式登录.click()
+            }
+            if (text("今日头条登录").findOne(4000)) {
+                其他方式登录_成功标记 = true
+                break;
+            }
+        }
+        if (!其他方式登录_成功标记) {
+            log("点击其他方式登录失败")
+            return false
+        }
+        let 微博登录 = text("微博登录").findOne(4000)
+        if (!微博登录) {
+            log("找不到微博登录按钮")
+            return false
+        }
+        微博登录.parent().click()
+        let 登录按钮 = text("登录").clickable().findOne(15000)
+        if (!登录按钮) {
+            log("找不到登录按钮")
+            return false
+        }
+        let all_edit_text= className("android.widget.EditText").find()
+        if (all_edit_text.length ==2) {
+            all_edit_text[0].setText(数据.账号)
+            all_edit_text[1].setText(数据.密码)
+        }else{
+            log("找不到输入框")
+            return false
+        }
+        text("登录").clickable().findOne().click()
+        
+
+
+    }
     let 打开结果 = 等待抖音打开()
     if (!打开结果) {
         return false
@@ -551,6 +591,13 @@ function main() {
             }
         }
 
+    } else if (信息.类型 == 2){//微博登录
+        for (let index = 0; index < 5; index++) {
+            清理数据root(app.getPackageName("抖音短视频"))
+            if (登录抖音(2, 信息)) {
+                break;
+            }
+        }
     }
 
 }
