@@ -73,7 +73,7 @@ if (!files.exists(music_name)) {
 
 var w = floaty.rawWindow(
     <frame gravity="center">
-        <text id="text" textSize = "1sp">.</text>
+        <text id="text" textSize = "20sp">卧槽</text>
     </frame>
 );
 w.setPosition(100, 0);
