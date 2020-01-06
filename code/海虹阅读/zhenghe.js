@@ -342,7 +342,7 @@ function 打开阅读APP(timeout) {
 
     timeout = timeout || 30
     for (let index = 0; index < timeout; index++) {
-
+        shell("am force-stop com.android.documentsui",true)
         app.openAppSetting(当前操作包名)
         let 强行停止 = text("强行停止").findOne(5000)
         if (强行停止) {
