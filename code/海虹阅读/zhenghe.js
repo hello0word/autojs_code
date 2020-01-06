@@ -342,7 +342,7 @@ function 打开阅读APP(timeout) {
 
     timeout = timeout || 30
     for (let index = 0; index < timeout; index++) {
-        shell("am force-stop com.android.documentsui",true)
+        shell("am force-stop com.android.documentsui", true)
         app.openAppSetting(当前操作包名)
         let 强行停止 = text("强行停止").findOne(5000)
         if (强行停止) {
@@ -802,9 +802,14 @@ function wait_douyin(arg) {
             if (关注按钮) {
                 log("已进入关注页面")
                 return true
-            }else{
-                return false
             }
+            let 取消关注按钮 = text("取消关注").clickable().findOne(20000)
+            if (取消关注按钮) {
+                log("已进入关注页面")
+                return true
+            }
+            return false
+
         }
         var change_arr = []
         for (let index = 0; index < douyin_video_wait_count; index++) {
@@ -1057,12 +1062,11 @@ function 抖音_点赞关注(arg) { //1关注   3点赞
         let 关注按钮 = text("关注").clickable().findOne(4000)
         if (关注按钮) {
             关注按钮.click()
-            let 取消关注 = text("取消关注").clickable().findOne(4000)
-            if (取消关注) {
-                log("关注成功")
-                return true
-            }
-
+        }
+        let 取消关注 = text("取消关注").clickable().findOne(4000)
+        if (取消关注) {
+            log("关注成功")
+            return true
         }
         my_click(guanzhu_tap_x, guanzhu_tap_y)
         console.hide()
@@ -1949,7 +1953,7 @@ function 显示今日进度() {
 
     var 内容 = "日期:" + 今日记录器.当日日期 + ",抖音完成数:" + 今日记录器.抖音完成数 + ",抖音养号时间:" + 今日记录器.抖音养号时间 + ",快手完成数:" + 今日记录器.快手完成数 + ",快手养号时间:" + 今日记录器.快手养号时间
     console.info(内容)
-    files.write("/sdcard/66阅读数据.txt",内容)
+    files.write("/sdcard/66阅读数据.txt", 内容)
 }
 
 function 异常界面处理() {
