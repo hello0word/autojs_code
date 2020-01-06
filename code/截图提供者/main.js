@@ -16,10 +16,12 @@ let receiver = new BroadcastReceiver(function (ctx, intent) {
         // var intent = new Intent();
         // intent.setAction("captureok");
         if (path) {
+            files.ensureDir(path)
             captureScreen(path)
             log("已保存到:" + path)
             // intent.putExtra("path",path );
         } else {
+            files.ensureDir("/sdcard/current.png")
             captureScreen("/sdcard/current.png")
             log("保存到:/sdcard/current.png")
             // intent.putExtra("path","/sdcard/current.png" );
