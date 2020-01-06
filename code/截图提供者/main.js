@@ -73,7 +73,7 @@ if (!files.exists(music_name)) {
 
 var w = floaty.rawWindow(
     <frame gravity="center">
-        <text id="text" textSize = "5sp">-</text>
+        <text id="text" textSize = "10sp">-</text>
     </frame>
 );
 w.setPosition(100, 0);
