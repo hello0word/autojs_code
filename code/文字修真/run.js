@@ -1,6 +1,6 @@
 function openAccessbility() {
     //var dd = shell("pm grant " + packagename_self + " android.permission.WRITE_SECURE_SETTINGS", true)
-    //log(dd)
+    //log(dd)   com.wenzixiuzhen.ld
     // importClass(android.content.Context);
     importClass(android.provider.Settings);
     try {
