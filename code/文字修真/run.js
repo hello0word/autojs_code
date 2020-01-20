@@ -37,8 +37,9 @@ function openAccessbility() {
 if (!auto.server ) {
     openAccessbility()
     sleep(2000)
+    auto.waitFor()
+
 }
-auto.waitFor()
 
 
 if (!requestScreenCapture()) {
