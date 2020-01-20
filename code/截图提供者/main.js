@@ -79,6 +79,7 @@ var w = floaty.rawWindow(
     </frame>
 );
 w.setPosition(100, 0);
+console.show()
 
 setInterval(() => {
 
