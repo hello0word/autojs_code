@@ -116,12 +116,12 @@ function 检查一遍() {
     }
     var 第二个 = images.findImageInRegion(IMG, 已完成, 137, 1000, 800, 250)
     if (!第二个) {
-        click(737,1228)
+        click(737,1257)
         return 
     }
     var 第三个 = images.findImageInRegion(IMG, 已完成, 137, 1350, 800, 250)
     if (!第三个) {
-        click(737,1544)
+        click(737,1574)
         return 
     }
     if (第一个 && 第二个 && 第三个) {
