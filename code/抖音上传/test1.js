@@ -54,4 +54,33 @@ function 随机在当前图片表里选5到7张图片() {
 }
 // 随机在当前图片表里选5到7张图片()
 
+function 获取图片() {
+    try {
+        var res = http.get("http://122.51.203.83/getimg.php")
+        if (res.statusCode == 200) {
+            log(res.headers)
+            var img = images.fromBytes(res.body.bytes())
+            if (img) {
+                var name = "/sdcard/PIC/" + new Date().getTime() + ".jpg"
+                img.saveTo(name)
+                log('保存为' + name)
+                img.recycle()
+                media.scanFile(name)
+                return name
+            } else {
+                log("解析失败")
+                return false
+            }
+        } else {
+            log(res.statusCode)
+            return false
+        }
+    } catch (error) {
+        log(error)
+        return false
+    }
+}
+for (let index = 0; index < 10; index++) {
+    获取图片()
 
+}
