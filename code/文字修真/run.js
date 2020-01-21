@@ -112,26 +112,26 @@ function 检查一遍() {
     var IMG = captureScreen();
     var 第一个 = images.findImageInRegion(IMG, 已完成, 137, 700, 800, 350)
     if (!第一个) {
-        var 开始 = images.findImageInRegion(IMG, 开始, 137, 700, 800, 350)
-        if (开始) {
-            click(开始.x, 开始.y)
+        var 开始坐标 = images.findImageInRegion(IMG, 开始, 137, 700, 800, 350)
+        if (开始坐标) {
+            click(开始坐标.x, 开始坐标.y)
         }
         return
     }
     var 第二个 = images.findImageInRegion(IMG, 已完成, 137, 1000, 800, 350)
     if (!第二个) {
-        var 开始 = images.findImageInRegion(IMG, 开始, 137, 1000, 800, 350)
+        var 开始坐标 = images.findImageInRegion(IMG, 开始, 137, 1000, 800, 350)
 
-        if (开始) {
-            click(开始.x, 开始.y)
+        if (开始坐标) {
+            click(开始坐标.x, 开始坐标.y)
         }
         return
     }
     var 第三个 = images.findImageInRegion(IMG, 已完成, 137, 1350, 800, 350)
     if (!第三个) {
-        var 开始 = images.findImageInRegion(IMG, 开始, 137, 1000, 800, 350)
-        if (开始) {
-            click(开始.x, 开始.y)
+        var 开始坐标 = images.findImageInRegion(IMG, 开始, 137, 1000, 800, 350)
+        if (开始坐标) {
+            click(开始坐标.x, 开始坐标.y)
         }
         return
     }
