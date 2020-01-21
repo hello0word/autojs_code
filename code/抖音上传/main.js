@@ -463,7 +463,7 @@ function main() {
 
 function 获取图片() {
     try {
-        var res = http.get("http://pic.tsmp4.net/api/nvsheng/img.php")
+        var res = http.get("https://uploadbeta.com/api/pictures/random/?key=BingEverydayWallpaperPicture")
         if (res.statusCode == 200) {
             // log(res.headers)
             var img = images.fromBytes(res.body.bytes())
