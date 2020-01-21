@@ -131,7 +131,7 @@ function 检查一遍() {
     }
     var 第三个 = images.findImageInRegion(IMG, 已完成, 137, 1350, 800, 350)
     if (!第三个) {
-        var 开始坐标 = images.findImageInRegion(IMG, 开始, 137, 1000, 800, 350)
+        var 开始坐标 = images.findImageInRegion(IMG, 开始, 137, 1350, 800, 350)
         if (开始坐标) {
             click(开始坐标.x, 开始坐标.y)
             sleep(60 *1000)
