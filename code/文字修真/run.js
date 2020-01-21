@@ -34,7 +34,7 @@ function openAccessbility() {
 }
 
 
-if (!auto.server ) {
+if (!auto.server) {
     openAccessbility()
     sleep(2000)
     auto.waitFor()
@@ -101,6 +101,7 @@ function onClick() {
 
 var 是否运行 = false
 var 已完成 = images.read("/sdcard/已完成.png")
+var 开始 = images.read("/sdcard/开始.png")
 
 function 检查一遍() {
     //557  1726  刷新任务
@@ -111,24 +112,34 @@ function 检查一遍() {
     var IMG = captureScreen();
     var 第一个 = images.findImageInRegion(IMG, 已完成, 137, 700, 800, 350)
     if (!第一个) {
-        click(737,919)
-        return 
+        var 开始 = images.findImageInRegion(IMG, 开始, 137, 700, 800, 350)
+        if (开始) {
+            click(开始.x, 开始.y)
+        }
+        return
     }
     var 第二个 = images.findImageInRegion(IMG, 已完成, 137, 1000, 800, 350)
     if (!第二个) {
-        click(737,1257)
-        return 
+        var 开始 = images.findImageInRegion(IMG, 开始, 137, 1000, 800, 350)
+
+        if (开始) {
+            click(开始.x, 开始.y)
+        }
+        return
     }
     var 第三个 = images.findImageInRegion(IMG, 已完成, 137, 1350, 800, 350)
     if (!第三个) {
-        click(737,1574)
-        return 
+        var 开始 = images.findImageInRegion(IMG, 开始, 137, 1000, 800, 350)
+        if (开始) {
+            click(开始.x, 开始.y)
+        }
+        return
     }
     if (第一个 && 第二个 && 第三个) {
-        click(557,1726)
+        click(557, 1726)
         sleep(1500)
-        click(715,1256)
-        
+        click(715, 1256)
+
     }
 }
 
