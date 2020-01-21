@@ -109,17 +109,17 @@ function 检查一遍() {
     // 737 1228
     // 737 1544
     var IMG = captureScreen();
-    var 第一个 = images.findImageInRegion(IMG, 已完成, 137, 700, 800, 250)
+    var 第一个 = images.findImageInRegion(IMG, 已完成, 137, 700, 800, 350)
     if (!第一个) {
         click(737,919)
         return 
     }
-    var 第二个 = images.findImageInRegion(IMG, 已完成, 137, 1000, 800, 250)
+    var 第二个 = images.findImageInRegion(IMG, 已完成, 137, 1000, 800, 350)
     if (!第二个) {
         click(737,1257)
         return 
     }
-    var 第三个 = images.findImageInRegion(IMG, 已完成, 137, 1350, 800, 250)
+    var 第三个 = images.findImageInRegion(IMG, 已完成, 137, 1350, 800, 350)
     if (!第三个) {
         click(737,1574)
         return 
