@@ -371,6 +371,11 @@ function 打开阅读APP(timeout) {
             back()
             continue
         }
+
+        //  这里检查更新
+
+
+
         if (text_or_desc("联系客服").clickable().findOne(8000) && text("任务中心").findOne(8000)) {
             toastLog("阅读开启成功")
             return true
@@ -571,6 +576,7 @@ function task_start() {
         }
         re = my_click(re.bounds().centerX(), re.bounds().centerY())
         log("领取任务" + re)
+        //这里判断界面  
         if (descStartsWith("目前没有可做的").findOne(2000)) {
             //没任务
             本次没任务的标记 = true
@@ -628,6 +634,10 @@ function task_start() {
                 ss.click()
             }
         }
+
+        //这里添加个识别
+        
+
     } else if (current_task == "快手") {
         log("快手任务")
 
@@ -849,7 +859,7 @@ function wait_douyin(arg) {
  * 点赞和关注
  * @param {} 
  */
-function 抖音点赞和关注(arg) {//1关注   3点赞
+function 抖音点赞和关注(arg) {//1关注   3点赞 
 
     try {
 
@@ -1250,7 +1260,11 @@ function up_image(result) {
         }
 
     }
-    function wait_load(count) {
+    /**
+     * 等待加载并检测是否正确
+     * @param {*} count 
+     */
+    function wait_load(count, result) {
         sleep(2000)
         var count = count || 0
         for (let index = 0; index < 30; index++) {
@@ -1259,6 +1273,9 @@ function up_image(result) {
                 for (let index2 = 0; index2 < 10; index2++) {
                     if (text_or_desc("上传截图").clickable().findOne(10).bounds().centerY() > device.height * 0.6) {
                         log("加载完成")
+                        //TODO 
+                        //根据 result 检测截图对不对
+                        // 
                         sleep(2000)
                         break
                     }
@@ -1306,7 +1323,7 @@ function up_image(result) {
                 } else if (shangchuan_arr.length == 2) {
                     shangchuan_arr[index].click()
                     file_select(index)
-                    if (!wait_load(index)) {
+                    if (!wait_load(index, result)) {
                         return false
                     }
 

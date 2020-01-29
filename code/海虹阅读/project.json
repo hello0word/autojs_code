@@ -1,6 +1,6 @@
 {
     "name": "海虹阅读",
-    "main": "main.js",
+    "main": "run.js",
     "ignore": [
         "build"
     ],
