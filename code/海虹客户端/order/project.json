@@ -1,0 +1,34 @@
+{
+  "assets": [],
+  "build": {
+    "build_id": "C7B7D713-3",
+    "build_number": 3,
+    "build_time": 1579992297401,
+    "release": false
+  },
+  "encryptLevel": 1,
+  "useFeatures": [],
+  "icon": "res/icon.png",
+  "launchConfig": {
+    "displaySplash": true,
+    "hideLogs": true,
+    "splashIcon": "res/splashIcon.png",
+    "splashText": "卡密下载模块",
+    "stableMode": false
+  },
+  "main": "main.js",
+  "name": "下载卡密",
+  "optimization": {
+    "removeOpenCv": true,
+    "unusedResources": true
+  },
+  "packageName": "com.liuspider.order.download",
+  "scripts": {},
+  "signingConfig": {
+    "alias": "com.all.allinme",
+    "keystore": "/storage/emulated/0/脚本/.keystore/allapp.jks",
+    "uuid": "68ab6276-9e9e-493a-b767-037651e54796"
+  },
+  "versionCode": 1,
+  "versionName": "1.0.0"
+}

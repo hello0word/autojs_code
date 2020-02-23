@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SpiderUi</title>
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <style>
+        .footer {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          /* Set the fixed height of the footer here */
+          height: 50px;
+        }
+        .nav-tabs>.li-right {
+          float:right;
+        }
+        input[type=checkbox],td>label,th>label,.multi{
+            text-align: center;
+            margin:0; 
+            padding:auto 0; 
+        }
+        .radio-inline input[type=radio]{
+            padding-left:10px; 
+            margin-left: 10px;
+        }
+        .form-inline .form-control{
+            width:100%;
+        }
+        .form-group{
+            margin-bottom: 0;
+        }
+        .checkbox-inline, .radio-inline{
+            padding-left: 0;
+        }
+        .content>div{
+            display: none;
+        }
+        .content>.selected{
+            display: block;
+        }
+        /* img{max-width:300px;_width:expression(this.width > 300 ? "300px" : this.width) */
+    </style>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+</head>
+
+<body>
+    <!-- <h1 class="text-center">刷单</h1> -->
+    <ul class="nav nav-tabs" style="margin-bottom: 15px">
+        <li class="active"><a>数据报表</a></li>
+        <li><a>计划部署</a></li>
+        <li class="li-right"><a>手机页面</a></li>
+        <li class="li-right"><a>平台余额</a></li>
+    </ul>
+    <div class="content">
+        <div class="content1 selected">
+            <div class="container-fluid">
+                <div class="panel panel-default">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">
+                        <div class="container-fluid" style="padding: 0">
+                            <span class="col-xs-11" style="padding: 0">Spananel heading</span>
+                            <span class="glyphicon glyphicon-refresh text-info text-right col-xs-1" style="padding: 0" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped client_info">
+                            <thead>
+                                <tr>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-footer" style="padding: 10px 0 0 0">
+                        <div class="text-center">
+                            <ul class="pagination" style="margin:0">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="btn-group-md text-center">
+                    <!-- <button type="button" class="btn btn-default">上号抖音</button> -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            上号抖音 <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a class="account_type" value="weibo">微博号</a></li>
+                            <li><a class="account_type" value="us">美国号</a></li>
+                            <li><a class="account_type" value="tt">今日头条号</a></li>
+                        </ul>
+                    </div>
+                    <button type="button" value="ks" class="btn btn-default account_type">上号快手</button>
+                    <button type="button" value="wx" class="btn btn-default account_type">上号微信</button>
+                    <button type="button" value="tx" class="btn btn-primary account_type" data-toggle="modal" data-target="#myModal">提现</button>
+                </div>
+                <!-- <div style="margin-bottom: 50px"></div> -->
+            </div>
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">提现</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form">
+                                <div class="form-group">
+                                    <label for="account" class="col-sm-2 control-label">账号</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="account" placeholder="请输入账号">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="count" class="col-sm-2 control-label">金额</label>
+                                    <div class="col-sm-10">
+                                        <input type="number" class="form-control" id="count" placeholder="请输入金额数量">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="option" class="col-sm-2 control-label">提现方式</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control" id="option">
+                                            <option value="vx">微信</option>
+                                            <option value="zfb">支付宝</option>
+                                            <option value="qq">QQ</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                            <form class="form-horizontal online" role="form" style="display:none">
+                                <div class="form-group">
+                                    <label for="firstname" class="col-sm-2 control-label">提现金额</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" id="firstname" placeholder="请输入金额数量">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary">确认</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+        <div class="content2">
+            <div class="container-fluid item-one" style="padding-bottom: 50px">
+                <form class="form-inline schedule" role="form">
+                    <div class="row" style="margin-top: 3px">
+                        <div class="form-group col-md-4 col-xs-4">
+                            <select class="form-control task" name="task_item">
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4 col-xs-2" style="padding:0">
+                            <select class="form-control wish" name="task_rate">
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4 col-xs-6 text-right">
+                            <button type="button" class="btn btn-default glyphicon glyphicon-minus-sign btn-danger" onclick="minus(this)"> </button>
+                            <button type="button" class="btn btn-default btn-success glyphicon glyphicon-plus-sign" onclick="plus()"> </button>
+                            <a class="push" href="#push" data-toggle="collapse"><button class="btn btn-default glyphicon btn-primary glyphicon-chevron-down accordion-toggle"> </button></a>
+                        </div>
+                    </div>
+                    <div class="row" style="margin: 5px 0">
+                        <div id="push" class="collapse">
+                            <div class="container-fluid">
+                                <div class="row multi_option">
+                                    <div class="col-xs-3">
+                                        <label for="dy_auto_quit" class="radio-inline">掉抖音号自停<input type="radio" checked="true" name="task_name" id="dy_auto_quit" qw="dy_auto"> </label>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label for="do_login" class="radio-inline">上号<input type="radio" name="task_name" id="do_login" qw="login"> </label>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label for="task_skip" class="radio-inline">跳过<input type="radio" name="task_name" id="task_skip" qw="skip"> </label>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label for="auto_draw_out" class="radio-inline">自动提现<input type="radio" name="task_name" id="auto_draw_out" qw="tx"> </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <footer class="navbar-fixed-bottom foot" style="padding-bottom: 15px">
+                <div class="container-fluid">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-success submit" style="width:100%">提交任务</button>
+                    </div>
+                </div>
+            </footer>
+            <div class="modal fade" id="detail_modal" tabindex="-1" role="dialog" aria-labelledby="module_detail" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="module_detail">提现</h4>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary">确认</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal -->
+            </div>
+        </div>
+        <div class="content3">
+            <div class="container-fluid">
+                <div class="phone">
+                    <!-- 模态框（Modal） -->
+                    <div class="modal fade" id="myModals" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content" style="height: 95vh">
+                                <div class="text-center">
+                                    <div class="form-group">
+                                    <select class="form-control operate" onchange="" name="task_item">
+                                    </select>
+                                    </div>
+                                </div>
+                                <div class="modal-body">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="position:fixed;right: 0;top:0;z-index: 1200;margin: 10px">&times;</button>
+                                    <div class="center-block">
+                                        <img onmousemove="show_coords(event,this)" class="on_show carousel-inner img-responsive" src="" alt="img17" style="height: 85vh" />
+                                    </div>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="content4">
+            <div class="row">
+                <a href="#">a</a>
+            </div>
+        </div>
+    </div>
+    <div id="time"></div>
+    <script>
+    $('.nav-tabs>li').click(function() {
+        console.log(this,$(this).index())
+        $(this).addClass('active').siblings().removeClass('active');
+        $('.content > div').eq($(this).index()).addClass('selected').siblings().removeClass('selected');
+    });
+
+    function select_all() {
+        let main = $("#center_control");
+        let value = false;
+        if (!main.hasClass("all")) {
+            main.addClass("all");
+            value = true;
+        } else { main.removeClass("all"); }
+        $(".multi").each(function(i, arrow) {
+            arrow.checked = value;
+        });
+    };
+
+    var task = { "66dy": "66DY", "ks": "66快手", "99dy": "99DY", "dypublish": "DY上作品", "dyvedio": "DY上视频作品", "kspicture": "快手上图片作品" };
+    var wishlast = { 30: "30分钟", 60: "一小时", 90: "一个半小时", 120: "两个小时" };
+    for (i in task) {
+        $(".task").append("<option value=" + i + ">" + task[i] + "</option>")
+    }
+    var operate = { home: "home",recents: "recents",quickSettings: "quickSettings" };
+    for (i in operate) {
+        $(".operate").append("<option value=" + i + ">" + i + "</option>")
+    }
+     $(".operate").change(function(){
+        var selected=$(this).children('option:selected').val();
+        // alert(selected);
+        code(selected+"()")
+    });
+
+    for (i in wishlast) {
+        $(".wish").append("<option value=" + i + ">" + wishlast[i] + "</option>")
+    }
+
+    multi_option = { "掉抖音号自停": "dy_auto", "上号": "login", "跳过": "skip", "自动提现": "tx" }
+
+    var plus = function() {
+        let item = $(".item-one");
+        let len = item.length;
+        let index = new Date().getTime();
+        $('#push').removeClass("in")
+        $(".foot").before(item[0].outerHTML);
+        $(".multi_option")[len].innerHTML = ""
+        for (i in multi_option) {
+            j = parseInt(Math.random() * 100)
+            $($(".multi_option")[len]).append('<div class="col-xs-3"><label for="' + (index + j) + '" class="radio-inline">' + i + '<input type="radio" checked="true" name="task_name" id="' + (index + j) + '" qw="' + multi_option[i] + '"> </label></div>')
+        }
+
+        $(".push")[len].href = "#push" + index;
+        $(".collapse")[len].id = "push" + index;
+    };
+
+    var minus = function(arrow) {
+        let item = $(".item-one");
+        if (item.length === 1) return
+        $(arrow).parents(".item-one").remove();
+    };
+
+    var key_item = ["机号", "客户端登陆时间", "状态", "66积分数", "微信状态", "微信余额", "抖音状态", "66当天任务数"]
+    var All_client = { show_count: 10, data: null, key_item: [] };
+
+    var openws = function(data) {
+        let head = '<th>#</th><th><label><input type="checkbox" class="multi" id="center_control"></label></th>',
+            content = [];
+
+        let arrow = $(".client_info>thead>tr");
+        arrow.append('<th>#</th><th><label><input type="checkbox" class="multi" id="center_control" onclick="select_all()"></label></th>')
+        let j = -2;
+        All_client.key_item = [];
+        for (var i in data) {
+            j++
+            if (!data[i] || key_item.indexOf(data[i]) == -1) continue
+            All_client.key_item.push(j)
+            arrow.append("<th>" + data[i] + "</th>")
+        }
+        console.log(All_client.key_item)
+    };
+
+
+    var client_all = function(data) {
+        All_client.data = data;
+        $(".pagination")[0].innerHTML = "";
+        $(".pagination").append('<li onclick="previous()"><a >&laquo;</a></li>')
+        let len = data.length / All_client.show_count;
+        All_client.len = len;
+        $(".pagination").append('<li><a class="client_page disabled" >当前第1页，共' + len + '页</a></li>')
+
+        $(".pagination").append('<li onclick="next()"><a >&raquo;</a></li>')
+        show_client(data.slice(0, All_client.show_count))
+    };
+
+    var gg = null;
+
+    function previous() {
+        var i = parseInt($("tr>td").eq(0).html()) / All_client.show_count;
+        i = parseInt(i)
+        let from = (i - 1) * All_client.show_count,
+            to = from + All_client.show_count;
+        if (from < 0) return
+        show_client(All_client.data.slice(from, to), from)
+    }
+
+    function next() {
+        var i = parseInt($("tr").last().find("td")[0].innerHTML) / All_client.show_count + 1;
+        let from = (i - 1) * All_client.show_count,
+            to = from + All_client.show_count;
+        if (from >= All_client.data.length) return
+        show_client(All_client.data.slice(from, to), from)
+    }
+
+    function success(data) {
+        console.log(data)
+        alert(data)
+    }
+
+    var show_client = function(data, index) {
+        index = index || 0
+        let arrow = $(".client_info>tbody"),
+            head = ['<tr><td>', '</td><td><label><input type="checkbox" class="multi"></label></td>']
+        arrow[0].innerHTML = "";
+        for (var i = 0; i < data.length; i++) {
+            if (!data[i]) continue
+            let row = [head[0] + (index + i + 1) + head[1]];
+            for (var j = 0; j < data[i].length; j++) {
+                if (All_client.key_item.indexOf(j) == -1) continue
+
+                row.push("<td>" + data[i][j] + "</td>")
+            }
+            row.push("</tr>")
+            html = row.join("")
+            arrow.append(html)
+        }
+        $(".client_page").html("当前第" + (index / All_client.show_count + 1) + "页，共" + All_client.len + "页")
+        $(".client_info>tbody").bind("click", function() {
+            $("#detail_modal").modal('toggle')
+        })
+    };
+
+    var error = function(data) {
+        alert(data)
+    };
+    var open = function() {
+        $(".client_info>tbody")[0].innerHTML = ""
+        $(".client_info>thead>tr")[0].innerHTML = ""
+        data = {
+            arrow: "all_client",
+            callback: "success"
+        }
+        ws.send(JSON.stringify(data))
+    }
+
+    var show_phone = function(data) {
+        blob = data
+        if($(".img-thumbnail").length===0){
+            let html = '<div class="col-md-3 col-xs-6" data-size="1280x853"><img class="img-thumbnail" src="' + data + '" alt="img1" /><div class="description description--grid">Assemblage</div></div>'
+            $(".phone").append(html);
+            $("img.img-thumbnail").bind("click", function open() {
+                console.log(this.src)
+                $('.on_show')[0].src = this.src;
+                $('#myModals').modal({ backdrop: false, keyboard: true })
+            })
+        }else{
+            $(".img-thumbnail")[0].src = data;
+            $(".on_show")[0].src = data;
+        }
+                
+    }
+    function show_coords(event,arrow){
+        x=(event.clientX-arrow.offsetLeft)/arrow.width
+        y=(event.clientY-arrow.offsetTop)/arrow.height
+        data = {data:{"x":x,"y":y},arrow:"user_send","to":"click"}
+        ws.send(JSON.stringify(data))
+        console.log(data)
+    }
+
+    function code(data){
+        data = {data:data,arrow:"user_send","to":"eval('home()')"}
+        console.log(data)
+        ws.send(JSON.stringify(data))
+    }
+
+    var ws = new WebSocket("ws://"+111.231.168.232+"/chat");
+    // var iss = setInterval(function(){ws = new WebSocket("ws://127.0.0.1:8000/chat");},5000)
+
+    data = {
+        arrow: "all_client",
+        account: "121170706",
+        password: "yeniu742174"
+    }
+
+    function cc(){
+        // alert("12")
+        alert(JSON.stringify(data))
+        ws.send(JSON.stringify(data))
+
+        // ws = new WebSocket("ws://127.0.0.1:8000/chat");
+    }
+    ws.onmessage = function(event) {
+        let data = JSON.parse(event.data)
+        console.log(data, data.callback + "(data.data)")
+        if (data.callback) { eval(data.callback + "(data.data)"); }
+
+    };
+    ws.onerror = function(e) {
+        qw = [];
+        for ( var p in e) {
+            qw.push(p + "=" + e[p]);
+        }
+        alert(JSON.stringify(qw))
+    }
+    ws.onopen = function() {
+        // alert("12")
+        // alert(JSON.stringify(data))
+        ws.send(JSON.stringify(data))
+    }
+    </script>
+    <script>
+    function serial(data, j) {
+        let datas = data.split("&"),
+            item = {};
+        for (var i = 0; i < datas.length; i++) {
+            paire = datas[i].split("=");
+
+            if (paire[1] === "on") {
+                txt = $($('input[checked="true"]')[j]).attr("qw");
+                console.log(txt);
+                paire[1] = txt
+            }
+            item[paire[0]] = paire[1]
+        }
+        return item;
+    }
+    task = {
+        schedule: function() {
+            let schedule = [],
+                item = null;
+            $("form.schedule").each(function(i, v) {
+                item = serial($(this).serialize(), i);
+                schedule.push(item);
+            })
+            let data = {
+                callback: "success",
+                arrow: "client_task",
+                client_mark: "30013533521305",
+                schedule: schedule
+            }
+            console.log(data)
+            ws.send(JSON.stringify(data))
+        },
+        now_task: function() {
+            var q = $(this).attr("value")
+            let data = {
+                callback: "success",
+                arrow: "user_send",
+                "client_mark": "30013533521305",
+                "schedule": [{ "task_item": q, "task_name": "login", "task_rate": 0 }]
+            }
+            ws.send(JSON.stringify(data))
+            console.log(data)
+        }
+    }
+    $(".submit").bind("click", task.schedule)
+    $(".account_type").bind("click", task.now_task)
+    $(".glyphicon-refresh").bind("click", cc)
+
+    </script>
+</body>
+
+</html>

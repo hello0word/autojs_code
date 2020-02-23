@@ -173,11 +173,9 @@ function text_or_desc(str) {
 }
 
 function 清理数据root(packagename) {
-    清理后台(packagename)
-    let re = shell("pm clear " + packagename, true)
-    if (re.code == 0) {
-        return true
-    }
+    let packagename = app.getPackageName("这里填app名")
+    shell("am force-stop " + packagename, true)
+    shell("pm clear " + packagename, true)
 }
 
 
