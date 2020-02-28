@@ -1,0 +1,34 @@
+{
+  "assets": [],
+  "build": {
+    "build_id": "CBC9AEB4-164",
+    "build_number": 164,
+    "build_time": 1580359863356,
+    "release": false
+  },
+  "encryptLevel": 0,
+  "useFeatures": [],
+  "icon": "res/icon.png",
+  "launchConfig": {
+    "displaySplash": true,
+    "hideLogs": true,
+    "splashIcon": "res/icon.png",
+    "splashText": "Powered by 攒攒",
+    "stableMode": false
+  },
+  "mainScriptFile": "main.js",
+  "name": "攒攒任务极速版",
+  "optimization": {
+    "removeOpenCv": true,
+    "unusedResources": false
+  },
+  "packageName": "muling.zzjsb",
+  "scripts": {},
+  "signingConfig": {
+    "alias": "",
+    "keystore": "",
+    "uuid": ""
+  },
+  "versionCode": 100,
+  "versionName": "1.1"
+}
