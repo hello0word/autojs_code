@@ -165,13 +165,15 @@ ui.login.click((view) => {
         }
         threads.start(function () {
             var pL = login(vv.username.text(), vv.password.text());
-
+            log("登录信息:")
+            log(pL)
             if (!pL.data || !pL.data.token) {
                 toast("登录失败!");
                 return;
             }
 
             toastLog("登陆成功!");
+
             oneLog("登陆成功!");
             account_manager_obj.add(vv.username.text(), vv.password.text(), pL.data.token)
             // STORAGE.put("username", vv.username.text())
@@ -193,6 +195,8 @@ ui.get_dy_info.click(view => {
     let info = STORAGE.get("DY_ACCOUNT_INFO", {})
     dialogs.alert("抖音账号信息", JSON.stringify(info))
 })
+
+
 
 
 function 获取抖音账号信息() {
@@ -228,7 +232,17 @@ function account_manager() {
                     log(all[i])
                     STORAGE.put("username", all[i][0])
                     STORAGE.put("password", all[i][1])
-                    STORAGE.put("token", all[i][2])
+                    var pL = login(all[i][0], all[i][1]);
+
+                    if (!pL.data || !pL.data.token) {
+                        toast("登录失败!");
+                        return;
+                    }
+                    log("登录信息:")
+                    log(pL)
+                    toastLog("登陆成功!");
+                    STORAGE.put("token", pL.data.token)
+
                     isLogin = true;
                 } else if (e == 1) {
                     let all_e = []
@@ -247,6 +261,14 @@ function account_manager() {
     //添加账号
     this.add = function (username, password, token) {
         let all = STORAGE.get("all_account", [])
+        for (let index = 0; index < all.length; index++) {
+            let element = all[index];
+            if(element[0]==username){
+                all[index] = [username, password, token]
+                STORAGE.put("all_account", all)
+                return 
+            }
+        }
         let info = [username, password, token]
         all.push(info)
         STORAGE.put("all_account", all)
@@ -289,7 +311,14 @@ function account_manager() {
         }
 
     }
-
+    this.检查重复=function (){
+        let all = STORAGE.get("all_account", [])
+        let all_new = []
+        for (let index = 0; index < all.length; index++) {
+            let element = all[index];
+            all_new.push(element[0])
+        }
+    }
 }
 
 ui.autoService.setOnCheckedChangeListener(function (widget, checked) {
@@ -518,7 +547,7 @@ function Task(type, LM) {
     while (true) {
         console.warn("- - - - - - - " + LM.getCurrent(type) + "/" + LM.getMax(type) + " - - - - - - -")
         let token = STORAGE.get("token", null)
-
+        log(token)
         let ts = getTaskSummary(type, token)
         checkOutTime(ts)
         if (ts.code != 0) {
