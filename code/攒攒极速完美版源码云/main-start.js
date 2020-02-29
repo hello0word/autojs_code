@@ -371,7 +371,7 @@ ui.tolog.click(() => {
 
 function login_my(){
     var pL = login(STORAGE.get("username", null), STORAGE.get("password", null));
-
+    Log(JSON.stringify(pL))
     if (!pL.data || !pL.data.token) {
         toastLog("自动登录失败!" + pL.msg);
         return;
@@ -599,7 +599,7 @@ function Task(type, LM) {
                 return
             }
             if (task.code == 1000) return //没有任务了
-            
+
             sleep(random(15000, 19000))
             continue
 
