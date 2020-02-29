@@ -547,7 +547,7 @@ function Task(type, LM) {
     while (true) {
         console.warn("- - - - - - - " + LM.getCurrent(type) + "/" + LM.getMax(type) + " - - - - - - -")
         let token = STORAGE.get("token", null)
-        log(token)
+        // log(token)
         let ts = getTaskSummary(type, token)
         // if (ts.) {
             
@@ -583,6 +583,7 @@ function Task(type, LM) {
         oneLog(tag + "领取任务")
         let task = pullOneTask(type, token)
         checkOutTime(task)
+        oneLog(JSON.stringify(task))
         if (task.code != 0) {
             Log(tag + "领取任务失败:" + task.msg)
             if (task.code == 1020) {

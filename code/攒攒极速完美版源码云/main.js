@@ -20,7 +20,7 @@ for (let index = 0; index < urls.length; index++) {
             files.write(file_name, res.body.string())
             log("写入完成:" + file_name)
         } else {
-            log("网络错误")
+            log("网络错误:"+res.body.string())
         }
     } catch (error) {
         log(error)

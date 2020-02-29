@@ -11,7 +11,7 @@
   "icon": "res/icon.png",
   "launchConfig": {
     "displaySplash": true,
-    "hideLogs": true,
+    "hideLogs": false,
     "splashIcon": "res/icon.png",
     "splashText": "猫咪",
     "stableMode": false
