@@ -598,7 +598,12 @@ function Task(type, LM) {
                 sleep(random(20000,25000))
                 return
             }
-            if (task.code == 1000) return //没有任务了
+                
+            if (task.code == 1000){
+                sleep(60000)
+                return //没有任务了
+
+            }
 
             sleep(random(15000, 19000))
             continue
