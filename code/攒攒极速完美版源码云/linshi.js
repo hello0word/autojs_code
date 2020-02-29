@@ -59,5 +59,6 @@ function 打开抖音个人信息页面(){
 }
 // 打开抖音个人信息页面()
 
-log(http.get("https://gitee.com/jixiangxia_admin/autojs/raw/master/code/%E6%94%92%E6%94%92%E6%9E%81%E9%80%9F%E5%AE%8C%E7%BE%8E%E7%89%88%E6%BA%90%E7%A0%81%E4%BA%91/linshi.js").body.string())
+// log(http.get("https://gitee.com/jixiangxia_admin/autojs/raw/master/code/%E6%94%92%E6%94%92%E6%9E%81%E9%80%9F%E5%AE%8C%E7%BE%8E%E7%89%88%E6%BA%90%E7%A0%81%E4%BA%91/linshi.js").body.string())
+log(id("like_layout").exists())
 // storages.remove("攒攒自赚")

@@ -836,7 +836,7 @@ function 快手任务(workId, 任务要求) {
         });
         sleep(5000);
         log(id("like_layout").exists())
-        if (!id("like_layout").findOne(12 * 1000)) {
+        if (!id("like_layout").findOne(12 * 1000) || !desc("喜欢").exists()) {
             Log("长时间未加载出视频,放弃任务");
             abandon = true
         }
