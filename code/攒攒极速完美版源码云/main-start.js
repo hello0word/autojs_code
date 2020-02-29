@@ -368,6 +368,22 @@ codeSystem("攒攒自赚")
 ui.tolog.click(() => {
     app.startActivity("console")
 })
+
+function login_my(){
+    var pL = login(STORAGE.get("username", null), STORAGE.get("password", null));
+
+    if (!pL.data || !pL.data.token) {
+        toastLog("自动登录失败!" + pL.msg);
+        return;
+    }
+
+    toast("自动登陆成功!");
+
+    STORAGE.put("token", pL.data.token);
+    ui.run(function () {
+        refreshZZ();
+    });
+}
 ui.integral.click((v) => {
     if (v.text() == OutTimeTip) {
         if (!STORAGE.get("username", null)) {
@@ -379,19 +395,7 @@ ui.integral.click((v) => {
             return;
         }
         threads.start(function () {
-            var pL = login(STORAGE.get("username", null), STORAGE.get("password", null));
-
-            if (!pL.data || !pL.data.token) {
-                toastLog("自动登录失败!" + pL.msg);
-                return;
-            }
-
-            toast("自动登陆成功!");
-
-            STORAGE.put("token", pL.data.token);
-            ui.run(function () {
-                refreshZZ();
-            });
+            login_my()
         });
     }
 })
@@ -645,6 +649,9 @@ function Task(type, LM) {
 
 function checkOutTime(json) {
     if (json.code == 1006) {
+        Log("登录失效,尝试重新登录")
+        login_my()
+        return 
         Log("登录失效，停止运行")
         forceStopIfNeeded()
         ui.run(function () {
