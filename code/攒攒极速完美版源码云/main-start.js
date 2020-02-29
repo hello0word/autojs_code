@@ -591,7 +591,7 @@ function Task(type, LM) {
                 forceStopIfNeeded();
             }
             if (task.code == 1207) {
-                sleep(random(10000,15000))
+                sleep(random(20000,25000))
                 return
             }
             if (task.code == 1000) return //没有任务了
