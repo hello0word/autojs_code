@@ -549,6 +549,10 @@ function Task(type, LM) {
         let token = STORAGE.get("token", null)
         log(token)
         let ts = getTaskSummary(type, token)
+        // if (ts.) {
+            
+        // }
+        oneLog(ts)
         checkOutTime(ts)
         if (ts.code != 0) {
             console.error(ts.msg)
