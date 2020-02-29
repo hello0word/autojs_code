@@ -589,7 +589,7 @@ function Task(type, LM) {
         checkOutTime(task)
         oneLog(JSON.stringify(task))
         if (task.code != 0) {
-            Log(tag + "领取任务失败:" + task.msg)
+            Log(tag + "领取任务失败:"+ task.code+"  " + task.msg)
             if (task.code == 1020) {
                 Log("停止运行");
                 forceStopIfNeeded();
