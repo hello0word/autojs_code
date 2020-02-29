@@ -637,7 +637,7 @@ function Task(type, LM) {
             LM.addFinish(type)
         }
 
-        sleep(random(15000, 22000))
+        sleep(random(10000, 15000))
 
     }
 }
