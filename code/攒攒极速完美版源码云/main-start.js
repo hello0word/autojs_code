@@ -552,7 +552,7 @@ function Task(type, LM) {
         // if (ts.) {
             
         // }
-        oneLog(ts)
+        oneLog(JSON.stringify(ts))
         checkOutTime(ts)
         if (ts.code != 0) {
             console.error(ts.msg)
