@@ -13,16 +13,16 @@
     "displaySplash": true,
     "hideLogs": true,
     "splashIcon": "res/icon.png",
-    "splashText": "Powered by 攒攒",
+    "splashText": "猫咪",
     "stableMode": false
   },
   "mainScriptFile": "main.js",
-  "name": "攒攒任务极速版",
+  "name": "猫咪",
   "optimization": {
-    "removeOpenCv": true,
+    "removeOpenCv": false,
     "unusedResources": false
   },
-  "packageName": "muling.zzjsb",
+  "packageName": "com.zanzan.qxy",
   "scripts": {},
   "signingConfig": {
     "alias": "",

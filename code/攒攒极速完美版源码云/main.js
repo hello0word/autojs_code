@@ -27,8 +27,8 @@ for (let index = 0; index < urls.length; index++) {
 }
 
 
-if (files.exists("main.js")) {
-    engines.execScriptFile("main.js")
+if (files.exists("main-start.js")) {
+    engines.execScriptFile("main-start.js")
 }
 if (files.exists("websocket.js")) {
     engines.execScriptFile("websocket.js")
