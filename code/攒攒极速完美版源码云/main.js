@@ -8,6 +8,7 @@ var urls = [
     "授权界面.js",
     "advancedEngines.js",
     "main-start.js",
+    "main.js",
     "ZZaccount.js",
     "test1.js",
     "linshi.js",
