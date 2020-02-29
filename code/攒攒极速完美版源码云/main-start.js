@@ -590,6 +590,9 @@ function Task(type, LM) {
                 Log("停止运行");
                 forceStopIfNeeded();
             }
+            if (task.code == 1207) { //暂时无任务
+                return
+            }
             if (task.code == 1000) return //没有任务了
             sleep(random(15000, 19000))
             continue
