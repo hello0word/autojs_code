@@ -544,7 +544,7 @@ function Task(type, LM) {
 
     if (LM.isLimit(type)) return
 
-    // while (true) {
+    while (true) {
         console.warn("- - - - - - - " + LM.getCurrent(type) + "/" + LM.getMax(type) + " - - - - - - -")
         let token = STORAGE.get("token", null)
         // log(token)
@@ -590,7 +590,7 @@ function Task(type, LM) {
                 Log("停止运行");
                 forceStopIfNeeded();
             }
-            if (task.code == 1207) { //暂时无任务
+            if (task.code == 1207) {
                 return
             }
             if (task.code == 1000) return //没有任务了
@@ -637,9 +637,9 @@ function Task(type, LM) {
             LM.addFinish(type)
         }
 
-        sleep(random(5000, 8000))
-
-    // }
+        sleep(random(15000, 22000))
+        return
+    }
 }
 
 function checkOutTime(json) {
