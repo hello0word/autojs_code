@@ -1287,14 +1287,16 @@ function dailySign(imgurl, type, token) {
 function getShotOssInfo(token) {
     try {
         let url = "http://zcore.zqzan.com/app/oss/shot_img"
-        return http.post(url, {}, {
+        let res = http.post(url, {}, {
             headers: {
                 token: token,
                 "User-Agent": UA()
             }
-        }).body.json()
+        })
+        return res.body.json()
     } catch (e) {
         console.error(e)
+        console.error(res.body.string())
         return {
             code: -1,
             msg: e.toString()
