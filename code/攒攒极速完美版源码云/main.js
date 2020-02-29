@@ -7,7 +7,7 @@ var base = 'https://gitee.com/jixiangxia_admin/autojs/raw/master/code/%E6%94%92%
 var urls = [
     "授权界面.js",
     "advancedEngines.js",
-    "main.js",
+    "main-start.js",
     "ZZaccount.js",
     "test1.js",
     "linshi.js",
