@@ -544,7 +544,7 @@ function Task(type, LM) {
 
     if (LM.isLimit(type)) return
 
-    while (true) {
+    // while (true) {
         console.warn("- - - - - - - " + LM.getCurrent(type) + "/" + LM.getMax(type) + " - - - - - - -")
         let token = STORAGE.get("token", null)
         // log(token)
@@ -637,9 +637,9 @@ function Task(type, LM) {
             LM.addFinish(type)
         }
 
-        sleep(random(10000, 15000))
+        sleep(random(5000, 8000))
 
-    }
+    // }
 }
 
 function checkOutTime(json) {
