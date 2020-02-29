@@ -650,7 +650,7 @@ function Task(type, LM) {
 function checkOutTime(json) {
     if (json.code == 1006) {
         Log("登录失效,尝试重新登录")
-        sleep(random(60*1000,90*1000))
+        sleep(random(40*1000,60*1000))
         login_my()
         return 
         Log("登录失效，停止运行")
