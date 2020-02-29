@@ -599,8 +599,10 @@ function Task(type, LM) {
                 return
             }
             if (task.code == 1000) return //没有任务了
+            
             sleep(random(15000, 19000))
             continue
+
         }
 
         let TaskDemand = parseDemand(task.data)
