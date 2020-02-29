@@ -494,7 +494,7 @@ function workMain() {
         return
     }
     log("开始1")
-    // runtime.accessibilityBridge.mWindowFilter = null
+    runtime.accessibilityBridge.mWindowFilter = null
 
     Log("脚本开始运行")
     let LM = new LimitManager()
@@ -736,7 +736,7 @@ function 抖音任务(workId, 任务要求) {
             if (任务要求.match("评论") && !abandon) {
                 tag.parent().click()
 
-                //    runtime.accessibilityBridge.mWindowFilter = null
+                   runtime.accessibilityBridge.mWindowFilter = null
                 sleep(2000)
 
                 if (textMatches("评论并转发").findOne(1000)) {
@@ -803,7 +803,7 @@ function 抖音任务(workId, 任务要求) {
             Log("未找到必要控件，放弃任务")
         }
 
-        // runtime.accessibilityBridge.mWindowFilter = null
+        runtime.accessibilityBridge.mWindowFilter = null
 
         backToScript()
 
