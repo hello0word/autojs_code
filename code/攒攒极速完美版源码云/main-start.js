@@ -672,6 +672,7 @@ function checkOutTime(json) {
 function 抖音任务(workId, 任务要求) {
     if (任务要求.match("评论") && ui.noComment.isChecked()) {
         Log("已勾选不做评论任务，放弃任务");
+        sleep(30000)
         return 0;
     }
 
