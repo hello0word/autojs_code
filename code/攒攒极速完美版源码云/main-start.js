@@ -399,7 +399,8 @@ ui.integral.click((v) => {
         });
     }
 })
-ui.start.click(() => {
+
+function main(){
     if (!isInTime) {
         toast("设备无剩余时间，请充值");
         return;
@@ -425,6 +426,9 @@ ui.start.click(() => {
             });
         }
     });
+}
+ui.start.click(() => {
+    main()
 });
 
 function refreshZZ() {
@@ -944,7 +948,7 @@ function 快手任务(workId, 任务要求) {
         if (任务要求.match("关注") && id("follow_text_container").findOne(500)) {
             Log("检测到快手今日关注达到上限，放弃此任务，并今日不再做关注任务")
             abandon = true
-            快手关注上限 = true
+            // 快手关注上限 = true
         }
 
         if (!abandon) ScreenShot(1);
@@ -1657,3 +1661,15 @@ function getDeviceIdentity() {
         return arr.reverse().join("")
     }
 }
+
+// setTimeout(()=>{
+//     if (app.getPackageName("Tasker")) {
+//         log("存在tasker,开启自动运行")
+//         // main()
+//     }
+// },5000)
+
+setInterval(()=>{
+    
+    files.write("/sdcard/Android/xintiao.xml",new Date().getTime())
+},1000)
