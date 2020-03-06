@@ -14,10 +14,15 @@ function main(){
     }
 }
 function work(){
+    let jishu = 0
     while (true) {
         if (text("开始阅读").exists()) {
-            text("开始阅读").findOne().click()
-            log("开始阅读")
+            jishu +=1
+            if (jishu >7) {
+                text("开始阅读").findOne().click()
+                log("开始阅读")
+                jishu=0
+            }
         }
         sleep(5000)
     }
@@ -25,7 +30,7 @@ function work(){
 
 function work2(){
     while(true){
-        if(descContains("在看").exists() ){
+        if(descContains("在看").exists() || desc("阅读原文").eists() ){
             log("在看")
             sleep(10000)
             back()
