@@ -30,7 +30,7 @@ function work(){
 
 function work2(){
     while(true){
-        if(descContains("在看").exists() || desc("阅读原文").eists() ){
+        if(descContains("在看").exists() || desc("阅读原文").exists() ){
             log("在看")
             sleep(10000)
             back()
