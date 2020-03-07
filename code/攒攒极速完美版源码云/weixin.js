@@ -18,7 +18,7 @@ function work(){
     while (true) {
         if (text("开始阅读").exists()) {
             jishu +=1
-            toast("开始阅读:"+jishu)
+            toastLog("开始阅读:"+jishu)
             if (jishu >7) {
                 text("开始阅读").findOne().click()
                 log("开始阅读")
@@ -31,19 +31,24 @@ function work(){
 
 function work2(){
     while(true){
-        if(descContains("在看").exists()  ){
-            if (descContains("在看").findOne().bounds().centerY() > device.height * 0.82 ) {
-                toast("10秒后返回")
+        if (descStartsWith(" 在看").exists()  ){
+            log("1")
+            log(descStartsWith(" 在看").findOne().bounds().centerY())
+            if (descStartsWith(" 在看").findOne().bounds().centerY() < device.height * 1.1 ) {
+                toastLog("10秒后返回")
                 sleep(10000)
                 back()
-            }
+            } 
             
         } else if (desc("阅读原文").exists()){
-            if (descContains("阅读原文").findOne().bounds().centerY() > device.height * 0.82) {
-                toast("10秒后返回")
+            log(2)
+            if (descContains("阅读原文").findOne().bounds().centerY() < device.height * 1.1) {
+                toastLog("10秒后返回")
                 sleep(10000)
                 back()
             }
+        }else{
+            log("都没有")
         }
         sleep(3000)
     }
