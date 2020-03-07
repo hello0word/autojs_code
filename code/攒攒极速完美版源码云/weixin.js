@@ -32,7 +32,7 @@ function work(){
 function work2(){
     while(true){
         if(descContains("在看").exists()  ){
-            if (descContains("再看").findOne().bounds().centerY() > device.height * 0.82 ) {
+            if (descContains("在看").findOne().bounds().centerY() > device.height * 0.82 ) {
                 toast("10秒后返回")
                 sleep(10000)
                 back()
