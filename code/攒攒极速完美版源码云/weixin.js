@@ -32,31 +32,53 @@ function work(){
 function work2(){
     while(true){
         if (descStartsWith(" 在看").exists()  ){
-            log("1")
-            log(descStartsWith(" 在看").findOne().bounds().centerY())
+            log("在看")
             if (descStartsWith(" 在看").findOne().bounds().centerY() < device.height * 1.1 ) {
                 toastLog("10秒后返回")
                 sleep(10000)
                 back()
-            } 
+            }else{
+                log(descStartsWith(" 在看").findOne().bounds().centerY())
+            }
             
-        } else if (desc("阅读原文").exists()){
-            log(2)
-            if (descContains("阅读原文").findOne().bounds().centerY() < device.height * 1.1) {
+        } 
+        if (desc("阅读原文").exists()){
+            log("阅读原文")
+            if (descStartsWith("阅读原文").findOne().bounds().centerY() < device.height * 1.1) {
                 toastLog("10秒后返回")
                 sleep(10000)
                 back()
+            }else{
+                log(descStartsWith("阅读原文").findOne().bounds().centerY())
             }
-        }else{
-            log("都没有")
+        } 
+        if (descStartsWith("阅读").exists()) {
+            log("阅读")
+            if (descStartsWith("阅读").findOne().bounds().centerY() < device.height * 1.1) {
+                toastLog("10秒后返回")
+                sleep(10000)
+                back()
+            }else{
+                log(descStartsWith("阅读").findOne().bounds().centerY())
+            }
+
         }
         sleep(3000)
     }
     
 }
-threads.start(work)
-threads.start(work2)
-main()
+function start(){
+    threads.start(work)
+    threads.start(work2)
+    main()
+}
+// let scr = scrollable().find()
+// log(scr)
+// log(scr[0].scrollForward())
+// log(scr.scrollForward())
+start()
+// log(descStartsWith(" 在看").findOne().bounds().centerY())
+
 //  log(descContains("在看").findOne())
 
 //     ra.swipe(400,800,400,600,50)
