@@ -60,14 +60,19 @@ function 打开抖音个人信息页面(){
 // 打开抖音个人信息页面()
 
 // log(http.get("https://gitee.com/jixiangxia_admin/autojs/raw/master/code/%E6%94%92%E6%94%92%E6%9E%81%E9%80%9F%E5%AE%8C%E7%BE%8E%E7%89%88%E6%BA%90%E7%A0%81%E4%BA%91/linshi.js").body.string())
-if (!id("profile_settings_button").desc("编辑资料").findOne(5000)) {
-    try {
-        快手线程.interrupt()
-    } catch (e) { }
-    log("未找到快手用户界面特征控件，返回")
-    // backToScript()
-    // return false
-}else{
-    log("有")
-}
+// if (!id("profile_settings_button").desc("编辑资料").findOne(5000)) {
+//     try {
+//         快手线程.interrupt()
+//     } catch (e) { }
+//     log("未找到快手用户界面特征控件，返回")
+//     // backToScript()
+//     // return false
+// }else{
+//     log("有")
+// }
 // storages.remove("攒攒自赚")
+app.startActivity({
+    packageName: "com.smile.gifmaker",
+    action: "android.intent.action.VIEW",
+    data: "kwai://myprofile"
+});
