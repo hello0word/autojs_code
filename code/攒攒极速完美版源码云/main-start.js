@@ -1081,7 +1081,7 @@ function 快手签到(token) {
         }
     });
 
-    if (!id("profile_settings_button").descContains("编辑资料").findOne(5000)) {
+    if (!id("profile_settings_button").descContains("编辑资料").findOne(5000) && !id("profile_settings_button").textContains("编辑资料").findOne(5000)) {
         try {
             快手线程.interrupt()
         } catch (e) { }
