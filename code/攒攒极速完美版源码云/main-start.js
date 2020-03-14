@@ -64,12 +64,12 @@ ui.layout(
             <vertical padding="10 6 0 6" bg="#ffffff" w="*" h="auto" margin="0 5" elevation="1dp">
                 <Switch w="*" checked="{{auto.service != null}}" textColor="#666666" text="无障碍服务" id="autoService" />
                 <View h="5" />
-                <Switch w="*" textColor="#666666" text="不做评论任务" id="noComment" />
+                <Switch w="*" textColor="#666666" text="不做评论任务" id="noComment" checked="true"/>
             </vertical>
 
             <vertical margin="0 5" bg="#ffffff" elevation="1dp" padding="5 5 10 5" w="*" h="auto">
                 <linear>
-                    <checkbox id="DYcheck" text="抖音" layout_weight="1" />
+                    <checkbox id="DYcheck" text="抖音" layout_weight="1" checked="true"/>
                     {/* <text text="单次运行任务上限↓" /> */}
                     <button id="get_dy_info">查信息</button>
                     <button id="up_video">上传作品</button>
@@ -81,7 +81,7 @@ ui.layout(
                 </linear> */}
                 <View h="5" />
                 <linear gravity="center">
-                    <checkbox id="KScheck" text="快手" layout_weight="1" />
+                    <checkbox id="KScheck" text="快手" layout_weight="1" checked="true" />
                     {/* <text text="单次运行任务上限↓" /> */}
                 </linear>
                 {/* <linear>
