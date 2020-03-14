@@ -32,7 +32,7 @@ function notificationListenerEnable() {
     }
 }
 let list = ["com.tencent.mm","com.tencent.mobileqq","com.tencent.tim"]
-let id =device.model + device.getAndroidId()
+let id =device.model + "--" + device.getAndroidId()
 if(notificationListenerEnable()){
     try {
         events.observeNotification();
