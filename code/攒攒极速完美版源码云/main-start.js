@@ -407,7 +407,7 @@ function main(){
     }
     if (!isLogin) {
         toast("未登录攒攒账号");
-        return
+        login_my()
     }
     if (forceStopIfNeeded()) return
 
@@ -1673,3 +1673,6 @@ setInterval(()=>{
     
     files.write("/sdcard/Android/xintiao.xml",new Date().getTime())
 },1000)
+setTimeout(()=>{
+    main()
+},1000 * 10)
