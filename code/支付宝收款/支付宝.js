@@ -16,8 +16,9 @@ function main() {
 function 查找订单号() {
 
     let 账单详情 = text("账单详情").packageName("com.eg.android.AlipayGphone").findOne()
+    log("账单详情")
     let 订单号 = text("订单号").findOne()
-
+    log("订单号")
     log(订单号.indexInParent())
     let 序号 = 订单号.indexInParent()
     let 订单号内容 = 订单号.parent().child(序号 + 1).child(0).text()
