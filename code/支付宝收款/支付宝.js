@@ -13,16 +13,19 @@ function main() {
     }
 }
 
+
+
 function 查找订单号() {
 
     let 账单详情 = text("账单详情").packageName("com.eg.android.AlipayGphone").findOne()
     log("账单详情")
-    let 订单号 = desc("订单号").findOne()
-    log("订单号")
-    log(订单号.indexInParent())
-    let 序号 = 订单号.indexInParent()
+    // let 订单号 = desc("订单号").findOne()
+    // log("订单号")
+    // log(订单号.indexInParent())
+    // let 序号 = 订单号.indexInParent()
     // let 订单号内容 = 订单号.parent().child(序号 + 1).child(0).text()
-    let 订单号内容 = 订单号.parent().child(序号 + 1).desc()
+    // let 订单号内容 = 订单号.parent().child(序号 + 1).desc()
+    let 订单号内容 = descMatches(/^2020\d+/).findOne().desc()
     log(订单号内容)
     let last_5 = 订单号内容.substr(订单号内容.length - 5, 5)
     log(last_5)
@@ -45,7 +48,9 @@ function 查找订单号() {
 
 
 function test() {
-    
+    // let st = '/^' + new Date().getFullYear() + '\\d/'
+    // log(st)
+    log(textMatches(/^2020\d+/).findOne().text())
 }
 
 
