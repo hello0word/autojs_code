@@ -31,9 +31,9 @@ function 查找订单号() {
     log("账单详情")
     let 订单号 = desc("订单号").findOne(6 *1000)
     if (订单号) {
-        log("desc订单号")
+        toastLog("desc订单号")
     }else if(text("订单号").exists()){
-        log("text订单号")
+        toastLog("text订单号")
     }
     // log(订单号.indexInParent())
     // let 序号 = 订单号.indexInParent()
