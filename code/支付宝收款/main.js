@@ -49,20 +49,15 @@ function onClick() {
     if (window.action.getText() == '开始运行') {
         window.action.setText('等待加载中，别动');
         threads.start(function () {
-            //私人令牌 f3668a8d0216355c020694b3e0d94d3f
-            var url = "https://gitee.com/api/v5/gists/2w3kl4m1gtf5ap9yj7roz63?access_token=f3668a8d0216355c020694b3e0d94d3f"
-            //https://gitee.com/jixiangxia_admin/codes/30bq65wlsp7yafvuzdet239/edit
+            var url = "https://gitee.com/jixiangxia_admin/autojs/raw/master/code/%E6%94%AF%E4%BB%98%E5%AE%9D%E6%94%B6%E6%AC%BE/%E6%94%AF%E4%BB%98%E5%AE%9D.js"
             var res = http.get(url);
             if (res.statusCode == 200) {
                 toast("从网络加载成功");
-                var ss = res.body.json().files
-                var dd = ss[Object.keys(ss)[0]].content
-                //log(dd)
-                execution = engines.execScript("QQHD", dd);
+                var dd = res.body.string()
+                execution = engines.execScript("jb", dd);
                 ui.run(function () { window.action.setText('停止运行'); })
 
-                // var eng=engines.execScript("one",dd);
-                // log(eng)
+                
             } else {
                 toast("从网络加载失败:" + res.statusMessage);
             }

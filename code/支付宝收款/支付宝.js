@@ -4,8 +4,10 @@
 
 function main() {
     while (true) {
+        toastLog("查找订单号")
         let str = 查找订单号()
         back()
+        toastLog("查找输入框")
         let 输入框 = packageName("com.eg.android.AlipayGphone").className("android.widget.EditText").id("chat_msg_edit").findOne()
         输入框.setText(str)
     }
@@ -45,5 +47,5 @@ function test() {
 }
 
 
-// main()
-test()
+main()
+// test()
