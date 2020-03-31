@@ -6,6 +6,7 @@ function main() {
     while (true) {
         toastLog("查找订单号")
         let str = 查找订单号()
+        sleep(1000)
         back()
         toastLog("查找输入框")
         let 输入框 = packageName("com.eg.android.AlipayGphone").className("android.widget.EditText").id("chat_msg_edit").findOne()
