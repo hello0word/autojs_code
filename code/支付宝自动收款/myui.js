@@ -1,5 +1,6 @@
 "ui";
-floaty.requestPermission()
+// dialogs.alert("请在接下来的页面里授予悬浮窗权限")
+// floaty.requestPermission()
 var color = "#009688";
 
 var storage= storages.create("支付宝工具")
