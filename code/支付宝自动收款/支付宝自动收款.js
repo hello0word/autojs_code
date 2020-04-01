@@ -3,6 +3,7 @@
 var storage = storages.create("支付宝工具")
 var 已经使用过的账号 = []
 console.show()
+console.setPosition(100,300)
 function main() {
     while (true) {
         进入聊天页面()
