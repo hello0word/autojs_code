@@ -55,6 +55,7 @@ ui.layout(
 //创建选项菜单(右上角)
 ui.emitter.on("create_options_menu", menu => {
     menu.add("设置");
+    menu.add("日志");
     menu.add("关于");
 });
 //监听选项菜单点击
@@ -62,6 +63,9 @@ ui.emitter.on("options_item_selected", (e, item) => {
     switch (item.getTitle()) {
         case "设置":
             app.startActivity("settings")
+            break;
+        case "日志":
+            app.startActivity("console")
             break;
         case "关于":
             alert("关于", "支付宝工具");
