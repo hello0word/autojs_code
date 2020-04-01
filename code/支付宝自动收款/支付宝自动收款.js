@@ -20,11 +20,17 @@ function main() {
 function 判断是否成功收款() {
     let msg_list = id("chat_msg_list").findOne()
     let last_msg = msg_list.child(msg_list.childCount() - 1)
-    let weizhi = last_msg.findOne(textContains("向你支付"))
+    let weizhi = last_msg.findOne(id("chat_msg_avatar_cover"))
     if (weizhi) {
-        return true
+        weizhi = weizhi.bounds().centerX()
+        if (weizhi > device.width / 2) {
+            log("最后一条为自己的消息")
+            return false
+        } else {
+            return true
+        }
     } else {
-        return false
+        return true
     }
 
 }
