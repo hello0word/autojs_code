@@ -130,6 +130,7 @@ function 切换账号() {
                 log("该账号可以作为下一个")
                 element.click()
                 sleep(3000)
+                return true 
             }
         }
 
