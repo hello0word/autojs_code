@@ -1,5 +1,5 @@
 "ui";
-
+floaty.requestPermission()
 var color = "#009688";
 
 var storage= storages.create("支付宝工具")
