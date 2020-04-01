@@ -10,6 +10,9 @@ function main() {
         if (判断是否成功收款()) {
             发起收款()
         }
+        let 本次休眠 = random(parseInt(storage.get("延时下限", 5)), parseInt(storage.get("延时上限", 20)))
+        log("本次休眠:%d秒",本次休眠)
+        sleep(本次休眠* 1000)
         切换账号()
     }
 
@@ -126,14 +129,17 @@ function 切换账号() {
 }
 
 function test() {
-    let msg_list = id("chat_msg_list").findOne()
-    let last_msg = msg_list.child(msg_list.childCount() - 1)
-    let weizhi = last_msg.findOne(textContains("向你支付"))
-    if (weizhi) {
-        return true
-    } else {
-        return false
-    }
+    // let msg_list = id("chat_msg_list").findOne()
+    // let last_msg = msg_list.child(msg_list.childCount() - 1)
+    // let weizhi = last_msg.findOne(textContains("向你支付"))
+    // if (weizhi) {
+    //     return true
+    // } else {
+    //     return false
+    // }
+    let 本次休眠 = random(parseInt(storage.get("延时下限", 5)), parseInt(storage.get("延时上限", 20)))
+    log("本次休眠:%d秒", 本次休眠)
+    sleep(本次休眠 * 1000)
 
 }
 
