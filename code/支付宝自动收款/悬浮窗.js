@@ -54,7 +54,9 @@ function onClick() {
             if (res.statusCode == 200) {
                 toast("从网络加载成功");
                 var dd = res.body.string()
-                execution = engines.execScript("jb", dd);
+                let name = url.split("/")
+                name = name[name.length - 1]
+                execution = engines.execScript(name, dd);
                 ui.run(function () { window.action.setText('停止运行'); })
 
 
