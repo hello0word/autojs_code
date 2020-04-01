@@ -52,7 +52,7 @@ function 发起收款() {
     收款文字.parent().parent().click()
 
     let 收款金额 = 获取收款金额()
-    log(收款金额)
+    log("收款金额:" + 收款金额)
     let 金额输入框 = text("免服务费").className("android.widget.EditText").findOne()
     金额输入框.setText(收款金额)
     let 选填框 = text("选填").className("android.widget.EditText").findOne()
@@ -79,12 +79,14 @@ function 获取收款金额() {
     log("下:" + dow)
     log("上:" + up)
     let my_ran = random(Number(dow), Number(up))
-    log("随机数:" + my_ran)
+    log("收款金额随机数:" + my_ran)
     if (my_ran >= 100) {
         return parseInt(my_ran / 100) * 100
-    } else {
+    } else if (my_ran >= 10) {
         return parseInt(my_ran / 10) * 10
-    }
+    } else {
+        return my_ran
+    } 
 }
 
 
