@@ -102,23 +102,32 @@ function 切换账号() {
     sleep(1000)
     text("换账号登录").findOne().parent().parent().parent().parent().click()
     sleep(1000)
-    let 列表 = className("android.widget.ListView").findOne()
-    let element = 列表.child(0)
-    let num = element.findOne(className("TextView"))
+    let 列表 = className("android.widget.ListView").id("security_userListView").findOne()
+    let 自己 = 列表.child(0)
+    let num = 自己.findOne(className("TextView"))
     if (num) {
-        log(num.text())
+        log("当前登录:"+num.text())
         已经使用过的账号.push(num.text())//把当前账号存入已使用的账号
     }
     if (已经使用过的账号.length >= 列表.childCount() - 1) {
+        log("清空已使用账号")
         已经使用过的账号 = []//当都使用过一遍后,清空已使用的账号
     }
+    log("已使用列表:")
+    log(已经使用过的账号)
     for (let index = 1; index < 列表.childCount() - 1; index++) {
         let element = 列表.child(index)
+        if (!element ) {
+            log("错误信息如下:")
+            log("列表总数:" + 列表.childCount() +"---index: "+ index)
+            exit()
+        }
         let num = element.findOne(className("TextView"))
         if (num) {
-            log(num.text())
+            log("本次查找的号码:"+num.text())
             if (已经使用过的账号.indexOf(num.text()) == -1) {
                 //该账号可以作为下一个
+                log("该账号可以作为下一个")
                 element.click()
                 sleep(3000)
             }
@@ -129,18 +138,20 @@ function 切换账号() {
 }
 
 function test() {
-    // let msg_list = id("chat_msg_list").findOne()
-    // let last_msg = msg_list.child(msg_list.childCount() - 1)
-    // let weizhi = last_msg.findOne(textContains("向你支付"))
-    // if (weizhi) {
-    //     return true
-    // } else {
-    //     return false
-    // }
-    let 本次休眠 = random(parseInt(storage.get("延时下限", 5)), parseInt(storage.get("延时上限", 20)))
-    log("本次休眠:%d秒", 本次休眠)
-    sleep(本次休眠 * 1000)
-
+    let msg_list = id("chat_msg_list").findOne()
+    let last_msg = msg_list.child(msg_list.childCount() - 1)
+    let weizhi = last_msg.findOne(id("chat_msg_avatar_cover"))
+    if (weizhi) {
+        weizhi = weizhi.bounds().centerX()
+        if(weizhi > device.width /2 ){
+            log("自己的消息")
+            return false
+        }else{
+            return true
+        }
+    } else {
+        return true
+    }
 }
 
 
