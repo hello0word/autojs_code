@@ -89,10 +89,13 @@ function 切换账号() {
         }
 
     })
-    if (id("sigle_tab_bg").findOne().click()) {
+    if (id("tab_description").text("我的").findOne().parent().click()) {
+        log("我的")
         thread.interrupt()
     }
     id("right_container_2").desc("设置").findOne().click()
+    log("设置")
+    sleep(1000)
     text("换账号登录").findOne().parent().parent().parent().parent().click()
     sleep(1000)
     let 列表 = className("android.widget.ListView").findOne()
