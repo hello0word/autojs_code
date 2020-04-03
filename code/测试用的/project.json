@@ -1,0 +1,22 @@
+{
+    "name": "",
+    "main": "main.js",
+    "ignore": [
+        "build"
+    ],
+    "encryptLevel": 1,
+    "useFeatures": [],
+    "launchConfig": {
+        "displaySplash": true,
+        "hideLogs": false,
+        "splashText": "",
+        "stableMode": false
+    },
+    "optimization": {
+        "removeOpenCv": false,
+        "unusedResources": false
+    },
+    "packageName": "",
+    "versionName": "1.0.0",
+    "versionCode": 1
+}
