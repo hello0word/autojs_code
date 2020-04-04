@@ -4,7 +4,27 @@ var storage = storages.create("支付宝工具")
 var 已经使用过的账号 = []
 console.show()
 console.setPosition(100,300)
+var G_当前余额 = 0
 function main() {
+    threads.start(function () {
+        // let 悬浮窗 = 获取悬浮窗引擎()
+        // log("悬浮窗引擎" + 悬浮窗)
+        while (true) {
+
+            try {
+                let 当前余额 = parseInt(获取余额())
+                if (Number.isSafeInteger(当前余额)) {
+                    G_当前余额 = 当前余额
+                }
+            } catch (error) {
+
+            }
+
+
+
+            sleep(100)
+        }
+    })
     while (true) {
         进入聊天页面()
         if (判断是否成功收款()) {
@@ -53,6 +73,10 @@ function 发起收款() {
 
     let 收款金额 = 获取收款金额()
     log("收款金额:" + 收款金额)
+    if (G_当前余额 < 收款金额) {
+        toastLog("余额不足,停止")
+        exit()
+    }
     let 金额输入框 = text("免服务费").className("android.widget.EditText").findOne()
     金额输入框.setText(收款金额)
     let 选填框 = text("选填").className("android.widget.EditText").findOne()
@@ -73,6 +97,42 @@ function 发起收款() {
 
 }
 
+function 获取余额() {
+    // log("开始识别余额")
+    let 消息列表 = id("chat_msg_list").packageName("com.eg.android.AlipayGphone").findOne()
+    let 消息列表个数 = 消息列表.childCount()
+    for (let index = 消息列表个数 - 1; index >= 0; index--) {
+        let element = 消息列表.child(index);
+        let 头像 = element.findOne(id("chat_msg_avatar_cover"))
+        if (头像) {
+            let x = 头像.bounds().centerX()
+            if (x < device.width / 2) {// 对方发的
+                //这条是自己发的
+                let 发送文本 = element.findOne(id("chat_msg_text"))
+                if (发送文本) {
+                    let 文本 = 发送文本.text()
+                    if (文本.indexOf("余额") != -1) {
+                        let 初始位置 = 文本.indexOf("余额")
+                        let 余额 = 文本.substr(初始位置 + 2, 文本.length - 初始位置 - 2)
+                        // log("本次识别余额:"+余额)
+                        return 余额
+                    } else {
+                        // log(4)
+                    }
+                } else {
+                    // log(3)
+                }
+            } else {
+                // log(2)
+            }
+        } else {
+            // log(1)
+        }
+    }
+
+
+}
+
 function 获取收款金额() {
     let dow = storage.get("数额下限", 1)
     let up = storage.get("数额上限", 10)
@@ -85,7 +145,7 @@ function 获取收款金额() {
     } else if (my_ran >= 10) {
         return parseInt(my_ran / 10) * 10
     } else {
-        return my_ran
+        return parseInt(my_ran)
     } 
 }
 
