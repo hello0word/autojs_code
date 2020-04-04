@@ -1,5 +1,5 @@
 
-
+console.show()
 
 var G_当前余额
 //获取悬浮窗引擎
