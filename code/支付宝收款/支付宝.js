@@ -31,13 +31,18 @@ function main() {
         // log("悬浮窗引擎" + 悬浮窗)
         while(true){
             if (currentActivity() =="com.alipay.mobile.chatapp.ui.PersonalChatMsgActivity_") {
-                let 当前余额 = parseInt(获取余额())
-                if (Number.isSafeInteger(当前余额)) {
-                    G_当前余额 = 当前余额
-                    ui.run(() => {
-                        window.识别余额.setText("当前余额:" + G_当前余额)
-                    })
+                try {
+                    let 当前余额 = parseInt(获取余额())
+                    if (Number.isSafeInteger(当前余额)) {
+                        G_当前余额 = 当前余额
+                        ui.run(() => {
+                            window.识别余额.setText("当前余额:" + G_当前余额)
+                        })
+                    }
+                } catch (error) {
+                    
                 }
+                
                 
             }
             sleep(100)
