@@ -180,7 +180,7 @@ function 查找订单号等数据() {
 
     //排除掉重复的字符串
     let 筛选数组 = 订单详情.收款理由.split("")
-    if (筛选数组.distinct().length < 订单详情.收款理由) {
+    if (筛选数组.distinct().length < 订单详情.收款理由.length) {
         log("有重复的")
         return "无效数据"
     }
