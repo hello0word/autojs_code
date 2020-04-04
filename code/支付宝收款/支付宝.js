@@ -199,7 +199,7 @@ function 获取余额() {
                 let 发送文本 = element.findOne(id("chat_msg_text"))
                 if( 发送文本){
                     let 文本 = 发送文本.text()
-                    if (文本.indexOf("----余额") != -1) {
+                    if (文本.indexOf("余额") != -1) {
                         let 初始位置  = 文本.indexOf("余额")
                         let 余额 = 文本.substr(初始位置+2,文本.length - 初始位置 - 2)
                         // log("本次识别余额:"+余额)
