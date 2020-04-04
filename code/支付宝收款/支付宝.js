@@ -141,6 +141,7 @@ function 查找订单号等数据() {
         return num
     }
     let 出现次数= 次数查找(订单详情.订单号后5位, 订单详情.收款理由)
+    log("出现次数:" + 出现次数)
     let 倍数 =  -1
     if (订单详情.收款理由.length == 1) {
         //处理龙虎合
@@ -162,21 +163,22 @@ function 查找订单号等数据() {
         }
         
     } else if (订单详情.收款理由.length == 2 ) {
-        if (出现次数 != -1) {
+        if (出现次数 == 1) {
             倍数 =  3
         }
     } else if (订单详情.收款理由.length == 3){
-        if (出现次数 != -1) {
+        if (出现次数 == 1) {
             倍数 =  19
         }
     } else if (订单详情.收款理由.length == 4) {
-        if (出现次数 != -1) {
+        if (出现次数 == 1) {
             倍数 =  49
         }
     } 
     
     log("倍数 = "+ 倍数)
     余额 = parseInt(G_当前余额) + parseInt(订单详情.收款金额) * 倍数
+    log("余额：" + 余额)
     let 最终字符串 = 订单详情.订单号后5位 + 龙虎合标记 + "-----余额" + 余额
     log(最终字符串)
     return 最终字符串
@@ -223,15 +225,8 @@ function 获取余额() {
 
 
 function test(){
-    var array = engines.all()
-    for (let index = 0; index < array.length; index++) {
-        var element = array[index];
-        if (String(element).indexOf("main.js")) {
-            return element
-        }
-    } 
-     
+    
 }
 
 main()
-// log(test().emit("余额",100))
+// log(test())
