@@ -1,7 +1,7 @@
 
-console.show()
+// console.show()
 
-var G_当前余额
+var G_当前余额 = 0 
 //获取悬浮窗引擎
 function 获取悬浮窗引擎(){
     var array = engines.all()
@@ -13,20 +13,34 @@ function 获取悬浮窗引擎(){
     } 
 }
 
+var window = floaty.window(
+    <frame>
+        <horizontal>
+            <button id="识别余额" text={"当前余额:" + G_当前余额} w="auto" h="40" bg="#77ffffff" />
+        </horizontal>
+
+    </frame>
+);
+
+window.setPosition(device.width / 3 *2, 200)
 var 已记录订单号列表=[]
 function main() {
 
     threads.start(function(){
-        let 悬浮窗 = 获取悬浮窗引擎()
-        log("悬浮窗引擎" + 悬浮窗)
+        // let 悬浮窗 = 获取悬浮窗引擎()
+        // log("悬浮窗引擎" + 悬浮窗)
         while(true){
             if (currentActivity() =="com.alipay.mobile.chatapp.ui.PersonalChatMsgActivity_") {
-                G_当前余额 = parseInt(获取余额())
-                if (悬浮窗) {
-                    悬浮窗.emit("余额", G_当前余额)
+                let 当前余额 = parseInt(获取余额())
+                if (Number.isSafeInteger(当前余额)) {
+                    G_当前余额 = 当前余额
+                    ui.run(() => {
+                        window.识别余额.setText("当前余额:" + G_当前余额)
+                    })
                 }
+                
             }
-            sleep(10)
+            sleep(100)
         }
     })
     while (true) {
