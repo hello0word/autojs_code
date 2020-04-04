@@ -1,12 +1,29 @@
 
 auto.waitFor()
+var 当前余额 = 0
 var window = floaty.window(
     <frame>
-        <button id="action" text="开始运行" w="auto" h="40" bg="#77ffffff" />
+        <horizontal>
+            <button id="action" text="开始运行" w="auto" h="40" bg="#77EE0000" />
+            <button id="识别余额" text={"当前余额:" + 当前余额} w="auto" h="40" bg="#77ffffff" />
+        </horizontal>
+        
     </frame>
 );
 
+events.on("余额", function (余额) {
+    // log("收到消息")
+    当前余额 = 余额;
+    ui.run(()=>{
+        window.识别余额.setText("当前余额:" + 当前余额)
+        // log("设置完成:" + 当前余额)
+    })
+});
+
 setInterval(() => { }, 1000);
+
+
+
 
 var execution = null;
 
