@@ -65,7 +65,6 @@ function main() {
         }
     })
     while (true) {
-        log("当前余额:" + G_当前余额)
         toastLog("查找订单号")
         let str = 查找订单号等数据(G_当前余额)
         if (str == "该订单已记录") {
