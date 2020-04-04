@@ -5,6 +5,17 @@ var 已经使用过的账号 = []
 console.show()
 console.setPosition(100,300)
 var G_当前余额 = 0
+
+var window = floaty.window(
+    <frame>
+        <horizontal>
+            <button id="识别余额" text={"当前余额:" + G_当前余额} w="auto" h="40" bg="#77ffffff" />
+        </horizontal>
+
+    </frame>
+);
+
+window.setPosition(device.width / 3 * 2, 200)
 function main() {
     threads.start(function () {
         // let 悬浮窗 = 获取悬浮窗引擎()
@@ -15,6 +26,9 @@ function main() {
                 let 当前余额 = parseInt(获取余额())
                 if (Number.isSafeInteger(当前余额)) {
                     G_当前余额 = 当前余额
+                    ui.run(() => {
+                        window.识别余额.setText("当前余额:" + G_当前余额)
+                    })
                 }
             } catch (error) {
 
