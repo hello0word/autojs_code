@@ -26,10 +26,9 @@ function main() {
                     悬浮窗.emit("余额", G_当前余额)
                 }
             }
-            sleep(100)
+            sleep(10)
         }
     })
-    G_当前余额 = parseInt(获取余额())
     while (true) {
         log("当前余额:" + G_当前余额)
         toastLog("查找订单号")
@@ -79,7 +78,7 @@ function loop_serch(){
 }
 
 
-function 查找订单号等数据(当前余额) {
+function 查找订单号等数据() {
     let 账单详情 = text("账单详情").packageName("com.eg.android.AlipayGphone").findOne()
     log("账单详情")
     // let 订单号 = desc("订单号").findOne(6 *1000)
@@ -119,11 +118,8 @@ function 查找订单号等数据(当前余额) {
         }
         return num
     }
-    let 余额 = 当前余额
     let 出现次数= 次数查找(订单详情.订单号后5位, 订单详情.收款理由)
     let 倍数 =  -1
-    
-
     if (订单详情.收款理由.length == 1) {
         //处理龙虎合
         if (订单详情.收款理由 == "龙" || 订单详情.收款理由 == "虎" || 订单详情.收款理由 == "合") {
@@ -158,8 +154,7 @@ function 查找订单号等数据(当前余额) {
     } 
     
     log("倍数 = "+ 倍数)
-    余额 = parseInt(余额) + parseInt(订单详情.收款金额) * 倍数
-    G_当前余额 = 余额
+    余额 = parseInt(G_当前余额) + parseInt(订单详情.收款金额) * 倍数
     let 最终字符串 = 订单详情.订单号后5位 + 龙虎合标记 + "-----余额" + 余额
     log(最终字符串)
     return 最终字符串
