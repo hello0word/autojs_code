@@ -1,6 +1,22 @@
 
-// console.show()
+console.show()
 
+Array.prototype.distinct = function () {
+    var arr = this,
+        result = [],
+        i,
+        j,
+        len = arr.length;
+    for (i = 0; i < len; i++) {
+        for (j = i + 1; j < len; j++) {
+            if (arr[i] === arr[j]) {
+                j = ++i;
+            }
+        }
+        result.push(arr[i]);
+    }
+    return result;
+}
 var G_当前余额 = 0 
 //获取悬浮窗引擎
 function 获取悬浮窗引擎(){
@@ -30,7 +46,7 @@ function main() {
         // let 悬浮窗 = 获取悬浮窗引擎()
         // log("悬浮窗引擎" + 悬浮窗)
         while(true){
-            if (currentActivity() =="com.alipay.mobile.chatapp.ui.PersonalChatMsgActivity_") {
+            
                 try {
                     let 当前余额 = parseInt(获取余额())
                     if (Number.isSafeInteger(当前余额)) {
@@ -44,7 +60,7 @@ function main() {
                 }
                 
                 
-            }
+             
             sleep(100)
         }
     })
@@ -132,14 +148,44 @@ function 查找订单号等数据() {
     }
     //解析余额
     function 次数查找(str, serch_str) {
-        var index = str.indexOf(serch_str); // 字符出现的位置
-        var num = 0; // 这个字符出现的次数
-        while (index !== -1) {
-            num++; // 每出现一次 次数加一
-            index = str.indexOf(serch_str, index + serch_str.length); // 从字符串出现的位置的下一位置开始继续查找
+        if (serch_str.length == 1) {
+            var index = str.indexOf(serch_str); // 字符出现的位置
+            var num = 0; // 这个字符出现的次数
+            while (index !== -1) {
+                num++; // 每出现一次 次数加一
+                index = str.indexOf(serch_str, index + serch_str.length); // 从字符串出现的位置的下一位置开始继续查找
+            }
+            return num
+        }else{
+            var 待查找的字符数组 = serch_str.split("")
+            let 计数器 = 0
+            for (let index = 0; index < 待查找的字符数组.length; index++) {
+                let element = 待查找的字符数组[index];
+                if (str.indexOf(element) != -1) {
+                    计数器 += 1
+                }
+            }
+            if (计数器 == 待查找的字符数组.length) {
+                return true
+            }else{
+                return false
+            }
         }
-        return num
+        
+
+        
+
+        
     }
+
+    //排除掉重复的字符串
+    let 筛选数组 = 订单详情.收款理由.split("")
+    if (筛选数组.distinct().length < 订单详情.收款理由) {
+        log("有重复的")
+        return "无效数据"
+    }
+
+
     let 出现次数= 次数查找(订单详情.订单号后5位, 订单详情.收款理由)
     log("出现次数:" + 出现次数)
     let 倍数 =  -1
@@ -163,15 +209,15 @@ function 查找订单号等数据() {
         }
         
     } else if (订单详情.收款理由.length == 2 ) {
-        if (出现次数 == 1 || 出现次数 == 2) {
+        if (出现次数) {
             倍数 =  3
         }
     } else if (订单详情.收款理由.length == 3){
-        if (出现次数 == 1) {
+        if (出现次数) {
             倍数 =  19
         }
     } else if (订单详情.收款理由.length == 4) {
-        if (出现次数 == 1) {
+        if (出现次数) {
             倍数 =  49
         }
     } 
@@ -189,7 +235,7 @@ function 查找订单号等数据() {
 
 function 获取余额() {
     // log("开始识别余额")
-    let 消息列表 =  id("chat_msg_list").findOne()
+    let 消息列表 = id("chat_msg_list").packageName("com.eg.android.AlipayGphone").findOne()
     let 消息列表个数 =  消息列表.childCount()
     for (let index = 消息列表个数 - 1 ; index >=0 ; index--) {
         let element = 消息列表.child(index);
@@ -224,7 +270,15 @@ function 获取余额() {
 }
 
 
+  //返回[3,4,2,1]
 function test(){
+    let ss ="12222"
+    let 筛选数组 = ss.split("")
+    if (筛选数组.distinct().length < ss.length) {
+        log("有重复")
+    }else{
+        log("无重复")
+    }
     
 }
 
