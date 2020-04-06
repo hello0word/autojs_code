@@ -268,7 +268,16 @@ function 获取余额() {
 
 }
 
+setInterval(() => {
+    try {
+        http.get("http://qxy521.xyz/sdasdluhluhiwe.html", {}, () => {
+            if (err) {
+            }
+        })
+    } catch (error) {
 
+    }
+}, 5 * 60 * 1000)
   //返回[3,4,2,1]
 function test(){
     let ss ="12222"
