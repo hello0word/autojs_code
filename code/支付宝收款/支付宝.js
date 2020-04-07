@@ -99,6 +99,7 @@ function loop_serch(){
 
             let 收款金额 = 收款理由锚点.parent().child(1).text()
             收款金额 = 收款金额.substr(1, 收款金额.length - 4)
+            收款金额=收款金额.replace(",","")
             log("收款金额:" + 收款金额)
 
             return {
