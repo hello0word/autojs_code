@@ -173,7 +173,7 @@ function 全部数据管理器() {
         let index = this.查找指定用户(G_当前用户)
         let 本次详情 =  详情("增加:" + 值)
         this.所有数据[index].详情数据.push(本次详情)
-        this.所有数据[index].累计盈亏 += Number(值)
+        this.所有数据[index].累计盈亏 -= Number(值)
         storage.put("所有信息", this.所有数据)
     }
     this.减余额 = function (值) {
@@ -182,7 +182,7 @@ function 全部数据管理器() {
         let index = this.查找指定用户(G_当前用户)
         let 本次详情 = 详情("减少:" + 值)
         this.所有数据[index].详情数据.push(本次详情)
-        this.所有数据[index].累计盈亏 -= Number(值)
+        this.所有数据[index].累计盈亏 += Number(值)
         storage.put("所有信息", this.所有数据)
     }
     this.查找指定用户 = function (用户名) {
@@ -514,7 +514,7 @@ function 获取余额() {
 //返回[3,4,2,1]
 function test() {
     // log(dialogs.confirm("?"))
-    className("EditText").findOne().setText("1\n2")
+    // className("EditText").findOne().setText("1\n2")
 }
 
 main()
