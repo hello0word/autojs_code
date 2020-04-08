@@ -1,5 +1,5 @@
 
-console.show()
+// console.show()
 var storage = storages.create("ZFBTOOL")
 
 Array.prototype.distinct = function () {
@@ -152,8 +152,10 @@ window.清空数据.setOnTouchListener(function (view, event) {
 
 function 详情(内容) {
     let 当前时间 = new Date()
-    this.创建时间 = "" + 当前时间.getFullYear() + "-" + (当前时间.getMonth() + 1) + "-" + 当前时间.getDate() + "  " + 当前时间.getHours() + ":" + 当前时间.getMinutes() + ":" + 当前时间.getSeconds()// 使用时间戳
-    this.内容 = 内容
+    return "" + (当前时间.getMonth() + 1) + "-" + 当前时间.getDate() + "  " + 当前时间.getHours() + ":" + 当前时间.getMinutes() + "  " + 内容// 使用时间戳
+
+    // this.创建时间 = "" + (当前时间.getMonth() + 1) + "-" + 当前时间.getDate() + "  " + 当前时间.getHours() + ":" + 当前时间.getMinutes() + ":" + 当前时间.getSeconds()// 使用时间戳
+    // this.内容 = 内容
 }
 
 function 用户(用户名) {
@@ -169,7 +171,7 @@ function 全部数据管理器() {
     this.加余额 = function (值) {
         this.所有数据 = storage.get("所有信息", [])
         let index = this.查找指定用户(G_当前用户)
-        let 本次详情 = new 详情("增加:" + 值)
+        let 本次详情 =  详情("增加:" + 值)
         this.所有数据[index].详情数据.push(本次详情)
         this.所有数据[index].累计盈亏 += Number(值)
         storage.put("所有信息", this.所有数据)
@@ -178,7 +180,7 @@ function 全部数据管理器() {
         this.所有数据 = storage.get("所有信息", [])
 
         let index = this.查找指定用户(G_当前用户)
-        let 本次详情 = new 详情("减少:" + 值)
+        let 本次详情 = 详情("减少:" + 值)
         this.所有数据[index].详情数据.push(本次详情)
         this.所有数据[index].累计盈亏 -= Number(值)
         storage.put("所有信息", this.所有数据)
@@ -199,8 +201,17 @@ function 全部数据管理器() {
     }
     this.显示所有信息 = function () {
         this.所有数据 = storage.get("所有信息", [])
-
-        return JSON.stringify(this.所有数据)
+        let all_info_str = ""
+        for (let index = 0; index < this.所有数据.length; index++) {
+            let element = this.所有数据[index];
+            all_info_str += element.用户名 + ":总盈亏 " + element.累计盈亏 + "\n"
+            for (let index2 = 0; index2 < element.详情数据.length; index2++) {
+                let element2 = element.详情数据[index2];
+                all_info_str += element2 + "\n"
+            }
+            all_info_str += "\n"
+        }
+        return all_info_str
 
     }
 }
@@ -502,7 +513,8 @@ function 获取余额() {
 
 //返回[3,4,2,1]
 function test() {
-    log(dialogs.confirm("?"))
+    // log(dialogs.confirm("?"))
+    className("EditText").findOne().setText("1\n2")
 }
 
 main()
