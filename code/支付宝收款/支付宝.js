@@ -275,7 +275,6 @@ function 清空数据() {
     }
 }
 
-var 已记录订单号列表 = []
 function main() {
 
     threads.start(function () {
@@ -364,13 +363,11 @@ function 查找订单号等数据() {
     // let 订单号内容 = 订单号.parent().child(序号 + 1).child(0).text()
     // let 订单号内容 = 订单号.parent().child(序号 + 1).desc()
     let 订单详情 = loop_serch()
-    if (已记录订单号列表.indexOf(订单详情.订单号) != -1) {
-        return "该订单已记录"
-    }
+    
     if (parseInt(订单详情.收款金额) > G_当前余额) {
         return "超额无效，请补充余额"
     }
-    已记录订单号列表.push(订单详情.订单号)
+    
     // log(订单详情)
 
     let last_5_arr = 订单详情.订单号后5位.split("")
@@ -460,6 +457,7 @@ function 查找订单号等数据() {
     }
 
     log("倍数 = " + 倍数)
+    log("计算前余额:" + G_当前余额)
     余额 = parseInt(G_当前余额) + parseInt(订单详情.收款金额) * 倍数
     log("余额：" + 余额)
     let 最终字符串 = 订单详情.订单号后5位 + 龙虎合标记 + "-----余额" + 余额
