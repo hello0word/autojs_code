@@ -407,8 +407,8 @@ function main() {
                 if (Number.isSafeInteger(当前余额)) {
                     G_当前余额 = 当前余额
                     ui.run(() => {
-                        window.识别余额.setText("当前余额:" + G_当前余额)
-                        window.当前用户.setText("当前用户:" + G_当前用户)
+                        window.识别余额.setText("余额:" + G_当前余额)
+                        window.当前用户.setText("昵称:" + G_当前用户)
                     })
                 }
             } catch (error) {
