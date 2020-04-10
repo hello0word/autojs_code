@@ -43,7 +43,7 @@ var window = floaty.window(
                 <button id="减余额" text={"减余额"} w="auto" h="40" bg="#ff00ff" />
                 <button id="所有信息" text={"所有信息"} w="auto" h="40" bg="#ffff00" />
                 <button id="清空数据" text={"清空数据"} w="auto" h="40" bg="#00ffff" />
-                <button id="固定文字" text={"设置固定文字"} w="auto" h="40" bg="#ffff00" />
+                <button id="固定文字" text={"固定文字"} w="auto" h="40" bg="#ffff00" />
                 <button id="清空走势" text={"清空走势"} w="auto" h="40" bg="#00ffff" />
 
             </vertical>
