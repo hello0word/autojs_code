@@ -20,6 +20,7 @@ Array.prototype.distinct = function () {
 }
 var G_当前余额 = 0
 var G_当前用户 = ""
+
 //获取悬浮窗引擎
 function 获取悬浮窗引擎() {
     var array = engines.all()
@@ -42,6 +43,7 @@ var window = floaty.window(
                 <button id="减余额" text={"减余额"} w="auto" h="40" bg="#ff00ff" />
                 <button id="所有信息" text={"所有信息"} w="auto" h="40" bg="#ffff00" />
                 <button id="清空数据" text={"清空数据"} w="auto" h="40" bg="#00ffff" />
+                <button id="固定文字" text={"设置固定文字"} w="auto" h="40" bg="#ffff00" />
 
             </vertical>
         </horizontal>
@@ -149,6 +151,41 @@ window.清空数据.setOnTouchListener(function (view, event) {
     }
     return true;
 });
+window.固定文字.setOnTouchListener(function (view, event) {
+    switch (event.getAction()) {
+        case event.ACTION_DOWN:
+            x = event.getRawX();
+            y = event.getRawY();
+            windowX = window.getX();
+            windowY = window.getY();
+            downTime = new Date().getTime();
+            return true;
+        case event.ACTION_MOVE:
+            //移动手指时调整悬浮窗位置
+            window.setPosition(windowX + (event.getRawX() - x),
+                windowY + (event.getRawY() - y));
+            return true;
+        case event.ACTION_UP:
+            //手指弹起时如果偏移很小则判断为点击
+            if (Math.abs(event.getRawY() - y) < 5 && Math.abs(event.getRawX() - x) < 5) {
+                固定文字();
+            }
+            return true;
+    }
+    return true;
+});
+
+function 固定文字(){
+    log(arguments.callee.name)
+    dialogs.rawInput("请输入固定文字", "", (value) => {
+        if (value != -1) {
+            storage.put("固定文字", value)
+        } else {
+            toast("取消")
+        }
+
+    });
+}
 
 function 详情(内容) {
     let 当前时间 = new Date()
@@ -157,6 +194,56 @@ function 详情(内容) {
     // this.创建时间 = "" + (当前时间.getMonth() + 1) + "-" + 当前时间.getDate() + "  " + 当前时间.getHours() + ":" + 当前时间.getMinutes() + ":" + 当前时间.getSeconds()// 使用时间戳
     // this.内容 = 内容
 }
+
+
+function 所有走势(){
+
+    this.所有走势数据 = storage.get("所有用户走势", [])
+    function 用户(用户名){
+        this.用户名 = 用户名
+        this.用户走势=[]
+    }
+
+    /**
+     * 返回用户序号
+     */
+    this.查找指定用户 = function (用户名) {
+        this.所有走势数据 = storage.get("所有用户走势", [])
+        for (let index = 0; index < this.所有走势数据.length; index++) {
+            let element = this.所有走势数据[index];
+            if (element.用户名 == 用户名) {
+                return index
+            }
+        }
+        let ret = this.所有走势数据.push(new 用户(用户名)) - 1
+        storage.put("所有用户走势", this.所有走势数据)
+        return ret
+
+    }
+    this.添加走势 =function(用户名,新数据){
+        this.所有走势数据 = storage.get("所有用户走势", [])
+        let index = this.查找指定用户(用户名)
+        this.所有走势数据[index].用户走势.push(新数据)
+        storage.put("所有用户走势", this.所有走势数据)
+    }
+    this.获取用户走势 = function (用户名){
+        this.所有走势数据 = storage.get("所有用户走势", [])
+        let index = this.查找指定用户(用户名)
+        let 当前走势数据 = this.所有走势数据[index].用户走势
+        if (当前走势数据.length > 20) {
+            log("大于20个")
+            当前走势数据 = 当前走势数据.slice(当前走势数据.length - 20)
+            this.所有走势数据[index].用户走势 = 当前走势数据
+            storage.put("所有用户走势", this.所有走势数据)
+        }
+        return 当前走势数据
+    }
+}
+
+
+
+
+
 
 function 用户(用户名) {
     this.用户名 = 用户名
@@ -221,6 +308,7 @@ function 发送() {
     id("sendBtn").text("发送").findOne().click()
 }
 var 全部数据 = new 全部数据管理器()
+var 全部走势 = new 所有走势()
 function 加余额() {
     log(arguments.callee.name)
     dialogs.input("请输入增加的值", "", (value) => {
@@ -332,7 +420,8 @@ function loop_serch() {
             let 收款理由锚点 = text("收款理由").findOne()
             let 收款理由 = 收款理由锚点.parent().child(收款理由锚点.indexInParent() + 1).child(0).text()
             log("收款理由:" + 收款理由)
-
+            let 收款人 = 收款理由锚点.parent().child(0).text()
+            log("收款人:" + 收款人)
             let 收款金额 = 收款理由锚点.parent().child(1).text()
             收款金额 = 收款金额.substr(1, 收款金额.length - 4)
             收款金额 = 收款金额.replace(",", "")
@@ -343,6 +432,7 @@ function loop_serch() {
                 订单号后5位: 订单号后5位,
                 收款理由: 收款理由,
                 收款金额: 收款金额,
+                收款人: 收款人,
             }
         }
     }
@@ -374,11 +464,11 @@ function 查找订单号等数据() {
     // log(last_5_arr)
     let 龙虎合标记 = ""
     if (last_5_arr[0] > last_5_arr[4]) {
-        龙虎合标记 = "虎"
+        龙虎合标记 = "🐯"
     } else if (last_5_arr[0] < last_5_arr[4]) {
-        龙虎合标记 = "龙"
+        龙虎合标记 = "🐲"
     } else {
-        龙虎合标记 = "合"
+        龙虎合标记 = "🈴"
     }
     //解析余额
     function 次数查找(str, serch_str) {
@@ -460,8 +550,33 @@ function 查找订单号等数据() {
     log("计算前余额:" + G_当前余额)
     余额 = parseInt(G_当前余额) + parseInt(订单详情.收款金额) * 倍数
     log("余额：" + 余额)
-    let 最终字符串 = 订单详情.订单号后5位 + 龙虎合标记 + "-----余额" + 余额
-    log(最终字符串)
+    // let 最终字符串 = 订单详情.订单号后5位 + 龙虎合标记 + "-----余额" + 余额
+    // log(最终字符串)
+
+
+    //处理走势
+    var 所有订单号 = storage.get("所有订单号",[])
+    if (所有订单号.length > 5000) {
+        所有订单号 = 所有订单号.slice(所有订单号.length - 5000)
+        storage.put("所有订单号", 所有订单号)
+    }
+    if (所有订单号.indexOf(订单详情.订单号) == -1) {
+        全部走势.添加走势(订单详情.收款人,订单详情.订单号后5位 + 龙虎合标记)
+        所有订单号.push(订单详情.订单号)
+        storage.put("所有订单号", 所有订单号)
+    }
+    let 最终字符串 = storage.get("固定文字","")
+    let 当前用户所有走势 = 全部走势.获取用户走势(订单详情.收款人)
+    for (let index = 0; index < 当前用户所有走势.length; index++) {
+        let element = 当前用户所有走势[index];
+        if ( index % 3 == 0) {
+            最终字符串+= "\n"
+        }
+        最终字符串 += element + " "
+    }
+    最终字符串 += "\n"
+    最终字符串 += "余额" + 余额
+
     return 最终字符串
 
 
@@ -513,6 +628,8 @@ function 获取余额() {
 function test() {
     // log(dialogs.confirm("?"))
     // className("EditText").findOne().setText("1\n2")
+    storage.put("所有用户走势", [])
+    // storage.put("")
 }
 
 main()
