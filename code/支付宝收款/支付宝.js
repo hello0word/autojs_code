@@ -44,6 +44,7 @@ var window = floaty.window(
                 <button id="所有信息" text={"所有信息"} w="auto" h="40" bg="#ffff00" />
                 <button id="清空数据" text={"清空数据"} w="auto" h="40" bg="#00ffff" />
                 <button id="固定文字" text={"设置固定文字"} w="auto" h="40" bg="#ffff00" />
+                <button id="清空走势" text={"清空走势"} w="auto" h="40" bg="#00ffff" />
 
             </vertical>
         </horizontal>
@@ -174,7 +175,38 @@ window.固定文字.setOnTouchListener(function (view, event) {
     }
     return true;
 });
+window.清空走势.setOnTouchListener(function (view, event) {
+    switch (event.getAction()) {
+        case event.ACTION_DOWN:
+            x = event.getRawX();
+            y = event.getRawY();
+            windowX = window.getX();
+            windowY = window.getY();
+            downTime = new Date().getTime();
+            return true;
+        case event.ACTION_MOVE:
+            //移动手指时调整悬浮窗位置
+            window.setPosition(windowX + (event.getRawX() - x),
+                windowY + (event.getRawY() - y));
+            return true;
+        case event.ACTION_UP:
+            //手指弹起时如果偏移很小则判断为点击
+            if (Math.abs(event.getRawY() - y) < 5 && Math.abs(event.getRawX() - x) < 5) {
+                清空走势();
+            }
+            return true;
+    }
+    return true;
+});
 
+function 清空走势(){
+    log(arguments.callee.name)
+    let value = dialogs.confirm("确定清空?")
+    if (value) {
+        storage.put("所有用户走势", [])
+        log("已清空")
+    }
+}
 function 固定文字(){
     log(arguments.callee.name)
     dialogs.rawInput("请输入固定文字", "", (value) => {
