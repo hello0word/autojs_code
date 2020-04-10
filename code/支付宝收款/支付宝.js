@@ -513,12 +513,17 @@ function 查找订单号等数据() {
     let 出现次数 = 次数查找(订单详情.订单号后5位, 订单详情.收款理由)
     log("出现次数:" + 出现次数)
     let 倍数 = -1
+    log("理由长度:" + 订单详情.收款理由.length)
     if (订单详情.收款理由.length == 1) {
         //处理龙虎合
         if (订单详情.收款理由 == "龙" || 订单详情.收款理由 == "虎" || 订单详情.收款理由 == "合") {
             if (龙虎合标记 == 订单详情.收款理由) {
                 倍数 = 1
+            } else {
+                log("未匹配到")
             }
+        }else{
+            log("未知字符串")
         }
         if (出现次数 == 1) {
             倍数 = 1
@@ -628,9 +633,20 @@ function 获取余额() {
 function test() {
     // log(dialogs.confirm("?"))
     // className("EditText").findOne().setText("1\n2")
-    storage.put("所有用户走势", [])
+    
     // storage.put("")
 }
-
+// var options = ["正式版", "测试版"]
+// var i = dialogs.select("请选择一个选项", options);
+// if (i >= 0) {
+//     toast("您选择的是" + options[i]);
+//     if(i == 0){
+//         main()
+//     }else if(i==1){
+//         test()
+//     }
+// } else {
+//     toast("您取消了选择");
+// }
 main()
 // log(test())
