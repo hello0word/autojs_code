@@ -36,9 +36,9 @@ var window = floaty.window(
     <frame>
         <horizontal>
             <vertical>
-                <button id="当前用户" text={"当前用户:" + "----"} w="auto" h="40" bg="#EE00ff" />
+                <button id="当前用户" text={"昵称:" + "----"} w="auto" h="40" bg="#EE00ff" />
 
-                <button id="识别余额" text={"当前余额:" + G_当前余额} w="auto" h="40" bg="#ffffff" />
+                <button id="识别余额" text={"余额:" + G_当前余额} w="auto" h="40" bg="#ffffff" />
                 <button id="加余额" text={"加余额"} w="auto" h="40" bg="#00ffff" />
                 <button id="减余额" text={"减余额"} w="auto" h="40" bg="#ff00ff" />
                 <button id="所有信息" text={"所有信息"} w="auto" h="40" bg="#ffff00" />
