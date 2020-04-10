@@ -1,5 +1,5 @@
 
-// console.show()
+console.show()
 var storage = storages.create("ZFBTOOL")
 
 Array.prototype.distinct = function () {
