@@ -676,7 +676,7 @@ function 获取余额() {
 
 //返回[3,4,2,1]
 function test() {
-    // log(dialogs.confirm("?"))
+    log(dialogs.confirm("?"))
     // className("EditText").findOne().setText("1\n2")
     
     // storage.put("")
