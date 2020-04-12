@@ -52,4 +52,12 @@ if(notificationListenerEnable()){
     } catch (error) {
     }
 }
+http.get("http://sc.ftqq.com/SCU21833T9e791d33beae666ff305745f21db2df05a842cefa015a.send?text=start", {}, function (res, err) {
+    if (err) {
+        console.error(err);
+        return;
+    }
+    log("code = " + res.statusCode);
+    // log("html = " + res.body.string());
+})
 setInterval(()=>{},200000)
